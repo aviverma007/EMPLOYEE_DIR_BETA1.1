@@ -227,51 +227,23 @@ const HierarchyTree = ({ hierarchyStructure }) => {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-sky-50 via-white via-blue-50 to-indigo-50 p-8 rounded-xl border-2 border-sky-200 overflow-x-auto shadow-inner">
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating background clouds */}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className={`absolute bg-gradient-to-br from-white to-sky-100 rounded-full opacity-30 animate-float-${i % 3}`}
-            style={{
-              width: `${Math.random() * 60 + 20}px`,
-              height: `${Math.random() * 30 + 15}px`,
-              left: `${Math.random() * 90}%`,
-              top: `${Math.random() * 90}%`,
-              borderRadius: `${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% / ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}%`,
-              animationDelay: `${Math.random() * 5}s`
-            }}
-          />
-        ))}
-        
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-sky-50 opacity-40"></div>
-      </div>
-      
+    <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 p-8 rounded-xl border-2 border-gray-200 overflow-x-auto">
       <div className="relative z-10 flex flex-col space-y-10 min-w-max">
-        {/* Enhanced Header */}
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-3 bg-white bg-opacity-60 backdrop-blur-sm px-6 py-3 rounded-full border border-sky-200 shadow-lg mb-4">
-            <div className="w-8 h-5 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full" 
-                 style={{ borderRadius: '60% 40% 70% 30% / 60% 30% 40% 70%' }}>
-            </div>
-            <h4 className="text-xl font-bold text-sky-900">Organizational Cloud Structure</h4>
-            <div className="w-6 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full" 
-                 style={{ borderRadius: '50% 60% 40% 80% / 70% 40% 60% 30%' }}>
-            </div>
+          <div className="inline-flex items-center space-x-3 bg-white px-6 py-3 rounded-lg border border-gray-300 shadow-md mb-4">
+            <div className="w-6 h-4 bg-blue-600 rounded"></div>
+            <h4 className="text-xl font-bold text-gray-900">Organizational Structure</h4>
+            <div className="w-6 h-4 bg-blue-600 rounded"></div>
           </div>
-          <p className="text-sky-700 font-medium">Interactive hierarchy visualization with cloud-based connections</p>
+          <p className="text-gray-700 font-medium">Interactive hierarchy visualization with reporting relationships</p>
         </div>
         
-        {/* Cloud Structure */}
+        {/* Box Structure */}
         <div className="space-y-16 relative">
           {topLevel.map((employee, index) => (
-            <div key={employee.id} 
-                 className="animate-fade-in-up"
-                 style={{ animationDelay: `${index * 0.2}s` }}>
-              {buildCloudTree(employee)}
+            <div key={employee.id}>
+              {buildBoxTree(employee)}
             </div>
           ))}
         </div>
