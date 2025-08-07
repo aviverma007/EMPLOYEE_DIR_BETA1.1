@@ -47,11 +47,11 @@ const TreeNode = ({ employee, children, level = 0 }) => {
         {/* Employee Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <p className="font-medium text-slate-900 truncate">{employee.name}</p>
-            <Badge variant="outline" className="text-xs flex-shrink-0">{employee.id}</Badge>
+            <p className="font-medium text-blue-900 truncate">{employee.name}</p>
+            <Badge variant="outline" className="text-xs flex-shrink-0 border-blue-200 text-blue-700">{employee.id}</Badge>
           </div>
-          <p className="text-sm text-gray-600 truncate">{employee.grade}</p>
-          <p className="text-xs text-gray-500">{employee.department}</p>
+          <p className="text-sm text-blue-600 truncate">{employee.grade}</p>
+          <p className="text-xs text-blue-500">{employee.department}</p>
         </div>
 
         {/* Children Count */}
