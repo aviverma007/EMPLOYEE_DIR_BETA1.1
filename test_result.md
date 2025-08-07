@@ -162,23 +162,53 @@ backend:
         -agent: "testing"
         -comment: "Comprehensive testing confirmed Excel data integration fully operational. 640 employees loaded correctly, all utility endpoints (departments: 24, locations: 23, stats) working perfectly. File path issue completely resolved."
 
-  - task: "Image Upload and Storage System"
+  - task: "News Management API"
     implemented: true
-    working: true
+    working: "NA"
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
-        -working: true
+        -working: "NA"
         -agent: "main"
-        -comment: "CRITICAL BUG FIX: Implemented complete image upload and storage system. Previously, images were only stored as URLs/base64 in database without actual file saving. Now supports: 1) Base64 data conversion to actual files, 2) Direct file upload API, 3) Proper file storage in /uploads/images/, 4) Static file serving, 5) Multiple image formats (JPEG, PNG, GIF, WebP). Created upload directory structure and file processing functions."
-        -working: true
-        -agent: "testing"
-        -comment: "Comprehensive testing of image upload system completed successfully. Both APIs working: PUT /api/employees/{id}/image (supports URLs and base64), POST /api/employees/{id}/upload-image (file upload). Base64 images properly converted to files, direct uploads working, files saved in /uploads/images/ directory with unique filenames, static file serving operational. All image formats supported and validated."
-        -working: true
-        -agent: "testing"
-        -comment: "RE-TESTED: Excel data integration working flawlessly. File path issue resolved (now uses correct Linux path /app/backend/employee_directory.xlsx). Successfully loads exactly 640 employees from Excel on startup and via POST /api/refresh-excel. All utility endpoints verified: 24 departments, 23 locations, comprehensive stats showing excel_employees=640, db_employees=640. Excel parser handles all data types correctly including mobile numbers, extensions, dates, and reporting relationships."
+        -comment: "Complete news management API implemented with CRUD operations: GET /api/news (fetch all news), POST /api/news (create news), PUT /api/news/{id} (update news), DELETE /api/news/{id} (delete news). News model includes title, content, priority (normal/medium/high), author, timestamps. Ready for testing."
+
+  - task: "Task Management API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "Complete task management API implemented with CRUD operations: GET /api/tasks (fetch all tasks), POST /api/tasks (create task), PUT /api/tasks/{id} (update task), DELETE /api/tasks/{id} (delete task). Task model includes title, description, assigned_to (employee ID), priority, status (pending/in_progress/completed), due_date, timestamps. Ready for testing."
+
+  - task: "Knowledge Management API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "Complete knowledge base API implemented with CRUD operations: GET /api/knowledge (fetch articles), POST /api/knowledge (create article), PUT /api/knowledge/{id} (update article), DELETE /api/knowledge/{id} (delete article). Knowledge model includes title, content, category (policy/process/training/announcement/guideline/other), tags, author, timestamps. Ready for testing."
+
+  - task: "Help/Support Management API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "main"
+        -comment: "Complete help/support API implemented with CRUD operations and reply system: GET /api/help (fetch requests), POST /api/help (create request), PUT /api/help/{id} (update status), POST /api/help/{id}/reply (add reply), DELETE /api/help/{id} (delete request). Help model includes title, message, priority, status (open/in_progress/resolved), replies array, author, timestamps. Ready for testing."
 
 frontend:
   - task: "Employee Directory Interface"
