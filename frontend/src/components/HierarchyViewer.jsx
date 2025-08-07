@@ -36,7 +36,7 @@ const HierarchyViewer = () => {
     loadData();
   }, []);
 
-  // Build hierarchy structure for tree view
+  // Build hierarchy structure for visualization
   const hierarchyStructure = useMemo(() => {
     const empMap = new Map(employees.map(emp => [emp.id, emp]));
     const childrenMap = new Map();
@@ -57,11 +57,13 @@ const HierarchyViewer = () => {
       }
     });
 
-    // Find top-level employees (those without managers)
-    const employeesWithManagers = new Set(hierarchyData.map(rel => rel.employeeId));
-    const topLevel = employees.filter(emp => !employeesWithManagers.has(emp.id));
+    // Get managers who have direct reports
+    const managersWithDirectReports = [...childrenMap.entries()]
+      .filter(([managerId, children]) => children.length > 0)
+      .map(([managerId]) => empMap.get(managerId))
+      .filter(Boolean);
 
-    return { empMap, childrenMap, topLevel };
+    return { empMap, childrenMap, topLevel: managersWithDirectReports };
   }, [hierarchyData, employees]);
 
   if (loading) {
