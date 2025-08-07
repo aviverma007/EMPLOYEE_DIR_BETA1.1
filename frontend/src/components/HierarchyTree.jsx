@@ -41,7 +41,7 @@ const TreeNode = ({ employee, children, level = 0 }) => {
               }}
             />
           ) : null}
-          <User className="h-4 w-4 text-gray-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
+          <User className="h-4 w-4 text-blue-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
         </div>
 
         {/* Employee Info */}
