@@ -1,20 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { Building2, RefreshCw, LogOut, Shield, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useAuth } from "../context/AuthContext";
+import { utilityAPI } from "../services/api";
 import { toast } from "sonner";
 
 const Header = () => {
   const { user, logout, isAdmin } = useAuth();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     if (!isAdmin()) {
       toast.error("Only administrators can refresh data");
       return;
     }
-    // Mock refresh functionality - will be replaced with actual API call
-    toast.success("Employee data refreshed successfully!");
+    
+    try {
+      setIsRefreshing(true);
+      const result = await utilityAPI.refreshExcel();
+      
+      toast.success(`Excel data refreshed successfully! Updated ${result.count} employees.`, {
+        description: `Last updated: ${new Date().toLocaleString()}`
+      });
+      
+      // Trigger a page reload to refresh all data
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+      toast.error("Failed to refresh Excel data. Please try again.");
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const handleLogout = () => {
@@ -63,11 +83,12 @@ const Header = () => {
               {isAdmin() && (
                 <Button 
                   onClick={handleRefresh}
+                  disabled={isRefreshing}
                   variant="outline"
                   className="flex items-center space-x-2 hover:bg-blue-50 border-blue-200"
                 >
-                  <RefreshCw className="h-4 w-4" />
-                  <span>Refresh Data</span>
+                  <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  <span>{isRefreshing ? 'Refreshing...' : 'Sync Excel'}</span>
                 </Button>
               )}
               
