@@ -29,7 +29,7 @@ const TreeNode = ({ employee, children, level = 0 }) => {
         </div>
 
         {/* Profile Image */}
-        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center flex-shrink-0">
           {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
             <img 
               src={employee.profileImage} 
