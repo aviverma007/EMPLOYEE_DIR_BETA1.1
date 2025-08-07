@@ -15,9 +15,31 @@ const HierarchyBuilder = () => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedManager, setSelectedManager] = useState("");
   const [viewMode, setViewMode] = useState("tree"); // tree or table
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Load all employees on component mount
+  useEffect(() => {
+    const loadEmployees = async () => {
+      try {
+        setLoading(true);
+        const allEmployees = await loadAllEmployeesFromExcel();
+        setEmployees(allEmployees);
+      } catch (error) {
+        console.error("Error loading employees:", error);
+        setEmployees(mockEmployees);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadEmployees();
+  }, []);
 
   // Get available employees for dropdown
-  const availableEmployees = mockEmployees.map(emp => ({
+  const availableEmployees = employees.map(emp => ({
     id: emp.id,
     name: emp.name,
     department: emp.department
