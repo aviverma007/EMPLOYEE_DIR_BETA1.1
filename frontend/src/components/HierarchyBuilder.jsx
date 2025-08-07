@@ -181,7 +181,7 @@ const HierarchyBuilder = () => {
                 }`}
               >
                 <Network className="h-4 w-4" />
-                <span>Cloud View</span>
+                <span>Box View</span>
               </Button>
               <Button
                 variant={viewMode === "table" ? "default" : "outline"}
