@@ -188,8 +188,8 @@ const HierarchyTree = ({ hierarchyStructure }) => {
     return (
       <div className="text-center py-16 text-gray-500 relative">
         <div className="relative z-10">
-          <div className="w-40 h-20 bg-blue-600 border-2 border-blue-700 mx-auto mb-6 rounded-lg flex items-center justify-center shadow-lg">
-            <User className="h-8 w-8 text-white" />
+          <div className="w-40 h-20 bg-gray-100 border-2 border-gray-300 mx-auto mb-6 rounded-lg flex items-center justify-center shadow-lg">
+            <User className="h-8 w-8 text-gray-600" />
           </div>
           <h3 className="text-xl font-bold mb-2 text-gray-600">No hierarchy structure to display</h3>
           <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
