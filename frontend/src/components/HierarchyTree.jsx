@@ -68,98 +68,162 @@ const CloudNode = ({ employee, children, level = 0, isExpanded, onToggle }) => {
   };
 
   const cloudStyle = getCloudStyle(level);
-  const marginLeft = level * 60;
+  const marginLeft = level * 80;
+
+  const getLevelIcon = (level) => {
+    switch(level) {
+      case 0: return <Crown className={`${cloudStyle.size.icon} text-white`} />;
+      case 1: return <Star className={`${cloudStyle.size.icon} text-white`} />;
+      case 2: return <Target className={`${cloudStyle.size.icon} text-white`} />;
+      default: return <User className={`${cloudStyle.size.icon} text-white`} />;
+    }
+  };
 
   return (
-    <div className="relative" style={{ marginLeft: `${marginLeft}px` }}>
-      {/* Connecting Lines */}
+    <div className="relative animate-pulse-gentle" style={{ marginLeft: `${marginLeft}px` }}>
+      {/* Enhanced Connecting Lines */}
       {level > 0 && (
         <>
-          {/* Horizontal line to parent */}
+          {/* Horizontal cloud connector */}
           <div 
-            className="absolute bg-gradient-to-r from-blue-300 to-blue-400 h-0.5 rounded-full"
+            className="absolute flex items-center"
             style={{
-              left: -60,
-              top: '40px',
-              width: '60px'
+              left: -80,
+              top: `${parseInt(cloudStyle.size.height.replace('h-', '')) * 4 + 8}px`,
+              width: '80px',
+              height: '4px'
             }}
-          />
-          {/* Vertical line from parent */}
+          >
+            {/* Dotted cloud line */}
+            <div className="flex-1 border-t-2 border-dashed border-sky-300 opacity-70"></div>
+            {/* Mini cloud connectors */}
+            <div className="w-2 h-2 bg-white rounded-full border-2 border-sky-300 -ml-1"></div>
+            <div className="w-3 h-3 bg-gradient-to-br from-sky-200 to-sky-300 rounded-full -ml-1"></div>
+            <div className="w-2 h-2 bg-white rounded-full border-2 border-sky-300 -ml-1"></div>
+          </div>
+          
+          {/* Vertical cloud connector */}
           <div 
-            className="absolute bg-gradient-to-b from-blue-300 to-blue-400 w-0.5 rounded-full"
+            className="absolute"
             style={{
-              left: -60,
-              top: -20,
-              height: '60px'
+              left: -80,
+              top: -40,
+              width: '4px',
+              height: `${parseInt(cloudStyle.size.height.replace('h-', '')) * 4 + 48}px`
             }}
-          />
+          >
+            <div className="w-full h-full border-l-2 border-dashed border-sky-300 opacity-70 relative">
+              {/* Floating cloud elements along the line */}
+              <div className="absolute w-2 h-2 bg-white rounded-full border border-sky-300 -left-1 top-4"></div>
+              <div className="absolute w-1.5 h-1.5 bg-sky-200 rounded-full -left-0.5 top-8"></div>
+              <div className="absolute w-2 h-2 bg-white rounded-full border border-sky-300 -left-1 top-12"></div>
+            </div>
+          </div>
         </>
       )}
 
-      {/* Cloud Container */}
-      <div className="relative mb-8">
-        {/* Cloud Shape */}
-        <div className={`${cloudStyle.size} relative`}>
-          <div className={`absolute inset-0 bg-gradient-to-br ${cloudStyle.color} rounded-full shadow-lg transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}
+      {/* Enhanced Cloud Container */}
+      <div className="relative mb-10 group">
+        {/* Cloud Shadow/Glow Effect */}
+        <div className={`absolute inset-0 ${cloudStyle.size.width} ${cloudStyle.size.height} ${cloudStyle.colors.glow} rounded-full blur-lg opacity-30 group-hover:opacity-50 transition-all duration-500`}
+             style={{ transform: 'scale(1.1)' }}>
+        </div>
+
+        {/* Main Cloud Shape */}
+        <div className={`${cloudStyle.size.width} ${cloudStyle.size.height} relative`}>
+          {/* Cloud Background with improved shape */}
+          <div className={`absolute inset-0 bg-gradient-to-br ${cloudStyle.colors.gradient} ${cloudStyle.colors.border} border-2 shadow-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-3xl hover:-rotate-1`}
                style={{
-                 clipPath: 'ellipse(100% 85% at 50% 50%)',
-                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+                 borderRadius: '50% 45% 55% 48% / 60% 50% 45% 40%',
+                 filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.15))'
                }}>
+            
+            {/* Inner cloud highlights */}
+            <div className="absolute top-2 left-4 w-6 h-4 bg-white bg-opacity-20 rounded-full blur-sm"></div>
+            <div className="absolute top-3 right-6 w-4 h-3 bg-white bg-opacity-15 rounded-full blur-sm"></div>
           </div>
           
           {/* Cloud Content */}
-          <div className="absolute inset-0 flex items-center justify-between px-4 py-2">
-            {/* Employee Info */}
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
-              {/* Profile Image */}
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-white bg-opacity-20 flex items-center justify-center flex-shrink-0 border-2 border-white border-opacity-30">
-                {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
-                  <img 
-                    src={employee.profileImage} 
-                    alt={employee.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                ) : null}
-                <User className="h-5 w-5 text-white" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
+          <div className="absolute inset-0 flex items-center justify-between px-6 py-3">
+            {/* Employee Info Section */}
+            <div className="flex items-center space-x-4 flex-1 min-w-0">
+              {/* Enhanced Profile Section */}
+              <div className="relative flex-shrink-0">
+                {/* Profile Image Container */}
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-white bg-opacity-25 flex items-center justify-center border-3 border-white border-opacity-40 shadow-lg backdrop-blur-sm">
+                  {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
+                    <img 
+                      src={employee.profileImage} 
+                      alt={employee.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="w-full h-full flex items-center justify-center" 
+                       style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'flex'}}>
+                    {getLevelIcon(level)}
+                  </div>
+                </div>
+                
+                {/* Level Badge */}
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center border-2 border-current text-xs font-bold"
+                     style={{ color: cloudStyle.colors.gradient.split(' ')[1].replace('from-', '').replace('-400', '-600') }}>
+                  {level + 1}
+                </div>
               </div>
 
-              {/* Employee Details */}
+              {/* Employee Details with Enhanced Typography */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <p className="font-semibold text-white text-sm truncate">{employee.name}</p>
-                  <Badge variant="secondary" className="text-xs bg-white bg-opacity-20 text-white border-white border-opacity-30">
+                <div className="flex items-center space-x-2 mb-1">
+                  <h3 className={`font-bold text-white ${cloudStyle.size.text} truncate drop-shadow-sm`}>
+                    {employee.name}
+                  </h3>
+                  <Badge className="text-xs bg-white bg-opacity-25 text-white border-white border-opacity-40 backdrop-blur-sm px-2 py-0.5">
                     {employee.id}
                   </Badge>
                 </div>
-                <p className="text-xs text-white text-opacity-90 truncate">{employee.grade}</p>
-                <p className="text-xs text-white text-opacity-75 truncate flex items-center">
-                  <Building2 className="h-3 w-3 mr-1" />
-                  {employee.department}
-                </p>
+                
+                <div className="space-y-0.5">
+                  <p className={`${cloudStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-white text-opacity-95 truncate font-medium drop-shadow-sm`}>
+                    {employee.grade}
+                  </p>
+                  <p className={`${cloudStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-white text-opacity-85 truncate flex items-center drop-shadow-sm`}>
+                    <Building2 className="h-3 w-3 mr-1.5" />
+                    {employee.department}
+                  </p>
+                  {employee.location && (
+                    <p className={`${cloudStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-white text-opacity-75 truncate`}>
+                      📍 {employee.location}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Expand/Collapse Button */}
+            {/* Enhanced Control Section */}
             {hasChildren && (
-              <div className="flex items-center space-x-2">
-                <Badge className="bg-white bg-opacity-20 text-white border-white border-opacity-30 text-xs">
+              <div className="flex flex-col items-center space-y-2 flex-shrink-0">
+                {/* Team Count Badge */}
+                <Badge className="bg-white bg-opacity-25 text-white border-white border-opacity-40 text-xs backdrop-blur-sm px-2 py-1">
                   <Users className="h-3 w-3 mr-1" />
-                  {children.length}
+                  <span className="font-bold">{children.length}</span>
+                  <span className="ml-1 text-xs opacity-75">team</span>
                 </Badge>
+                
+                {/* Expand/Collapse Button */}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onToggle(employee.id)}
-                  className="h-6 w-6 p-0 text-white hover:bg-white hover:bg-opacity-20 rounded-full"
+                  className="h-8 w-8 p-0 text-white hover:bg-white hover:bg-opacity-25 rounded-full transition-all duration-200 backdrop-blur-sm border border-white border-opacity-30"
                 >
                   {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="h-4 w-4 drop-shadow-sm" />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-4 w-4 drop-shadow-sm" />
                   )}
                 </Button>
               </div>
