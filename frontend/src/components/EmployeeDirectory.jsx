@@ -91,12 +91,12 @@ const EmployeeDirectory = () => {
 
     return employees.filter(employee => {
       const matchesSearch = 
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.id.includes(searchTerm) ||
-        employee.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.grade.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        employee.mobile.includes(searchTerm);
+        employee.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        employee.id.includes(debouncedSearchTerm) ||
+        employee.department.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        employee.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        employee.grade.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        employee.mobile.includes(debouncedSearchTerm);
 
       const matchesDepartment = departmentFilter === "All Departments" || 
         employee.department === departmentFilter;
@@ -106,12 +106,10 @@ const EmployeeDirectory = () => {
 
       return matchesSearch && matchesDepartment && matchesLocation;
     });
-  }, [employees, searchTerm, departmentFilter, locationFilter, hasSearched, isAdmin]);
+  }, [employees, debouncedSearchTerm, departmentFilter, locationFilter, hasSearched, isAdmin]);
 
   const handleImageUpdate = (employeeId, newImage) => {
-    if (!isAdmin()) {
-      return; // Users cannot update images
-    }
+    // Both admin and employees can update images now
     setEmployees(prev => prev.map(emp => 
       emp.id === employeeId ? { ...emp, profileImage: newImage } : emp
     ));
