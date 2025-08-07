@@ -1757,12 +1757,19 @@ class EmployeeDirectoryTester:
     def run_all_tests(self):
         """Run all backend API tests"""
         print("=" * 80)
-        print("EMPLOYEE DIRECTORY AND HIERARCHY BUILDER - BACKEND API TESTING")
+        print("EMPLOYEE DIRECTORY AND MANAGEMENT PLATFORM - COMPREHENSIVE BACKEND API TESTING")
         print("=" * 80)
         print(f"Testing backend at: {self.base_url}")
         print()
         
-        # Run all tests in order
+        # Initialize storage for created IDs
+        self.created_news_ids = []
+        self.created_task_ids = []
+        self.created_knowledge_ids = []
+        self.created_help_ids = []
+        
+        # Run existing employee and hierarchy tests
+        print("🔍 TESTING EMPLOYEE MANAGEMENT APIs...")
         self.test_1_get_all_employees()
         self.test_2_search_employees()
         self.test_3_filter_employees()
@@ -1771,17 +1778,47 @@ class EmployeeDirectoryTester:
         self.test_4c_upload_employee_image_file()
         self.test_4d_static_file_serving()
         self.test_5_refresh_excel_data()
+        
+        print("\n🏗️ TESTING HIERARCHY MANAGEMENT APIs...")
         self.test_6_get_hierarchy()
         self.test_7_create_hierarchy_relation()
         self.test_8_delete_hierarchy_relation()
         self.test_9_clear_all_hierarchy()
+        
+        print("\n📊 TESTING UTILITY APIs...")
         self.test_10_get_departments()
         self.test_11_get_locations()
         self.test_12_get_stats()
         
+        # Run new API tests
+        print("\n📰 TESTING NEWS MANAGEMENT APIs...")
+        self.test_13_get_all_news()
+        self.test_14_create_news()
+        self.test_15_update_news()
+        self.test_16_delete_news()
+        
+        print("\n📋 TESTING TASK MANAGEMENT APIs...")
+        self.test_17_get_all_tasks()
+        self.test_18_create_tasks()
+        self.test_19_update_task_status()
+        self.test_20_delete_task()
+        
+        print("\n📚 TESTING KNOWLEDGE MANAGEMENT APIs...")
+        self.test_21_get_all_knowledge()
+        self.test_22_create_knowledge_articles()
+        self.test_23_update_knowledge_article()
+        self.test_24_delete_knowledge_article()
+        
+        print("\n🆘 TESTING HELP/SUPPORT MANAGEMENT APIs...")
+        self.test_25_get_all_help_requests()
+        self.test_26_create_help_requests()
+        self.test_27_update_help_request_status()
+        self.test_28_add_help_reply()
+        self.test_29_delete_help_request()
+        
         # Summary
         print("=" * 80)
-        print("TEST SUMMARY")
+        print("COMPREHENSIVE TEST SUMMARY")
         print("=" * 80)
         
         passed = sum(1 for result in self.test_results if result["success"])
@@ -1792,6 +1829,25 @@ class EmployeeDirectoryTester:
         print(f"Failed: {failed}")
         print()
         
+        # Group results by API category
+        categories = {
+            "Employee Management": [r for r in self.test_results if any(x in r["test"] for x in ["employees", "image", "excel"])],
+            "Hierarchy Management": [r for r in self.test_results if "hierarchy" in r["test"].lower()],
+            "Utility APIs": [r for r in self.test_results if any(x in r["test"] for x in ["departments", "locations", "stats"])],
+            "News Management": [r for r in self.test_results if "news" in r["test"].lower()],
+            "Task Management": [r for r in self.test_results if "task" in r["test"].lower()],
+            "Knowledge Management": [r for r in self.test_results if "knowledge" in r["test"].lower()],
+            "Help/Support Management": [r for r in self.test_results if "help" in r["test"].lower()]
+        }
+        
+        for category, results in categories.items():
+            if results:
+                cat_passed = sum(1 for r in results if r["success"])
+                cat_total = len(results)
+                print(f"{category}: {cat_passed}/{cat_total} tests passed")
+        
+        print()
+        
         if failed > 0:
             print("FAILED TESTS:")
             for result in self.test_results:
@@ -1799,7 +1855,7 @@ class EmployeeDirectoryTester:
                     print(f"❌ {result['test']}: {result['message']}")
             print()
         
-        print("All tests completed!")
+        print("All comprehensive backend API tests completed!")
         return passed, failed
 
     def test_hierarchy_scenario_specific(self):
