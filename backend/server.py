@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Query
+from fastapi import FastAPI, APIRouter, HTTPException, Query, UploadFile, File
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -7,6 +8,9 @@ import logging
 from pathlib import Path
 from typing import List, Optional
 from datetime import datetime
+import base64
+import uuid
+import mimetypes
 
 from models import (
     Employee, EmployeeCreate, EmployeeUpdate, 
