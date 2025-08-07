@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Employee Directory & Hierarchy Builder - A full-stack application for SMARTWORLD DEVELOPERS Pvt. Ltd. to manage employee data from Excel files and build organizational hierarchy relationships."
+user_problem_statement: "Replace user selector page with 5-tab home page: Home (daily news), Employee Directory (existing + hierarchy), Work (task management), Knowledge (company info), Help (support messaging with replies). Admin-only access."
 
 backend:
   - task: "Employee Management API"
