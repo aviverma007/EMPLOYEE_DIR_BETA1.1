@@ -214,12 +214,11 @@ const HierarchyTree = ({ hierarchyStructure }) => {
   }
 
   const buildBoxTree = (employee) => {
-    const children = childrenMap.get(employee.id) || [];
     return (
       <BoxNode 
         key={employee.id}
         employee={employee} 
-        children={children}
+        childrenMap={childrenMap}
         level={0}
         isExpanded={expandedNodes.has(employee.id)}
         onToggle={toggleNode}
