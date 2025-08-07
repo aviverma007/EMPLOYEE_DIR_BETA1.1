@@ -86,9 +86,6 @@ const HierarchyViewer = () => {
             <CardTitle className="flex items-center space-x-2 text-blue-900">
               <Eye className="h-5 w-5" />
               <span>Organizational Hierarchy</span>
-              <Badge variant="secondary" className="ml-2 bg-blue-100 text-blue-700">
-                Read Only
-              </Badge>
             </CardTitle>
             
             <div className="flex space-x-2">
@@ -103,7 +100,7 @@ const HierarchyViewer = () => {
                 }`}
               >
                 <Network className="h-4 w-4" />
-                <span>Tree View</span>
+                <span>Cloud View</span>
               </Button>
               <Button
                 variant={viewMode === "table" ? "default" : "outline"}
