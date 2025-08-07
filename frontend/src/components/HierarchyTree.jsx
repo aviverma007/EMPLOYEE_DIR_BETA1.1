@@ -125,8 +125,8 @@ const HierarchyTree = ({ hierarchyStructure }) => {
 
   return (
     <div className="space-y-4">
-      <div className="bg-slate-50 p-4 rounded-lg">
-        <h4 className="font-medium text-slate-900 mb-4">Organizational Structure</h4>
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h4 className="font-medium text-blue-900 mb-4">Organizational Structure</h4>
         <div className="space-y-2">
           {topLevel.map(employee => buildTree(employee))}
         </div>
