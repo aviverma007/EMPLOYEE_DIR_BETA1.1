@@ -10,6 +10,12 @@ import HierarchyViewer from "./components/HierarchyViewer";
 import Header from "./components/Header";
 import { Toaster } from "./components/ui/sonner";
 
+// Import new components
+import Home from "./components/Home";
+import Work from "./components/Work";
+import Knowledge from "./components/Knowledge";
+import Help from "./components/Help";
+
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("directory");
