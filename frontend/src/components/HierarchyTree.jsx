@@ -127,7 +127,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
           <div className="mt-6 space-y-4 relative">
             {/* Vertical connection line for children */}
             <div 
-              className="absolute bg-gray-600 w-0.5"
+              className="absolute bg-gray-400 w-0.5"
               style={{
                 left: '50%',
                 top: '-15px',
