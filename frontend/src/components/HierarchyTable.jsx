@@ -23,11 +23,11 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="bg-slate-50">
-          <TableHead>Employee</TableHead>
-          <TableHead className="w-16 text-center">→</TableHead>
-          <TableHead>Reports To</TableHead>
-          <TableHead>Relationship</TableHead>
+        <TableRow className="bg-blue-50 border-blue-200">
+          <TableHead className="text-blue-900">Employee</TableHead>
+          <TableHead className="w-16 text-center text-blue-900">→</TableHead>
+          <TableHead className="text-blue-900">Reports To</TableHead>
+          <TableHead className="text-blue-900">Relationship</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
