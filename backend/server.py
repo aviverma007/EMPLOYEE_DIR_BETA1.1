@@ -1,15 +1,19 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Query
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
-import uuid
+from typing import List, Optional
 from datetime import datetime
 
+from models import (
+    Employee, EmployeeCreate, EmployeeUpdate, 
+    HierarchyRelation, HierarchyRelationCreate,
+    RefreshResponse
+)
+from excel_parser import ExcelParser
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -20,37 +24,257 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(title="Employee Directory API", version="1.0.0")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Initialize Excel parser
+excel_parser = ExcelParser()
 
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+# Employee Management Endpoints
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+@api_router.get("/employees", response_model=List[Employee])
+async def get_employees(
+    search: Optional[str] = Query(None, description="Search term for name, id, department, location, designation, mobile"),
+    department: Optional[str] = Query(None, description="Filter by department"),
+    location: Optional[str] = Query(None, description="Filter by location")
+):
+    """Get all employees with optional search and filters"""
+    try:
+        # Build query
+        query = {}
+        
+        if search:
+            # Create search query for multiple fields
+            query["$or"] = [
+                {"name": {"$regex": search, "$options": "i"}},
+                {"id": {"$regex": search, "$options": "i"}},
+                {"department": {"$regex": search, "$options": "i"}},
+                {"location": {"$regex": search, "$options": "i"}},
+                {"grade": {"$regex": search, "$options": "i"}},
+                {"mobile": {"$regex": search, "$options": "i"}}
+            ]
+        
+        if department and department != "All Departments":
+            query["department"] = department
+            
+        if location and location != "All Locations":
+            query["location"] = location
+        
+        # Get employees from database
+        employees_cursor = db.employees.find(query)
+        employees = await employees_cursor.to_list(1000)  # Limit to 1000 for performance
+        
+        # Convert MongoDB documents to Employee models
+        result = []
+        for emp in employees:
+            emp.pop('_id', None)  # Remove MongoDB _id field
+            result.append(Employee(**emp))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching employees: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch employees")
 
-# Add your routes to the router instead of directly to app
+@api_router.put("/employees/{employee_id}/image", response_model=Employee)
+async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
+    """Update employee profile image (admin functionality)"""
+    try:
+        # Update employee in database
+        result = await db.employees.update_one(
+            {"id": employee_id},
+            {
+                "$set": {
+                    "profileImage": update_data.profileImage,
+                    "lastUpdated": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        
+        # Get updated employee
+        employee_doc = await db.employees.find_one({"id": employee_id})
+        if not employee_doc:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        
+        employee_doc.pop('_id', None)
+        return Employee(**employee_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating employee image: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update employee image")
+
+@api_router.post("/refresh-excel", response_model=RefreshResponse)
+async def refresh_excel_data():
+    """Sync with Excel file data"""
+    try:
+        # Parse Excel file
+        employees_data = excel_parser.parse_excel_to_employees()
+        
+        # Clear existing employees
+        await db.employees.delete_many({})
+        
+        # Insert new employees
+        if employees_data:
+            # Convert to proper format for MongoDB
+            for emp in employees_data:
+                emp['lastUpdated'] = datetime.utcnow()
+            
+            await db.employees.insert_many(employees_data)
+        
+        return RefreshResponse(
+            message="Data refreshed successfully",
+            count=len(employees_data)
+        )
+        
+    except Exception as e:
+        logging.error(f"Error refreshing Excel data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to refresh data: {str(e)}")
+
+# Hierarchy Management Endpoints
+
+@api_router.get("/hierarchy", response_model=List[HierarchyRelation])
+async def get_hierarchy():
+    """Fetch all reporting relationships"""
+    try:
+        hierarchy_cursor = db.hierarchy.find()
+        hierarchy_docs = await hierarchy_cursor.to_list(1000)
+        
+        result = []
+        for doc in hierarchy_docs:
+            doc.pop('_id', None)
+            result.append(HierarchyRelation(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching hierarchy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch hierarchy")
+
+@api_router.post("/hierarchy", response_model=HierarchyRelation)
+async def add_hierarchy_relation(relation: HierarchyRelationCreate):
+    """Add new reporting relationship"""
+    try:
+        # Check if relationship already exists
+        existing = await db.hierarchy.find_one({"employeeId": relation.employeeId})
+        if existing:
+            raise HTTPException(
+                status_code=400, 
+                detail="Employee already has a reporting relationship"
+            )
+        
+        # Verify both employees exist
+        employee = await db.employees.find_one({"id": relation.employeeId})
+        manager = await db.employees.find_one({"id": relation.reportsTo})
+        
+        if not employee:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        if not manager:
+            raise HTTPException(status_code=404, detail="Manager not found")
+        
+        # Create new relationship
+        new_relation = HierarchyRelation(
+            employeeId=relation.employeeId,
+            reportsTo=relation.reportsTo
+        )
+        
+        # Insert into database
+        relation_dict = new_relation.dict()
+        await db.hierarchy.insert_one(relation_dict)
+        
+        return new_relation
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error adding hierarchy relation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add hierarchy relation")
+
+@api_router.delete("/hierarchy/{employee_id}")
+async def remove_hierarchy_relation(employee_id: str):
+    """Remove reporting relationship"""
+    try:
+        result = await db.hierarchy.delete_one({"employeeId": employee_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Hierarchy relation not found")
+        
+        return {"message": "Hierarchy relation removed successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error removing hierarchy relation: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to remove hierarchy relation")
+
+@api_router.delete("/hierarchy/clear")
+async def clear_all_hierarchy():
+    """Clear all reporting relationships"""
+    try:
+        result = await db.hierarchy.delete_many({})
+        
+        return {
+            "message": "All hierarchy relations cleared",
+            "count": result.deleted_count
+        }
+        
+    except Exception as e:
+        logging.error(f"Error clearing hierarchy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to clear hierarchy")
+
+# Utility Endpoints
+
+@api_router.get("/departments")
+async def get_departments():
+    """Get unique departments"""
+    try:
+        departments = excel_parser.get_unique_departments()
+        return {"departments": departments}
+    except Exception as e:
+        logging.error(f"Error getting departments: {str(e)}")
+        return {"departments": ["All Departments"]}
+
+@api_router.get("/locations")
+async def get_locations():
+    """Get unique locations"""
+    try:
+        locations = excel_parser.get_unique_locations()
+        return {"locations": locations}
+    except Exception as e:
+        logging.error(f"Error getting locations: {str(e)}")
+        return {"locations": ["All Locations"]}
+
+@api_router.get("/stats")
+async def get_stats():
+    """Get Excel file and database statistics"""
+    try:
+        excel_stats = excel_parser.get_file_stats()
+        
+        # Get database counts
+        emp_count = await db.employees.count_documents({})
+        hierarchy_count = await db.hierarchy.count_documents({})
+        
+        return {
+            "excel": excel_stats,
+            "database": {
+                "employees": emp_count,
+                "hierarchy_relations": hierarchy_count
+            }
+        }
+    except Exception as e:
+        logging.error(f"Error getting stats: {str(e)}")
+        return {"error": str(e)}
+
+# Legacy endpoint for backward compatibility
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+    return {"message": "Employee Directory API is running"}
 
 # Include the router in the main app
 app.include_router(api_router)
@@ -69,6 +293,32 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Initialize database with Excel data on startup
+@app.on_event("startup")
+async def startup_db():
+    """Initialize database with Excel data if empty"""
+    try:
+        # Check if employees collection is empty
+        count = await db.employees.count_documents({})
+        if count == 0:
+            logger.info("Database empty, loading Excel data...")
+            employees_data = excel_parser.parse_excel_to_employees()
+            
+            if employees_data:
+                # Add timestamps
+                for emp in employees_data:
+                    emp['lastUpdated'] = datetime.utcnow()
+                
+                await db.employees.insert_many(employees_data)
+                logger.info(f"Loaded {len(employees_data)} employees from Excel")
+            else:
+                logger.warning("No employee data found in Excel file")
+        else:
+            logger.info(f"Database already has {count} employees")
+            
+    except Exception as e:
+        logger.error(f"Error during startup: {str(e)}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
