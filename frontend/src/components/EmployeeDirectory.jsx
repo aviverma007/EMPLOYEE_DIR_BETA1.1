@@ -153,7 +153,7 @@ const EmployeeDirectory = () => {
               />
             </div>
 
-            {/* Filters - Only show if admin or user has searched */}
+            {/* Filters - Always show for both admin and regular users when they have searched */}
             {(isAdmin() || hasSearched) && (
               <>
                 {/* Department Filter */}
