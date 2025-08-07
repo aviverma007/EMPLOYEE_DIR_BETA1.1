@@ -50,11 +50,11 @@ const HierarchyBuilder = () => {
 
   // Build hierarchy structure for tree view
   const hierarchyStructure = useMemo(() => {
-    const empMap = new Map(mockEmployees.map(emp => [emp.id, emp]));
+    const empMap = new Map(employees.map(emp => [emp.id, emp]));
     const childrenMap = new Map();
     
     // Initialize children map
-    mockEmployees.forEach(emp => {
+    employees.forEach(emp => {
       childrenMap.set(emp.id, []);
     });
 
@@ -71,10 +71,10 @@ const HierarchyBuilder = () => {
 
     // Find top-level employees (those without managers)
     const employeesWithManagers = new Set(hierarchyData.map(rel => rel.employeeId));
-    const topLevel = mockEmployees.filter(emp => !employeesWithManagers.has(emp.id));
+    const topLevel = employees.filter(emp => !employeesWithManagers.has(emp.id));
 
     return { empMap, childrenMap, topLevel };
-  }, [hierarchyData]);
+  }, [hierarchyData, employees]);
 
   const handleAddRelationship = () => {
     if (!selectedEmployee || !selectedManager) {
