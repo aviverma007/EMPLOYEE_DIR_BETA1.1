@@ -60,24 +60,27 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Client-side filtering - same logic for both admin and regular users
+  // Client-side filtering - only show results when user searches
   const filteredEmployees = useMemo(() => {
+    // Don't show any employees until user starts searching
+    if (debouncedSearchTerm.trim().length === 0) {
+      return [];
+    }
+
     let filtered = employees;
 
     // Apply search filter
-    if (debouncedSearchTerm.trim().length > 0) {
-      const searchLower = debouncedSearchTerm.toLowerCase();
-      filtered = filtered.filter(employee => {
-        return (
-          employee.name.toLowerCase().includes(searchLower) ||
-          employee.id.includes(debouncedSearchTerm) ||
-          employee.department.toLowerCase().includes(searchLower) ||
-          employee.location.toLowerCase().includes(searchLower) ||
-          employee.grade.toLowerCase().includes(searchLower) ||
-          employee.mobile.includes(debouncedSearchTerm)
-        );
-      });
-    }
+    const searchLower = debouncedSearchTerm.toLowerCase();
+    filtered = filtered.filter(employee => {
+      return (
+        employee.name.toLowerCase().includes(searchLower) ||
+        employee.id.includes(debouncedSearchTerm) ||
+        employee.department.toLowerCase().includes(searchLower) ||
+        employee.location.toLowerCase().includes(searchLower) ||
+        employee.grade.toLowerCase().includes(searchLower) ||
+        employee.mobile.includes(debouncedSearchTerm)
+      );
+    });
 
     // Apply department filter
     if (departmentFilter !== "All Departments") {
@@ -91,6 +94,8 @@ const EmployeeDirectory = () => {
 
     return filtered;
   }, [employees, debouncedSearchTerm, departmentFilter, locationFilter]);
+
+  const hasSearched = debouncedSearchTerm.trim().length > 0;
 
   const handleImageUpdate = async (employeeId, newImageUrl) => {
     try {
