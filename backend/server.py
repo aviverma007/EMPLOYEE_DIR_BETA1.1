@@ -196,6 +196,21 @@ async def add_hierarchy_relation(relation: HierarchyRelationCreate):
         logging.error(f"Error adding hierarchy relation: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to add hierarchy relation")
 
+@api_router.delete("/hierarchy/clear")
+async def clear_all_hierarchy():
+    """Clear all reporting relationships"""
+    try:
+        result = await db.hierarchy.delete_many({})
+        
+        return {
+            "message": "All hierarchy relations cleared",
+            "count": result.deleted_count
+        }
+        
+    except Exception as e:
+        logging.error(f"Error clearing hierarchy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to clear hierarchy")
+
 @api_router.delete("/hierarchy/{employee_id}")
 async def remove_hierarchy_relation(employee_id: str):
     """Remove reporting relationship"""
@@ -212,21 +227,6 @@ async def remove_hierarchy_relation(employee_id: str):
     except Exception as e:
         logging.error(f"Error removing hierarchy relation: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to remove hierarchy relation")
-
-@api_router.delete("/hierarchy/clear")
-async def clear_all_hierarchy():
-    """Clear all reporting relationships"""
-    try:
-        result = await db.hierarchy.delete_many({})
-        
-        return {
-            "message": "All hierarchy relations cleared",
-            "count": result.deleted_count
-        }
-        
-    except Exception as e:
-        logging.error(f"Error clearing hierarchy: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to clear hierarchy")
 
 # Utility Endpoints
 
