@@ -3,8 +3,9 @@ import { User, ChevronDown, ChevronUp, Users, Building2 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
-const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => {
+const BoxNode = ({ employee, childrenMap, level = 0, expandedNodes, onToggle }) => {
   const children = childrenMap.get(employee.id) || [];
+  const isExpanded = expandedNodes.has(employee.id);
   const hasChildren = children && children.length > 0;
   
   const getBoxStyle = (level) => {
