@@ -120,22 +120,21 @@ const HierarchyViewer = () => {
         </CardHeader>
       </Card>
 
-      {/* Info Card for User */}
-      <Card className="border-blue-200 shadow-sm bg-blue-50">
+      {/* Hierarchy Statistics */}
+      <Card className="border-blue-200 shadow-sm bg-white">
         <CardContent className="p-6">
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Users className="h-6 w-6 text-blue-600" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div className="space-y-2">
+              <div className="text-2xl font-bold text-blue-600">{employees.length}</div>
+              <div className="text-sm text-blue-500">Total Employees</div>
             </div>
-            <div>
-              <h3 className="font-semibold text-blue-900">Current Organizational Structure</h3>
-              <p className="text-blue-600 text-sm">
-                View the saved reporting relationships in tree or table format. 
-                {hierarchyData.length > 0 
-                  ? ` Showing ${hierarchyData.length} reporting relationships.`
-                  : " No reporting relationships have been defined yet."
-                }
-              </p>
+            <div className="space-y-2">
+              <div className="text-2xl font-bold text-blue-600">{hierarchyStructure.topLevel.length}</div>
+              <div className="text-sm text-blue-500">Team Leaders</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-2xl font-bold text-blue-600">{hierarchyData.length}</div>
+              <div className="text-sm text-blue-500">Reporting Relations</div>
             </div>
           </div>
         </CardContent>
