@@ -168,11 +168,11 @@ frontend:
 
   - task: "Hierarchy Builder Interface"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/HierarchyBuilder.jsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         -working: "NA"
         -agent: "main"
@@ -180,6 +180,9 @@ frontend:
         -working: "NA"
         -agent: "main"
         -comment: "Fixed hierarchy tree building logic to show unified hierarchical structure. Updated logic to find true root managers (those who don't report to anyone) and build complete recursive trees showing proper chains like Ranjit Sarkar → Chandan → [Anirudh, Binay]. Modified HierarchyBuilder.jsx and HierarchyTree.jsx for correct tree visualization."
+        -working: true
+        -agent: "main"
+        -comment: "Successfully implemented UI improvements: Changed color scheme from blue to grey/black/white for better readability, simplified information display to show only employee name and ID, ensured all content fits properly inside boxes, and maintained profile image support in both tree and table views. Hierarchy now displays unified tree structure correctly with clean, professional design."
 
   - task: "Authentication System"
     implemented: true
