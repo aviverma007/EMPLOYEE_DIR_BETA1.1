@@ -269,12 +269,7 @@ const EmployeeDirectory = () => {
       <Dialog open={showDetailModal} onOpenChange={closeDetailModal}>
         <DialogContent className="sm:max-w-2xl border-blue-200">
           <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl text-blue-900">Employee Details</DialogTitle>
-              <Button variant="ghost" size="sm" onClick={closeDetailModal}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <DialogTitle className="text-xl text-blue-900">Employee Details</DialogTitle>
           </DialogHeader>
           
           {selectedEmployee && (
@@ -332,9 +327,16 @@ const EmployeeDirectory = () => {
                     <div>
                       <p className="text-sm text-blue-500">Mobile</p>
                       <p className="font-medium text-blue-900">{selectedEmployee.mobile}</p>
-                      {selectedEmployee.extension !== "0" && (
-                        <p className="text-sm text-blue-600">Ext: {selectedEmployee.extension}</p>
-                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-3">
+                    <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
+                      <span className="text-xs text-blue-600">E</span>
+                    </div>
+                    <div>
+                      <p className="text-sm text-blue-500">Extension</p>
+                      <p className="font-medium text-blue-900">{selectedEmployee.extension !== "0" ? selectedEmployee.extension : "Not Available"}</p>
                     </div>
                   </div>
                 </div>
