@@ -173,8 +173,8 @@ class EmployeeDirectoryTester:
         except Exception as e:
             self.log_test("GET /api/employees?department=X", False, f"Exception: {str(e)}")
 
-    def test_4_update_employee_image(self):
-        """Test PUT /api/employees/{id}/image - Test profile image update"""
+    def test_4_update_employee_image_url(self):
+        """Test PUT /api/employees/{id}/image - Test profile image update with URL"""
         try:
             # First get an employee to update
             response = self.session.get(f"{self.base_url}/employees")
@@ -184,7 +184,7 @@ class EmployeeDirectoryTester:
                     test_employee = employees[0]
                     employee_id = test_employee["id"]
                     
-                    # Update profile image
+                    # Update profile image with URL
                     update_data = {
                         "profileImage": "https://example.com/new-profile-image.jpg"
                     }
@@ -198,30 +198,219 @@ class EmployeeDirectoryTester:
                         updated_employee = update_response.json()
                         if updated_employee.get("profileImage") == update_data["profileImage"]:
                             self.log_test(
-                                "PUT /api/employees/{id}/image", 
+                                "PUT /api/employees/{id}/image (URL)", 
                                 True, 
-                                f"Successfully updated profile image for employee {employee_id}",
+                                f"Successfully updated profile image with URL for employee {employee_id}",
                                 {"employee_id": employee_id, "new_image": update_data["profileImage"]}
                             )
                         else:
                             self.log_test(
-                                "PUT /api/employees/{id}/image", 
+                                "PUT /api/employees/{id}/image (URL)", 
                                 False, 
                                 "Profile image was not updated correctly"
                             )
                     else:
                         self.log_test(
-                            "PUT /api/employees/{id}/image", 
+                            "PUT /api/employees/{id}/image (URL)", 
                             False, 
                             f"HTTP {update_response.status_code}: {update_response.text}"
                         )
                 else:
-                    self.log_test("PUT /api/employees/{id}/image", False, "No employees available for testing")
+                    self.log_test("PUT /api/employees/{id}/image (URL)", False, "No employees available for testing")
             else:
-                self.log_test("PUT /api/employees/{id}/image", False, "Could not fetch employees for testing")
+                self.log_test("PUT /api/employees/{id}/image (URL)", False, "Could not fetch employees for testing")
                 
         except Exception as e:
-            self.log_test("PUT /api/employees/{id}/image", False, f"Exception: {str(e)}")
+            self.log_test("PUT /api/employees/{id}/image (URL)", False, f"Exception: {str(e)}")
+
+    def test_4b_update_employee_image_base64(self):
+        """Test PUT /api/employees/{id}/image - Test profile image update with base64 data"""
+        try:
+            # First get an employee to update
+            response = self.session.get(f"{self.base_url}/employees")
+            if response.status_code == 200:
+                employees = response.json()
+                if employees:
+                    test_employee = employees[0]
+                    employee_id = test_employee["id"]
+                    
+                    # Create a small test image in base64 (1x1 red pixel PNG)
+                    base64_image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+                    
+                    # Update profile image with base64 data
+                    update_data = {
+                        "profileImage": base64_image
+                    }
+                    
+                    update_response = self.session.put(
+                        f"{self.base_url}/employees/{employee_id}/image",
+                        json=update_data
+                    )
+                    
+                    if update_response.status_code == 200:
+                        updated_employee = update_response.json()
+                        new_image_url = updated_employee.get("profileImage")
+                        
+                        # Check if the image was converted to a file URL
+                        if new_image_url and new_image_url.startswith("/uploads/images/"):
+                            self.log_test(
+                                "PUT /api/employees/{id}/image (Base64)", 
+                                True, 
+                                f"Successfully updated profile image with base64 data for employee {employee_id}",
+                                {"employee_id": employee_id, "new_image_url": new_image_url}
+                            )
+                        else:
+                            self.log_test(
+                                "PUT /api/employees/{id}/image (Base64)", 
+                                False, 
+                                f"Base64 image was not converted to file URL correctly. Got: {new_image_url}"
+                            )
+                    else:
+                        self.log_test(
+                            "PUT /api/employees/{id}/image (Base64)", 
+                            False, 
+                            f"HTTP {update_response.status_code}: {update_response.text}"
+                        )
+                else:
+                    self.log_test("PUT /api/employees/{id}/image (Base64)", False, "No employees available for testing")
+            else:
+                self.log_test("PUT /api/employees/{id}/image (Base64)", False, "Could not fetch employees for testing")
+                
+        except Exception as e:
+            self.log_test("PUT /api/employees/{id}/image (Base64)", False, f"Exception: {str(e)}")
+
+    def test_4c_upload_employee_image_file(self):
+        """Test POST /api/employees/{id}/upload-image - Test file upload"""
+        try:
+            # First get an employee to update
+            response = self.session.get(f"{self.base_url}/employees")
+            if response.status_code == 200:
+                employees = response.json()
+                if employees:
+                    test_employee = employees[0]
+                    employee_id = test_employee["id"]
+                    
+                    # Create a small test image file (1x1 red pixel PNG)
+                    import io
+                    import base64
+                    
+                    # Decode the base64 image to bytes
+                    base64_data = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+                    image_bytes = base64.b64decode(base64_data)
+                    
+                    # Create file-like object
+                    files = {
+                        'file': ('test_image.png', io.BytesIO(image_bytes), 'image/png')
+                    }
+                    
+                    upload_response = self.session.post(
+                        f"{self.base_url}/employees/{employee_id}/upload-image",
+                        files=files
+                    )
+                    
+                    if upload_response.status_code == 200:
+                        updated_employee = upload_response.json()
+                        new_image_url = updated_employee.get("profileImage")
+                        
+                        # Check if the image was saved as a file URL
+                        if new_image_url and new_image_url.startswith("/uploads/images/"):
+                            self.log_test(
+                                "POST /api/employees/{id}/upload-image", 
+                                True, 
+                                f"Successfully uploaded image file for employee {employee_id}",
+                                {"employee_id": employee_id, "new_image_url": new_image_url}
+                            )
+                        else:
+                            self.log_test(
+                                "POST /api/employees/{id}/upload-image", 
+                                False, 
+                                f"File upload did not return correct URL. Got: {new_image_url}"
+                            )
+                    else:
+                        self.log_test(
+                            "POST /api/employees/{id}/upload-image", 
+                            False, 
+                            f"HTTP {upload_response.status_code}: {upload_response.text}"
+                        )
+                else:
+                    self.log_test("POST /api/employees/{id}/upload-image", False, "No employees available for testing")
+            else:
+                self.log_test("POST /api/employees/{id}/upload-image", False, "Could not fetch employees for testing")
+                
+        except Exception as e:
+            self.log_test("POST /api/employees/{id}/upload-image", False, f"Exception: {str(e)}")
+
+    def test_4d_static_file_serving(self):
+        """Test static file serving for uploaded images"""
+        try:
+            # First upload an image to get a file URL
+            response = self.session.get(f"{self.base_url}/employees")
+            if response.status_code == 200:
+                employees = response.json()
+                if employees:
+                    test_employee = employees[0]
+                    employee_id = test_employee["id"]
+                    
+                    # Upload a test image first
+                    import io
+                    import base64
+                    
+                    base64_data = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+                    image_bytes = base64.b64decode(base64_data)
+                    
+                    files = {
+                        'file': ('test_static.png', io.BytesIO(image_bytes), 'image/png')
+                    }
+                    
+                    upload_response = self.session.post(
+                        f"{self.base_url}/employees/{employee_id}/upload-image",
+                        files=files
+                    )
+                    
+                    if upload_response.status_code == 200:
+                        updated_employee = upload_response.json()
+                        image_url = updated_employee.get("profileImage")
+                        
+                        if image_url and image_url.startswith("/uploads/images/"):
+                            # Now test if we can access the static file
+                            # Remove /api from base_url for static file access
+                            static_url = self.base_url.replace("/api", "") + image_url
+                            
+                            static_response = self.session.get(static_url)
+                            
+                            if static_response.status_code == 200:
+                                # Check if it's actually an image
+                                content_type = static_response.headers.get('content-type', '')
+                                if 'image' in content_type:
+                                    self.log_test(
+                                        "Static File Serving", 
+                                        True, 
+                                        f"Successfully served static image file",
+                                        {"image_url": static_url, "content_type": content_type}
+                                    )
+                                else:
+                                    self.log_test(
+                                        "Static File Serving", 
+                                        False, 
+                                        f"Static file served but wrong content type: {content_type}"
+                                    )
+                            else:
+                                self.log_test(
+                                    "Static File Serving", 
+                                    False, 
+                                    f"Could not access static file: HTTP {static_response.status_code}"
+                                )
+                        else:
+                            self.log_test("Static File Serving", False, "Could not get valid image URL for testing")
+                    else:
+                        self.log_test("Static File Serving", False, "Could not upload test image for static file testing")
+                else:
+                    self.log_test("Static File Serving", False, "No employees available for testing")
+            else:
+                self.log_test("Static File Serving", False, "Could not fetch employees for testing")
+                
+        except Exception as e:
+            self.log_test("Static File Serving", False, f"Exception: {str(e)}")
 
     def test_5_refresh_excel_data(self):
         """Test POST /api/refresh-excel - Test Excel data refresh"""
