@@ -1,50 +1,51 @@
-import { useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import EmployeeDirectory from "./components/EmployeeDirectory";
+import HierarchyBuilder from "./components/HierarchyBuilder";
+import Header from "./components/Header";
+import { Toaster } from "./components/ui/sonner";
 
 function App() {
+  const [activeTab, setActiveTab] = useState("directory");
+
   return (
-    <div className="App">
+    <div className="App min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          <Route path="/" element={
+            <div className="w-full">
+              <Header />
+              <div className="container mx-auto px-4 py-8 max-w-7xl">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 h-12 bg-white shadow-sm">
+                    <TabsTrigger 
+                      value="directory" 
+                      className="text-sm font-medium data-[state=active]:bg-slate-900 data-[state=active]:text-white"
+                    >
+                      Employee Directory
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="hierarchy" 
+                      className="text-sm font-medium data-[state=active]:bg-slate-900 data-[state=active]:text-white"
+                    >
+                      Hierarchy Builder
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="directory" className="mt-6">
+                    <EmployeeDirectory />
+                  </TabsContent>
+                  
+                  <TabsContent value="hierarchy" className="mt-6">
+                    <HierarchyBuilder />
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <Toaster />
+            </div>
+          } />
         </Routes>
       </BrowserRouter>
     </div>
