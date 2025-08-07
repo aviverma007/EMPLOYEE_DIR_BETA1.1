@@ -208,7 +208,7 @@ const HierarchyTree = ({ hierarchyStructure }) => {
         employee={employee} 
         childrenMap={childrenMap}
         level={0}
-        isExpanded={expandedNodes.has(employee.id)}
+        expandedNodes={expandedNodes}
         onToggle={toggleNode}
       />
     );
