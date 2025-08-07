@@ -103,17 +103,36 @@ const HierarchyBuilder = () => {
     setHierarchyData(prev => [...prev, newRelation]);
     setSelectedEmployee("");
     setSelectedManager("");
-    toast.success("Reporting relationship added successfully!");
+    setHasUnsavedChanges(true);
+    toast.success("Reporting relationship added! Click Save to persist changes.");
   };
 
   const handleRemoveRelationship = (employeeId) => {
     setHierarchyData(prev => prev.filter(rel => rel.employeeId !== employeeId));
-    toast.success("Reporting relationship removed successfully!");
+    setHasUnsavedChanges(true);
+    toast.success("Reporting relationship removed! Click Save to persist changes.");
   };
 
   const handleClearAll = () => {
     setHierarchyData([]);
-    toast.success("All reporting relationships cleared!");
+    setHasUnsavedChanges(true);
+    toast.success("All reporting relationships cleared! Click Save to persist changes.");
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      // Simulate API call to save hierarchy data
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setHasUnsavedChanges(false);
+      toast.success("Hierarchy changes saved successfully!");
+    } catch (error) {
+      toast.error("Failed to save hierarchy changes");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const getEmployeeName = (employeeId) => {
