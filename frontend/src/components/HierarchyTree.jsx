@@ -231,33 +231,55 @@ const CloudNode = ({ employee, children, level = 0, isExpanded, onToggle }) => {
           </div>
         </div>
 
-        {/* Child Nodes */}
+        {/* Enhanced Children Section */}
         {hasChildren && isExpanded && (
-          <div className="mt-6 space-y-4">
-            {/* Vertical line for children */}
+          <div className="mt-8 space-y-6 relative">
+            {/* Enhanced vertical connection line for children */}
             <div 
-              className="absolute bg-gradient-to-b from-blue-300 to-blue-400 w-0.5 rounded-full"
+              className="absolute z-0"
               style={{
                 left: '50%',
-                top: cloudStyle.size.includes('72') ? '80px' : 
-                     cloudStyle.size.includes('64') ? '72px' :
-                     cloudStyle.size.includes('56') ? '64px' :
-                     cloudStyle.size.includes('48') ? '56px' : '48px',
-                height: `${children.length * 100}px`,
+                top: '-20px',
                 transform: 'translateX(-50%)'
               }}
-            />
+            >
+              {/* Main trunk */}
+              <div className="w-1 bg-gradient-to-b from-sky-300 via-sky-400 to-transparent rounded-full"
+                   style={{ height: `${Math.max(children.length * 120, 60)}px` }}>
+              </div>
+              
+              {/* Cloud particles along the trunk */}
+              {[...Array(Math.ceil(children.length / 2))].map((_, i) => (
+                <div key={i} 
+                     className="absolute w-3 h-3 bg-gradient-to-br from-white to-sky-200 rounded-full border border-sky-300 shadow-sm animate-float"
+                     style={{ 
+                       left: '-6px', 
+                       top: `${20 + i * 40}px`,
+                       animationDelay: `${i * 0.5}s`
+                     }}>
+                </div>
+              ))}
+            </div>
             
-            {children.map((child, index) => (
-              <CloudNode 
-                key={child.id}
-                employee={child} 
-                children={[]} // For now, only show direct reports
-                level={level + 1}
-                isExpanded={true}
-                onToggle={() => {}}
-              />
-            ))}
+            {/* Child nodes with staggered animation */}
+            <div className="relative z-10 space-y-6">
+              {children.map((child, index) => (
+                <div key={child.id} 
+                     className="animate-slide-in-right"
+                     style={{ 
+                       animationDelay: `${index * 0.1}s`,
+                       animationFillMode: 'both'
+                     }}>
+                  <CloudNode 
+                    employee={child} 
+                    children={[]} // For now, only show direct reports
+                    level={level + 1}
+                    isExpanded={true}
+                    onToggle={() => {}}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
