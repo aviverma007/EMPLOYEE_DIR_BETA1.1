@@ -363,24 +363,54 @@ const HierarchyTree = ({ hierarchyStructure }) => {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 p-8 rounded-lg border border-blue-200 overflow-x-auto">
-      <div className="flex flex-col space-y-8 min-w-max">
-        <div className="text-center mb-6">
-          <h4 className="text-xl font-bold text-blue-900 mb-2">Organizational Cloud Structure</h4>
-          <p className="text-blue-600">Interactive hierarchy visualization with reporting relationships</p>
-        </div>
+    <div className="relative bg-gradient-to-br from-sky-50 via-white via-blue-50 to-indigo-50 p-8 rounded-xl border-2 border-sky-200 overflow-x-auto shadow-inner">
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating background clouds */}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute bg-gradient-to-br from-white to-sky-100 rounded-full opacity-30 animate-float-${i % 3}`}
+            style={{
+              width: `${Math.random() * 60 + 20}px`,
+              height: `${Math.random() * 30 + 15}px`,
+              left: `${Math.random() * 90}%`,
+              top: `${Math.random() * 90}%`,
+              borderRadius: `${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% / ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}% ${Math.random() * 30 + 40}%`,
+              animationDelay: `${Math.random() * 5}s`
+            }}
+          />
+        ))}
         
-        <div className="space-y-12">
-          {topLevel.map(employee => buildCloudTree(employee))}
-        </div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-sky-50 opacity-40"></div>
       </div>
       
-      {/* Background decorative elements */}
-      <div className="absolute top-4 right-4 w-16 h-8 bg-gradient-to-br from-blue-200 to-blue-300 rounded-full opacity-20"
-           style={{ clipPath: 'ellipse(100% 85% at 50% 50%)' }}>
-      </div>
-      <div className="absolute bottom-4 left-4 w-20 h-10 bg-gradient-to-br from-purple-200 to-purple-300 rounded-full opacity-20"
-           style={{ clipPath: 'ellipse(100% 85% at 50% 50%)' }}>
+      <div className="relative z-10 flex flex-col space-y-10 min-w-max">
+        {/* Enhanced Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center space-x-3 bg-white bg-opacity-60 backdrop-blur-sm px-6 py-3 rounded-full border border-sky-200 shadow-lg mb-4">
+            <div className="w-8 h-5 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full" 
+                 style={{ borderRadius: '60% 40% 70% 30% / 60% 30% 40% 70%' }}>
+            </div>
+            <h4 className="text-xl font-bold text-sky-900">Organizational Cloud Structure</h4>
+            <div className="w-6 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full" 
+                 style={{ borderRadius: '50% 60% 40% 80% / 70% 40% 60% 30%' }}>
+            </div>
+          </div>
+          <p className="text-sky-700 font-medium">Interactive hierarchy visualization with cloud-based connections</p>
+        </div>
+        
+        {/* Cloud Structure */}
+        <div className="space-y-16 relative">
+          {topLevel.map((employee, index) => (
+            <div key={employee.id} 
+                 className="animate-fade-in-up"
+                 style={{ animationDelay: `${index * 0.2}s` }}>
+              {buildCloudTree(employee)}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
