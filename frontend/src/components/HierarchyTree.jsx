@@ -145,7 +145,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, expandedNodes, onToggle }) 
                   employee={child} 
                   childrenMap={childrenMap}
                   level={level + 1}
-                  isExpanded={onToggle ? onToggle.expandedNodes?.has(child.id) || false : false}
+                  expandedNodes={expandedNodes}
                   onToggle={onToggle}
                 />
               ))}
