@@ -56,7 +56,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
         {/* Main Blue Box */}
         <div className={`${boxStyle.size.width} ${boxStyle.size.height} relative`}>
           {/* Blue Background Box */}
-          <div className="absolute inset-0 bg-blue-600 border-2 border-blue-700 rounded-lg shadow-lg">
+          <div className="absolute inset-0 bg-gray-100 border-2 border-gray-300 rounded-lg shadow-lg">
           </div>
           
           {/* Box Content */}
