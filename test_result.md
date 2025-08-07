@@ -183,6 +183,9 @@ frontend:
         -working: true
         -agent: "main"
         -comment: "Successfully implemented UI improvements: Changed color scheme from blue to grey/black/white for better readability, simplified information display to show only employee name and ID, ensured all content fits properly inside boxes, and maintained profile image support in both tree and table views. Hierarchy now displays unified tree structure correctly with clean, professional design."
+        -working: true
+        -agent: "main"
+        -comment: "CRITICAL BUG FIX: Fixed expand/collapse functionality issues where Chandan Khurana box was getting hidden and dropdown arrows only worked for Hari. Root cause was incorrect expansion state management - fixed by passing expandedNodes set to each BoxNode instead of parent's isExpanded state. Now all managers have independent expand/collapse control working correctly."
 
   - task: "Authentication System"
     implemented: true
