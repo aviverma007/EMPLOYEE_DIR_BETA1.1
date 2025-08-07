@@ -296,7 +296,7 @@ const HierarchyBuilder = () => {
         <Card className="border-blue-200 shadow-sm bg-white">
           <CardHeader className="bg-blue-50">
             <CardTitle className="text-lg text-blue-900">
-              {viewMode === "tree" ? "Organizational Cloud Structure" : "Hierarchy Table"}
+              {viewMode === "tree" ? "Organizational Structure" : "Hierarchy Table"}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
