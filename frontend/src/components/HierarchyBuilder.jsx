@@ -309,11 +309,11 @@ const HierarchyBuilder = () => {
         </CardContent>
       </Card>
 
-      {/* Hierarchy Display */}
+      {/* Relationship Tree Display - Only show when there are relationships */}
       {hierarchyData.length > 0 && (
         <Card className="border-blue-200 shadow-sm bg-white">
           <CardHeader className="bg-blue-50">
-            <CardTitle className="text-lg text-blue-900">Organizational Hierarchy Preview</CardTitle>
+            <CardTitle className="text-lg text-blue-900">Relationship Tree View</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {viewMode === "tree" ? (
