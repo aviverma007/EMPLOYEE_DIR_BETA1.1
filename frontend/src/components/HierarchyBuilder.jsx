@@ -37,12 +37,14 @@ const HierarchyBuilder = () => {
     loadEmployees();
   }, []);
 
-  // Get available employees for dropdown
-  const availableEmployees = employees.map(emp => ({
-    id: emp.id,
-    name: emp.name,
-    department: emp.department
-  }));
+  // Get available employees for dropdown with search-friendly format
+  const availableEmployees = useMemo(() => {
+    return employees.map(emp => ({
+      value: emp.id,
+      label: `${emp.name} (${emp.id}) - ${emp.department}`,
+      searchValue: `${emp.name} ${emp.id} ${emp.department}`.toLowerCase()
+    }));
+  }, [employees]);
 
   // Get available managers (all employees can be managers)
   const availableManagers = availableEmployees;
