@@ -49,7 +49,7 @@ const HierarchyBuilder = () => {
   // Get available managers (all employees can be managers)
   const availableManagers = availableEmployees;
 
-  // Build hierarchy structure for tree view
+  // Build hierarchy structure for specific employee relationships only
   const hierarchyStructure = useMemo(() => {
     const empMap = new Map(employees.map(emp => [emp.id, emp]));
     const childrenMap = new Map();
@@ -70,11 +70,19 @@ const HierarchyBuilder = () => {
       }
     });
 
-    // Find top-level employees (those without managers)
-    const employeesWithManagers = new Set(hierarchyData.map(rel => rel.employeeId));
-    const topLevel = employees.filter(emp => !employeesWithManagers.has(emp.id));
+    // Return only employees involved in relationships (not all top-level employees)
+    const employeesInRelationships = new Set();
+    hierarchyData.forEach(rel => {
+      employeesInRelationships.add(rel.employeeId);
+      employeesInRelationships.add(rel.reportsTo);
+    });
+    
+    const managersWithDirectReports = [...childrenMap.entries()]
+      .filter(([managerId, children]) => children.length > 0)
+      .map(([managerId]) => empMap.get(managerId))
+      .filter(Boolean);
 
-    return { empMap, childrenMap, topLevel };
+    return { empMap, childrenMap, topLevel: managersWithDirectReports };
   }, [hierarchyData, employees]);
 
   const handleAddRelationship = () => {
