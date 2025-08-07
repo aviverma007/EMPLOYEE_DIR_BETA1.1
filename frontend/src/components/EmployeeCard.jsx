@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { User, Camera, Upload, Eye } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -6,25 +6,64 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 
 const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const fileInputRef = useRef(null);
+  const { isAdmin } = useAuth();
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select a valid image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+      
+      setImageFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleImageSubmit = () => {
-    if (imageUrl && selectedEmployee) {
-      onImageUpdate(selectedEmployee.id, imageUrl);
+    if (imagePreview && selectedEmployee) {
+      onImageUpdate(selectedEmployee.id, imagePreview);
       toast.success("Profile image updated successfully!");
-      setImageUrl("");
+      setImageFile(null);
+      setImagePreview("");
       setSelectedEmployee(null);
+    }
+  };
+
+  const resetImageForm = () => {
+    setImageFile(null);
+    setImagePreview("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
   if (employees.length === 0) {
     return (
-      <Card className="p-8 text-center">
-        <div className="text-gray-500">
+      <Card className="p-8 text-center border-blue-200 bg-blue-50">
+        <div className="text-blue-500">
           <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p>No employees found matching your criteria.</p>
         </div>
@@ -35,12 +74,12 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {employees.map((employee) => (
-        <Card key={employee.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white group cursor-pointer">
+        <Card key={employee.id} className="hover:shadow-lg transition-all duration-300 border-blue-200 shadow-sm bg-white group cursor-pointer hover:border-blue-300">
           <CardContent className="p-6">
             <div className="flex flex-col items-center space-y-4">
               {/* Profile Image */}
               <div className="relative">
-                <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
                   {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
                     <img 
                       src={employee.profileImage} 
@@ -52,58 +91,82 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
                       }}
                     />
                   ) : null}
-                  <User className="h-8 w-8 text-gray-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
+                  <User className="h-8 w-8 text-blue-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
                 </div>
                 
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full p-0 bg-slate-900 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedEmployee(employee);
-                      }}
-                    >
-                      <Camera className="h-3 w-3" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Update Profile Image</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="image-url">Image URL</Label>
-                        <Input
-                          id="image-url"
-                          placeholder="Enter image URL..."
-                          value={imageUrl}
-                          onChange={(e) => setImageUrl(e.target.value)}
-                        />
-                      </div>
-                      <Button onClick={handleImageSubmit} className="w-full">
-                        <Upload className="h-4 w-4 mr-2" />
-                        Update Image
+                {isAdmin() && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full p-0 bg-blue-600 hover:bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedEmployee(employee);
+                          resetImageForm();
+                        }}
+                      >
+                        <Camera className="h-3 w-3" />
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md border-blue-200">
+                      <DialogHeader>
+                        <DialogTitle className="text-blue-900">Update Profile Image</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="image-file" className="text-blue-900">Select Image File</Label>
+                          <Input
+                            id="image-file"
+                            type="file"
+                            ref={fileInputRef}
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="border-blue-200 focus:border-blue-400"
+                          />
+                          <p className="text-xs text-blue-600">Supports JPG, PNG, GIF. Max size: 5MB</p>
+                        </div>
+                        
+                        {imagePreview && (
+                          <div className="space-y-2">
+                            <Label className="text-blue-900">Preview:</Label>
+                            <div className="w-20 h-20 rounded-full overflow-hidden bg-blue-100 mx-auto">
+                              <img 
+                                src={imagePreview} 
+                                alt="Preview" 
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        
+                        <Button 
+                          onClick={handleImageSubmit} 
+                          className="w-full bg-blue-600 hover:bg-blue-700"
+                          disabled={!imagePreview}
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Update Image
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
 
               {/* Employee Info - Condensed View */}
               <div className="text-center space-y-2" onClick={() => onEmployeeClick(employee)}>
-                <h3 className="font-semibold text-lg text-slate-900 hover:text-blue-600 transition-colors">{employee.name}</h3>
-                <Badge variant="secondary" className="text-xs">
+                <h3 className="font-semibold text-lg text-blue-900 hover:text-blue-600 transition-colors">{employee.name}</h3>
+                <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
                   {employee.id}
                 </Badge>
-                <p className="text-sm font-medium text-slate-600">{employee.department}</p>
+                <p className="text-sm font-medium text-blue-600">{employee.department}</p>
                 
                 {/* View Details Button */}
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-2"
+                  className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-2 text-blue-600 hover:bg-blue-50"
                   onClick={(e) => {
                     e.stopPropagation();
                     onEmployeeClick(employee);

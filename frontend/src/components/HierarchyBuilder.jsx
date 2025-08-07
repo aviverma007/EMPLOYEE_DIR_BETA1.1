@@ -1,10 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Users, Plus, Trash2, RotateCcw, Network, Table as TableIcon, Save } from "lucide-react";
+import { Users, Plus, Trash2, RotateCcw, Network, Table as TableIcon, Save, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Badge } from "./ui/badge";
-import { Separator } from "./ui/separator";
 import { mockEmployees, mockHierarchy, loadAllEmployeesFromExcel } from "../mock";
 import HierarchyTree from "./HierarchyTree";
 import HierarchyTable from "./HierarchyTable";
@@ -144,8 +143,8 @@ const HierarchyBuilder = () => {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading employee data...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-blue-600">Loading employee data...</p>
         </div>
       </div>
     );
@@ -154,14 +153,14 @@ const HierarchyBuilder = () => {
   return (
     <div className="space-y-6">
       {/* Header with View Toggle and Save Button */}
-      <Card className="border-0 shadow-sm bg-white">
-        <CardHeader className="pb-4">
+      <Card className="border-blue-200 shadow-sm bg-white">
+        <CardHeader className="pb-4 bg-blue-50">
           <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center space-x-2">
-              <Network className="h-5 w-5" />
+            <CardTitle className="flex items-center space-x-2 text-blue-900">
+              <Shield className="h-5 w-5" />
               <span>Hierarchy Builder</span>
               {hasUnsavedChanges && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-700">
                   Unsaved Changes
                 </Badge>
               )}
@@ -172,7 +171,11 @@ const HierarchyBuilder = () => {
                 variant={viewMode === "tree" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("tree")}
-                className="flex items-center space-x-2"
+                className={`flex items-center space-x-2 ${
+                  viewMode === "tree" 
+                    ? "bg-blue-600 hover:bg-blue-700" 
+                    : "border-blue-200 text-blue-700 hover:bg-blue-50"
+                }`}
               >
                 <Network className="h-4 w-4" />
                 <span>Tree View</span>
@@ -181,7 +184,11 @@ const HierarchyBuilder = () => {
                 variant={viewMode === "table" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("table")}
-                className="flex items-center space-x-2"
+                className={`flex items-center space-x-2 ${
+                  viewMode === "table" 
+                    ? "bg-blue-600 hover:bg-blue-700" 
+                    : "border-blue-200 text-blue-700 hover:bg-blue-50"
+                }`}
               >
                 <TableIcon className="h-4 w-4" />
                 <span>Table View</span>
@@ -203,17 +210,17 @@ const HierarchyBuilder = () => {
       </Card>
 
       {/* Add Relationship Form */}
-      <Card className="border-0 shadow-sm bg-white">
-        <CardHeader>
-          <CardTitle className="text-lg">Add Reporting Relationship</CardTitle>
+      <Card className="border-blue-200 shadow-sm bg-white">
+        <CardHeader className="bg-blue-50">
+          <CardTitle className="text-lg text-blue-900">Add Reporting Relationship</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Select Employee */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Select Employee</label>
+              <label className="text-sm font-medium text-blue-900">Select Employee</label>
               <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                <SelectTrigger>
+                <SelectTrigger className="border-blue-200 focus:border-blue-400">
                   <SelectValue placeholder="Choose employee..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -228,9 +235,9 @@ const HierarchyBuilder = () => {
 
             {/* Select Manager */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Reports To</label>
+              <label className="text-sm font-medium text-blue-900">Reports To</label>
               <Select value={selectedManager} onValueChange={setSelectedManager}>
-                <SelectTrigger>
+                <SelectTrigger className="border-blue-200 focus:border-blue-400">
                   <SelectValue placeholder="Choose manager..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -245,14 +252,17 @@ const HierarchyBuilder = () => {
 
             {/* Action Buttons */}
             <div className="flex space-x-2 items-end">
-              <Button onClick={handleAddRelationship} className="flex-1">
+              <Button 
+                onClick={handleAddRelationship} 
+                className="flex-1 bg-blue-600 hover:bg-blue-700"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add
               </Button>
               <Button 
                 variant="outline" 
                 onClick={handleClearAll}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-blue-200 text-blue-700 hover:bg-blue-50"
               >
                 <RotateCcw className="h-4 w-4" />
                 <span>Clear All</span>
@@ -263,13 +273,13 @@ const HierarchyBuilder = () => {
       </Card>
 
       {/* Current Relationships Summary */}
-      <Card className="border-0 shadow-sm bg-white">
-        <CardHeader>
-          <CardTitle className="text-lg">Current Relationships ({hierarchyData.length})</CardTitle>
+      <Card className="border-blue-200 shadow-sm bg-white">
+        <CardHeader className="bg-blue-50">
+          <CardTitle className="text-lg text-blue-900">Current Relationships ({hierarchyData.length})</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {hierarchyData.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-blue-500">
               <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No reporting relationships defined yet.</p>
               <p className="text-sm">Add relationships above to build the organizational hierarchy.</p>
@@ -277,10 +287,10 @@ const HierarchyBuilder = () => {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {hierarchyData.map(rel => (
-                <div key={rel.employeeId} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                <div key={rel.employeeId} className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="space-y-1">
-                    <p className="font-medium text-sm">{getEmployeeName(rel.employeeId)}</p>
-                    <p className="text-xs text-gray-600">reports to {getEmployeeName(rel.reportsTo)}</p>
+                    <p className="font-medium text-sm text-blue-900">{getEmployeeName(rel.employeeId)}</p>
+                    <p className="text-xs text-blue-600">reports to {getEmployeeName(rel.reportsTo)}</p>
                   </div>
                   <Button
                     variant="ghost"
@@ -299,11 +309,11 @@ const HierarchyBuilder = () => {
 
       {/* Hierarchy Display */}
       {hierarchyData.length > 0 && (
-        <Card className="border-0 shadow-sm bg-white">
-          <CardHeader>
-            <CardTitle className="text-lg">Organizational Hierarchy</CardTitle>
+        <Card className="border-blue-200 shadow-sm bg-white">
+          <CardHeader className="bg-blue-50">
+            <CardTitle className="text-lg text-blue-900">Organizational Hierarchy Preview</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {viewMode === "tree" ? (
               <HierarchyTree hierarchyStructure={hierarchyStructure} />
             ) : (
