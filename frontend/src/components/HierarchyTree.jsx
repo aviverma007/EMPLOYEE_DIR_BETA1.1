@@ -64,7 +64,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
             {/* Employee Info Section */}
             <div className="flex items-center space-x-3 flex-1 min-w-0">
               {/* Profile Image */}
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-white flex items-center justify-center border-2 border-white flex-shrink-0">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border-2 border-gray-400 flex-shrink-0">
                 {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
                   <img 
                     src={employee.profileImage} 
@@ -80,30 +80,17 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
                      style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'flex'}} />
               </div>
 
-              {/* Employee Details */}
+              {/* Employee Details - Only Name and ID */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2 mb-1">
-                  <h3 className={`font-bold text-white ${boxStyle.size.text} truncate`}>
+                <div className="flex flex-col space-y-1">
+                  <h3 className={`font-bold text-gray-900 ${boxStyle.size.text} truncate`}>
                     {employee.name}
                   </h3>
-                  <Badge className="text-xs bg-white text-black border-white px-2 py-0.5">
-                    {employee.id}
-                  </Badge>
-                </div>
-                
-                <div className="space-y-0.5">
-                  <p className={`${boxStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-gray-100 truncate font-medium`}>
-                    {employee.grade}
-                  </p>
-                  <p className={`${boxStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-gray-200 truncate flex items-center`}>
-                    <Building2 className="h-3 w-3 mr-1.5" />
-                    {employee.department}
-                  </p>
-                  {employee.location && (
-                    <p className={`${boxStyle.size.text === 'text-base' ? 'text-sm' : 'text-xs'} text-gray-300 truncate`}>
-                      📍 {employee.location}
-                    </p>
-                  )}
+                  <div className="flex items-center">
+                    <Badge className="text-xs bg-gray-800 text-white border-gray-800 px-2 py-1">
+                      {employee.id}
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
