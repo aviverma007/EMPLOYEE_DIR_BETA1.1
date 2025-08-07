@@ -229,35 +229,27 @@ const HierarchyBuilder = () => {
             {/* Select Employee */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-blue-900">Select Employee</label>
-              <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                  <SelectValue placeholder="Choose employee..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableEmployees.map(emp => (
-                    <SelectItem key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.id}) - {emp.department}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={selectedEmployee}
+                onValueChange={setSelectedEmployee}
+                options={availableEmployees}
+                placeholder="Choose employee..."
+                searchPlaceholder="Search employees..."
+                className="border-blue-200 focus:border-blue-400"
+              />
             </div>
 
             {/* Select Manager */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-blue-900">Reports To</label>
-              <Select value={selectedManager} onValueChange={setSelectedManager}>
-                <SelectTrigger className="border-blue-200 focus:border-blue-400">
-                  <SelectValue placeholder="Choose manager..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableManagers.map(emp => (
-                    <SelectItem key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.id}) - {emp.department}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <SearchableSelect
+                value={selectedManager}
+                onValueChange={setSelectedManager}
+                options={availableManagers}
+                placeholder="Choose manager..."
+                searchPlaceholder="Search managers..."
+                className="border-blue-200 focus:border-blue-400"
+              />
             </div>
 
             {/* Action Buttons */}
