@@ -134,53 +134,31 @@ const BoxNode = ({ employee, children, level = 0, isExpanded, onToggle }) => {
           </div>
         </div>
 
-        {/* Enhanced Children Section */}
+        {/* Children Section */}
         {hasChildren && isExpanded && (
-          <div className="mt-8 space-y-6 relative">
-            {/* Enhanced vertical connection line for children */}
+          <div className="mt-6 space-y-4 relative">
+            {/* Vertical connection line for children */}
             <div 
-              className="absolute z-0"
+              className="absolute bg-gray-600 w-0.5"
               style={{
                 left: '50%',
-                top: '-20px',
+                top: '-15px',
+                height: `${children.length * 120}px`,
                 transform: 'translateX(-50%)'
               }}
-            >
-              {/* Main trunk */}
-              <div className="w-1 bg-gradient-to-b from-sky-300 via-sky-400 to-transparent rounded-full"
-                   style={{ height: `${Math.max(children.length * 120, 60)}px` }}>
-              </div>
-              
-              {/* Cloud particles along the trunk */}
-              {[...Array(Math.ceil(children.length / 2))].map((_, i) => (
-                <div key={i} 
-                     className="absolute w-3 h-3 bg-gradient-to-br from-white to-sky-200 rounded-full border border-sky-300 shadow-sm animate-float"
-                     style={{ 
-                       left: '-6px', 
-                       top: `${20 + i * 40}px`,
-                       animationDelay: `${i * 0.5}s`
-                     }}>
-                </div>
-              ))}
-            </div>
+            />
             
-            {/* Child nodes with staggered animation */}
-            <div className="relative z-10 space-y-6">
+            {/* Child nodes */}
+            <div className="relative space-y-4">
               {children.map((child, index) => (
-                <div key={child.id} 
-                     className="animate-slide-in-right"
-                     style={{ 
-                       animationDelay: `${index * 0.1}s`,
-                       animationFillMode: 'both'
-                     }}>
-                  <CloudNode 
-                    employee={child} 
-                    children={[]} // For now, only show direct reports
-                    level={level + 1}
-                    isExpanded={true}
-                    onToggle={() => {}}
-                  />
-                </div>
+                <BoxNode 
+                  key={child.id}
+                  employee={child} 
+                  children={[]} // For now, only show direct reports
+                  level={level + 1}
+                  isExpanded={true}
+                  onToggle={() => {}}
+                />
               ))}
             </div>
           </div>
