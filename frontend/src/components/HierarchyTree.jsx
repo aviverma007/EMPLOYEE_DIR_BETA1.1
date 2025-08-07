@@ -317,18 +317,33 @@ const HierarchyTree = ({ hierarchyStructure }) => {
 
   if (topLevel.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <div className="relative">
-          <div className="w-32 h-16 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full mx-auto mb-4 opacity-50 flex items-center justify-center"
-               style={{
-                 clipPath: 'ellipse(100% 85% at 50% 50%)',
-                 filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
-               }}>
-            <User className="h-8 w-8 text-white" />
+      <div className="text-center py-16 text-gray-500 relative">
+        {/* Background cloud elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-8 left-1/4 w-16 h-10 bg-gradient-to-br from-sky-200 to-sky-300 rounded-full opacity-20 animate-float-slow"
+               style={{ borderRadius: '60% 40% 70% 30% / 60% 30% 40% 70%' }}>
+          </div>
+          <div className="absolute top-16 right-1/4 w-12 h-8 bg-gradient-to-br from-blue-200 to-blue-300 rounded-full opacity-15 animate-float-slower"
+               style={{ borderRadius: '50% 60% 40% 80% / 70% 40% 60% 30%' }}>
           </div>
         </div>
-        <p className="text-lg font-medium">No hierarchy structure to display</p>
-        <p className="text-sm">Add reporting relationships to see the organizational cloud structure.</p>
+        
+        <div className="relative z-10">
+          <div className="w-40 h-24 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 mx-auto mb-6 opacity-40 flex items-center justify-center shadow-lg"
+               style={{
+                 borderRadius: '50% 45% 55% 48% / 60% 50% 45% 40%',
+                 filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+               }}>
+            <User className="h-12 w-12 text-white" />
+          </div>
+          <h3 className="text-xl font-bold mb-2 text-gray-600">No hierarchy structure to display</h3>
+          <p className="text-gray-500 max-w-md mx-auto leading-relaxed">
+            Add reporting relationships above to see the beautiful organizational cloud structure come to life.
+          </p>
+          <div className="mt-4 text-sm text-gray-400">
+            ☁️ Create connections • 🌟 Watch the magic happen
+          </div>
+        </div>
       </div>
     );
   }
