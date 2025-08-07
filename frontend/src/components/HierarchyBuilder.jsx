@@ -307,7 +307,7 @@ const HierarchyBuilder = () => {
             {viewMode === "tree" ? (
               <HierarchyTree hierarchyStructure={hierarchyStructure} />
             ) : (
-              <HierarchyTable hierarchyData={hierarchyData} employees={mockEmployees} />
+              <HierarchyTable hierarchyData={hierarchyData} employees={employees} />
             )}
           </CardContent>
         </Card>
