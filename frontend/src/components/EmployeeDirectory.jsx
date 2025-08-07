@@ -13,6 +13,7 @@ import EmployeeList from "./EmployeeList";
 
 const EmployeeDirectory = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("All Departments");
   const [locationFilter, setLocationFilter] = useState("All Locations");
   const [viewMode, setViewMode] = useState("grid");
@@ -24,7 +25,16 @@ const EmployeeDirectory = () => {
   
   const { isAdmin } = useAuth();
 
-  // Load employees based on user role
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Load employees based on user role - only for admin
   useEffect(() => {
     const loadEmployees = async () => {
       try {
@@ -52,7 +62,7 @@ const EmployeeDirectory = () => {
 
   // Handle search for regular users
   useEffect(() => {
-    if (!isAdmin() && searchTerm.trim().length > 0) {
+    if (!isAdmin() && debouncedSearchTerm.trim().length > 0) {
       const performSearch = async () => {
         setLoading(true);
         try {
@@ -66,12 +76,12 @@ const EmployeeDirectory = () => {
         }
       };
       performSearch();
-    } else if (!isAdmin() && searchTerm.trim().length === 0 && hasSearched) {
+    } else if (!isAdmin() && debouncedSearchTerm.trim().length === 0 && hasSearched) {
       // Clear results when search is cleared for regular users
       setEmployees([]);
       setHasSearched(false);
     }
-  }, [searchTerm, isAdmin]);
+  }, [debouncedSearchTerm, isAdmin]);
 
   // Filter and search logic
   const filteredEmployees = useMemo(() => {
