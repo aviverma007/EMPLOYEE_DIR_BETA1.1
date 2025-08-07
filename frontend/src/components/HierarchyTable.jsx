@@ -65,7 +65,7 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
               </TableCell>
               
               <TableCell className="text-center">
-                <ArrowRight className="h-4 w-4 text-gray-400 mx-auto" />
+                <ArrowRight className="h-4 w-4 text-blue-400 mx-auto" />
               </TableCell>
               
               <TableCell>
@@ -85,20 +85,20 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
                     <User className="h-4 w-4 text-blue-500" style={{display: manager.profileImage && manager.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900">{manager.name}</p>
+                    <p className="font-medium text-blue-900">{manager.name}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="outline" className="text-xs">{manager.id}</Badge>
-                      <span className="text-xs text-gray-600">{manager.department}</span>
+                      <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">{manager.id}</Badge>
+                      <span className="text-xs text-blue-600">{manager.department}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{manager.grade}</p>
+                    <p className="text-xs text-blue-500">{manager.grade}</p>
                   </div>
                 </div>
               </TableCell>
               
               <TableCell>
                 <div className="text-sm">
-                  <p className="text-gray-600">Direct Report</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-blue-600">Direct Report</p>
+                  <p className="text-xs text-blue-500">
                     {employee.department === manager.department ? 'Same Department' : 'Cross Department'}
                   </p>
                 </div>
