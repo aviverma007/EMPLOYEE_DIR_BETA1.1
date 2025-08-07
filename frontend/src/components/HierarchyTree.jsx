@@ -56,7 +56,7 @@ const TreeNode = ({ employee, children, level = 0 }) => {
 
         {/* Children Count */}
         {hasChildren && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
             {children.length} {children.length === 1 ? 'report' : 'reports'}
           </Badge>
         )}
