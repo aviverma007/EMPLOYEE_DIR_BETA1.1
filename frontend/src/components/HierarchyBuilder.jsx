@@ -2,11 +2,11 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Users, Plus, Trash2, RotateCcw, Network, Table as TableIcon, Save, Shield } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Badge } from "./ui/badge";
 import { mockEmployees, mockHierarchy, loadAllEmployeesFromExcel } from "../mock";
 import HierarchyTree from "./HierarchyTree";
 import HierarchyTable from "./HierarchyTable";
+import SearchableSelect from "./ui/searchable-select";
 import { toast } from "sonner";
 
 const HierarchyBuilder = () => {
