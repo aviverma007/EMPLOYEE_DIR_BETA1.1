@@ -10,7 +10,7 @@ import SearchableSelect from "./ui/searchable-select";
 import { toast } from "sonner";
 
 const HierarchyBuilder = () => {
-  const [hierarchyData, setHierarchyData] = useState(mockHierarchy);
+  const [hierarchyData, setHierarchyData] = useState([]); // Start with empty array
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedManager, setSelectedManager] = useState("");
   const [viewMode, setViewMode] = useState("tree"); // tree or table
