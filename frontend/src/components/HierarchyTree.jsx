@@ -1,69 +1,22 @@
 import React, { useState } from "react";
-import { User, ChevronDown, ChevronUp, Users, Building2, Crown, Star, Target } from "lucide-react";
+import { User, ChevronDown, ChevronUp, Users, Building2 } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
-const CloudNode = ({ employee, children, level = 0, isExpanded, onToggle }) => {
+const BoxNode = ({ employee, children, level = 0, isExpanded, onToggle }) => {
   const hasChildren = children && children.length > 0;
   
-  const getCloudStyle = (level) => {
-    const cloudColors = [
-      {
-        gradient: 'from-sky-400 via-sky-500 to-sky-600',
-        glow: 'shadow-sky-200',
-        border: 'border-sky-300',
-        accent: 'bg-sky-100'
-      },
-      {
-        gradient: 'from-emerald-400 via-emerald-500 to-emerald-600',
-        glow: 'shadow-emerald-200',
-        border: 'border-emerald-300',
-        accent: 'bg-emerald-100'
-      },
-      {
-        gradient: 'from-violet-400 via-violet-500 to-violet-600',
-        glow: 'shadow-violet-200',
-        border: 'border-violet-300',
-        accent: 'bg-violet-100'
-      },
-      {
-        gradient: 'from-amber-400 via-amber-500 to-amber-600',
-        glow: 'shadow-amber-200',
-        border: 'border-amber-300',
-        accent: 'bg-amber-100'
-      },
-      {
-        gradient: 'from-rose-400 via-rose-500 to-rose-600',
-        glow: 'shadow-rose-200',
-        border: 'border-rose-300',
-        accent: 'bg-rose-100'
-      },
-      {
-        gradient: 'from-indigo-400 via-indigo-500 to-indigo-600',
-        glow: 'shadow-indigo-200',
-        border: 'border-indigo-300',
-        accent: 'bg-indigo-100'
-      },
-      {
-        gradient: 'from-teal-400 via-teal-500 to-teal-600',
-        glow: 'shadow-teal-200',
-        border: 'border-teal-300',
-        accent: 'bg-teal-100'
-      }
-    ];
-    
+  const getBoxStyle = (level) => {
     const sizes = [
-      { width: 'w-80', height: 'h-24', text: 'text-base', icon: 'h-6 w-6' }, // Level 0 - CEO/Top
-      { width: 'w-72', height: 'h-22', text: 'text-sm', icon: 'h-5 w-5' },   // Level 1 - Directors
-      { width: 'w-64', height: 'h-20', text: 'text-sm', icon: 'h-5 w-5' },   // Level 2 - Managers
-      { width: 'w-56', height: 'h-18', text: 'text-sm', icon: 'h-4 w-4' },   // Level 3 - Leads
-      { width: 'w-48', height: 'h-16', text: 'text-xs', icon: 'h-4 w-4' },   // Level 4+ - Contributors
+      { width: 'w-80', height: 'h-24', text: 'text-base' }, // Level 0 - CEO/Top
+      { width: 'w-72', height: 'h-20', text: 'text-sm' },   // Level 1 - Directors
+      { width: 'w-64', height: 'h-18', text: 'text-sm' },   // Level 2 - Managers
+      { width: 'w-56', height: 'h-16', text: 'text-sm' },   // Level 3 - Leads
+      { width: 'w-48', height: 'h-14', text: 'text-xs' },   // Level 4+ - Contributors
     ];
     
     return {
-      colors: cloudColors[level % cloudColors.length],
-      size: sizes[Math.min(level, sizes.length - 1)],
-      level: level
+      size: sizes[Math.min(level, sizes.length - 1)]
     };
   };
 
