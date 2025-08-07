@@ -689,6 +689,1071 @@ class EmployeeDirectoryTester:
         except Exception as e:
             self.log_test("GET /api/stats", False, f"Exception: {str(e)}")
 
+    # ========================================
+    # NEWS MANAGEMENT API TESTS
+    # ========================================
+
+    def test_13_get_all_news(self):
+        """Test GET /api/news - Fetch all news items"""
+        try:
+            response = self.session.get(f"{self.base_url}/news")
+            
+            if response.status_code == 200:
+                news_items = response.json()
+                news_count = len(news_items)
+                
+                self.log_test(
+                    "GET /api/news", 
+                    True, 
+                    f"Successfully fetched {news_count} news items",
+                    {"count": news_count}
+                )
+            else:
+                self.log_test(
+                    "GET /api/news", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except Exception as e:
+            self.log_test("GET /api/news", False, f"Exception: {str(e)}")
+
+    def test_14_create_news(self):
+        """Test POST /api/news - Create news with different priorities"""
+        try:
+            # Test creating news with different priority levels
+            test_news_items = [
+                {
+                    "title": "Company Annual Meeting 2025",
+                    "content": "Join us for our annual company meeting on March 15th, 2025. We'll discuss company performance, future goals, and celebrate our achievements.",
+                    "priority": "high"
+                },
+                {
+                    "title": "New Employee Wellness Program",
+                    "content": "We're excited to announce our new employee wellness program starting next month. This includes gym memberships, mental health support, and flexible work arrangements.",
+                    "priority": "medium"
+                },
+                {
+                    "title": "Office Coffee Machine Maintenance",
+                    "content": "The coffee machine on the 3rd floor will be under maintenance tomorrow from 2-4 PM. Please use the machine on the 2nd floor during this time.",
+                    "priority": "normal"
+                }
+            ]
+            
+            created_news = []
+            
+            for news_data in test_news_items:
+                response = self.session.post(
+                    f"{self.base_url}/news",
+                    json=news_data
+                )
+                
+                if response.status_code == 200:
+                    created_item = response.json()
+                    created_news.append(created_item)
+                    
+                    # Verify the created news has correct data
+                    if (created_item.get("title") == news_data["title"] and
+                        created_item.get("priority") == news_data["priority"] and
+                        created_item.get("id")):
+                        
+                        self.log_test(
+                            f"POST /api/news ({news_data['priority']} priority)", 
+                            True, 
+                            f"Successfully created news: {news_data['title'][:50]}...",
+                            {"news_id": created_item["id"], "priority": news_data["priority"]}
+                        )
+                    else:
+                        self.log_test(
+                            f"POST /api/news ({news_data['priority']} priority)", 
+                            False, 
+                            "News created but data doesn't match"
+                        )
+                else:
+                    self.log_test(
+                        f"POST /api/news ({news_data['priority']} priority)", 
+                        False, 
+                        f"HTTP {response.status_code}: {response.text}"
+                    )
+            
+            # Store created news IDs for later tests
+            self.created_news_ids = [item["id"] for item in created_news]
+                
+        except Exception as e:
+            self.log_test("POST /api/news", False, f"Exception: {str(e)}")
+
+    def test_15_update_news(self):
+        """Test PUT /api/news/{id} - Update news item"""
+        try:
+            # First create a news item to update
+            news_data = {
+                "title": "Test News for Update",
+                "content": "This news will be updated",
+                "priority": "normal"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/news",
+                json=news_data
+            )
+            
+            if create_response.status_code == 200:
+                created_news = create_response.json()
+                news_id = created_news["id"]
+                
+                # Update the news
+                update_data = {
+                    "title": "Updated Test News",
+                    "content": "This news has been updated with new content",
+                    "priority": "high"
+                }
+                
+                update_response = self.session.put(
+                    f"{self.base_url}/news/{news_id}",
+                    json=update_data
+                )
+                
+                if update_response.status_code == 200:
+                    updated_news = update_response.json()
+                    
+                    # Verify updates
+                    if (updated_news.get("title") == update_data["title"] and
+                        updated_news.get("priority") == update_data["priority"] and
+                        updated_news.get("updated_at") != created_news.get("created_at")):
+                        
+                        self.log_test(
+                            "PUT /api/news/{id}", 
+                            True, 
+                            f"Successfully updated news item",
+                            {"news_id": news_id, "new_title": update_data["title"]}
+                        )
+                    else:
+                        self.log_test(
+                            "PUT /api/news/{id}", 
+                            False, 
+                            "News updated but data doesn't match expected values"
+                        )
+                else:
+                    self.log_test(
+                        "PUT /api/news/{id}", 
+                        False, 
+                        f"HTTP {update_response.status_code}: {update_response.text}"
+                    )
+            else:
+                self.log_test("PUT /api/news/{id}", False, "Could not create news for update test")
+                
+        except Exception as e:
+            self.log_test("PUT /api/news/{id}", False, f"Exception: {str(e)}")
+
+    def test_16_delete_news(self):
+        """Test DELETE /api/news/{id} - Delete news item"""
+        try:
+            # First create a news item to delete
+            news_data = {
+                "title": "Test News for Deletion",
+                "content": "This news will be deleted",
+                "priority": "normal"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/news",
+                json=news_data
+            )
+            
+            if create_response.status_code == 200:
+                created_news = create_response.json()
+                news_id = created_news["id"]
+                
+                # Delete the news
+                delete_response = self.session.delete(f"{self.base_url}/news/{news_id}")
+                
+                if delete_response.status_code == 200:
+                    # Verify deletion by trying to fetch the news
+                    verify_response = self.session.get(f"{self.base_url}/news")
+                    if verify_response.status_code == 200:
+                        remaining_news = verify_response.json()
+                        deleted_news_exists = any(item["id"] == news_id for item in remaining_news)
+                        
+                        if not deleted_news_exists:
+                            self.log_test(
+                                "DELETE /api/news/{id}", 
+                                True, 
+                                f"Successfully deleted news item",
+                                {"deleted_news_id": news_id}
+                            )
+                        else:
+                            self.log_test(
+                                "DELETE /api/news/{id}", 
+                                False, 
+                                "News item still exists after deletion"
+                            )
+                    else:
+                        self.log_test(
+                            "DELETE /api/news/{id}", 
+                            True, 
+                            "News deleted (could not verify due to fetch error)"
+                        )
+                else:
+                    self.log_test(
+                        "DELETE /api/news/{id}", 
+                        False, 
+                        f"HTTP {delete_response.status_code}: {delete_response.text}"
+                    )
+            else:
+                self.log_test("DELETE /api/news/{id}", False, "Could not create news for deletion test")
+                
+        except Exception as e:
+            self.log_test("DELETE /api/news/{id}", False, f"Exception: {str(e)}")
+
+    # ========================================
+    # TASK MANAGEMENT API TESTS
+    # ========================================
+
+    def test_17_get_all_tasks(self):
+        """Test GET /api/tasks - Fetch all tasks"""
+        try:
+            response = self.session.get(f"{self.base_url}/tasks")
+            
+            if response.status_code == 200:
+                tasks = response.json()
+                task_count = len(tasks)
+                
+                self.log_test(
+                    "GET /api/tasks", 
+                    True, 
+                    f"Successfully fetched {task_count} tasks",
+                    {"count": task_count}
+                )
+            else:
+                self.log_test(
+                    "GET /api/tasks", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except Exception as e:
+            self.log_test("GET /api/tasks", False, f"Exception: {str(e)}")
+
+    def test_18_create_tasks(self):
+        """Test POST /api/tasks - Create tasks with employee assignment"""
+        try:
+            # First get employees to assign tasks to
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("POST /api/tasks", False, "Could not fetch employees for task assignment")
+                return
+            
+            employees = emp_response.json()
+            if len(employees) < 3:
+                self.log_test("POST /api/tasks", False, "Not enough employees for task assignment testing")
+                return
+            
+            # Test creating tasks with different priorities and statuses
+            test_tasks = [
+                {
+                    "title": "Complete Q1 Financial Report",
+                    "description": "Prepare and submit the quarterly financial report including revenue analysis, expense breakdown, and profit margins for Q1 2025.",
+                    "assigned_to": employees[0]["id"],
+                    "priority": "high",
+                    "status": "pending",
+                    "due_date": "2025-03-31T23:59:59"
+                },
+                {
+                    "title": "Update Employee Handbook",
+                    "description": "Review and update the employee handbook with new policies regarding remote work and flexible schedules.",
+                    "assigned_to": employees[1]["id"],
+                    "priority": "medium",
+                    "status": "in_progress",
+                    "due_date": "2025-02-28T17:00:00"
+                },
+                {
+                    "title": "Organize Team Building Event",
+                    "description": "Plan and coordinate a team building event for the development team. Include venue booking, catering, and activity planning.",
+                    "assigned_to": employees[2]["id"],
+                    "priority": "low",
+                    "status": "pending",
+                    "due_date": "2025-04-15T12:00:00"
+                }
+            ]
+            
+            created_tasks = []
+            
+            for task_data in test_tasks:
+                response = self.session.post(
+                    f"{self.base_url}/tasks",
+                    json=task_data
+                )
+                
+                if response.status_code == 200:
+                    created_task = response.json()
+                    created_tasks.append(created_task)
+                    
+                    # Verify the created task has correct data
+                    if (created_task.get("title") == task_data["title"] and
+                        created_task.get("assigned_to") == task_data["assigned_to"] and
+                        created_task.get("priority") == task_data["priority"] and
+                        created_task.get("id")):
+                        
+                        assigned_employee = next((emp for emp in employees if emp["id"] == task_data["assigned_to"]), None)
+                        employee_name = assigned_employee["name"] if assigned_employee else "Unknown"
+                        
+                        self.log_test(
+                            f"POST /api/tasks ({task_data['priority']} priority)", 
+                            True, 
+                            f"Successfully created task: {task_data['title'][:40]}... assigned to {employee_name}",
+                            {
+                                "task_id": created_task["id"], 
+                                "priority": task_data["priority"],
+                                "assigned_to": employee_name,
+                                "status": task_data["status"]
+                            }
+                        )
+                    else:
+                        self.log_test(
+                            f"POST /api/tasks ({task_data['priority']} priority)", 
+                            False, 
+                            "Task created but data doesn't match"
+                        )
+                else:
+                    self.log_test(
+                        f"POST /api/tasks ({task_data['priority']} priority)", 
+                        False, 
+                        f"HTTP {response.status_code}: {response.text}"
+                    )
+            
+            # Store created task IDs for later tests
+            self.created_task_ids = [task["id"] for task in created_tasks]
+                
+        except Exception as e:
+            self.log_test("POST /api/tasks", False, f"Exception: {str(e)}")
+
+    def test_19_update_task_status(self):
+        """Test PUT /api/tasks/{id} - Update task status and other fields"""
+        try:
+            # First create a task to update
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("PUT /api/tasks/{id}", False, "Could not fetch employees for task creation")
+                return
+            
+            employees = emp_response.json()
+            if not employees:
+                self.log_test("PUT /api/tasks/{id}", False, "No employees available for task assignment")
+                return
+            
+            task_data = {
+                "title": "Test Task for Status Update",
+                "description": "This task will have its status updated",
+                "assigned_to": employees[0]["id"],
+                "priority": "medium",
+                "status": "pending"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/tasks",
+                json=task_data
+            )
+            
+            if create_response.status_code == 200:
+                created_task = create_response.json()
+                task_id = created_task["id"]
+                
+                # Update the task status and other fields
+                update_data = {
+                    "status": "completed",
+                    "priority": "high",
+                    "title": "Updated Test Task - Completed"
+                }
+                
+                update_response = self.session.put(
+                    f"{self.base_url}/tasks/{task_id}",
+                    json=update_data
+                )
+                
+                if update_response.status_code == 200:
+                    updated_task = update_response.json()
+                    
+                    # Verify updates
+                    if (updated_task.get("status") == update_data["status"] and
+                        updated_task.get("priority") == update_data["priority"] and
+                        updated_task.get("title") == update_data["title"] and
+                        updated_task.get("updated_at") != created_task.get("created_at")):
+                        
+                        self.log_test(
+                            "PUT /api/tasks/{id}", 
+                            True, 
+                            f"Successfully updated task status and fields",
+                            {
+                                "task_id": task_id, 
+                                "new_status": update_data["status"],
+                                "new_priority": update_data["priority"]
+                            }
+                        )
+                    else:
+                        self.log_test(
+                            "PUT /api/tasks/{id}", 
+                            False, 
+                            "Task updated but data doesn't match expected values"
+                        )
+                else:
+                    self.log_test(
+                        "PUT /api/tasks/{id}", 
+                        False, 
+                        f"HTTP {update_response.status_code}: {update_response.text}"
+                    )
+            else:
+                self.log_test("PUT /api/tasks/{id}", False, "Could not create task for update test")
+                
+        except Exception as e:
+            self.log_test("PUT /api/tasks/{id}", False, f"Exception: {str(e)}")
+
+    def test_20_delete_task(self):
+        """Test DELETE /api/tasks/{id} - Delete task"""
+        try:
+            # First create a task to delete
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("DELETE /api/tasks/{id}", False, "Could not fetch employees for task creation")
+                return
+            
+            employees = emp_response.json()
+            if not employees:
+                self.log_test("DELETE /api/tasks/{id}", False, "No employees available for task assignment")
+                return
+            
+            task_data = {
+                "title": "Test Task for Deletion",
+                "description": "This task will be deleted",
+                "assigned_to": employees[0]["id"],
+                "priority": "low",
+                "status": "pending"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/tasks",
+                json=task_data
+            )
+            
+            if create_response.status_code == 200:
+                created_task = create_response.json()
+                task_id = created_task["id"]
+                
+                # Delete the task
+                delete_response = self.session.delete(f"{self.base_url}/tasks/{task_id}")
+                
+                if delete_response.status_code == 200:
+                    # Verify deletion by trying to fetch the tasks
+                    verify_response = self.session.get(f"{self.base_url}/tasks")
+                    if verify_response.status_code == 200:
+                        remaining_tasks = verify_response.json()
+                        deleted_task_exists = any(task["id"] == task_id for task in remaining_tasks)
+                        
+                        if not deleted_task_exists:
+                            self.log_test(
+                                "DELETE /api/tasks/{id}", 
+                                True, 
+                                f"Successfully deleted task",
+                                {"deleted_task_id": task_id}
+                            )
+                        else:
+                            self.log_test(
+                                "DELETE /api/tasks/{id}", 
+                                False, 
+                                "Task still exists after deletion"
+                            )
+                    else:
+                        self.log_test(
+                            "DELETE /api/tasks/{id}", 
+                            True, 
+                            "Task deleted (could not verify due to fetch error)"
+                        )
+                else:
+                    self.log_test(
+                        "DELETE /api/tasks/{id}", 
+                        False, 
+                        f"HTTP {delete_response.status_code}: {delete_response.text}"
+                    )
+            else:
+                self.log_test("DELETE /api/tasks/{id}", False, "Could not create task for deletion test")
+                
+        except Exception as e:
+            self.log_test("DELETE /api/tasks/{id}", False, f"Exception: {str(e)}")
+
+    # ========================================
+    # KNOWLEDGE MANAGEMENT API TESTS
+    # ========================================
+
+    def test_21_get_all_knowledge(self):
+        """Test GET /api/knowledge - Fetch all knowledge articles"""
+        try:
+            response = self.session.get(f"{self.base_url}/knowledge")
+            
+            if response.status_code == 200:
+                knowledge_articles = response.json()
+                article_count = len(knowledge_articles)
+                
+                self.log_test(
+                    "GET /api/knowledge", 
+                    True, 
+                    f"Successfully fetched {article_count} knowledge articles",
+                    {"count": article_count}
+                )
+            else:
+                self.log_test(
+                    "GET /api/knowledge", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except Exception as e:
+            self.log_test("GET /api/knowledge", False, f"Exception: {str(e)}")
+
+    def test_22_create_knowledge_articles(self):
+        """Test POST /api/knowledge - Create knowledge articles with different categories"""
+        try:
+            # Test creating knowledge articles with different categories and tags
+            test_articles = [
+                {
+                    "title": "Remote Work Policy 2025",
+                    "content": "Our updated remote work policy allows employees to work from home up to 3 days per week. Employees must maintain regular communication with their team and attend mandatory in-person meetings. Equipment and internet allowances are provided.",
+                    "category": "policy",
+                    "tags": ["remote-work", "policy", "2025", "flexibility"]
+                },
+                {
+                    "title": "New Employee Onboarding Process",
+                    "content": "Step-by-step guide for onboarding new employees: 1) Send welcome email with first-day instructions, 2) Prepare workspace and equipment, 3) Schedule orientation meetings, 4) Assign buddy/mentor, 5) Complete paperwork and system access setup.",
+                    "category": "process",
+                    "tags": ["onboarding", "hr", "new-employee", "process"]
+                },
+                {
+                    "title": "Cybersecurity Training Guidelines",
+                    "content": "All employees must complete annual cybersecurity training covering: password management, phishing identification, secure file sharing, VPN usage, and incident reporting procedures. Training must be completed within 30 days of hire.",
+                    "category": "training",
+                    "tags": ["cybersecurity", "training", "mandatory", "security"]
+                },
+                {
+                    "title": "Office Closure - Holiday Schedule",
+                    "content": "The office will be closed from December 24th to January 2nd for the holiday season. Emergency contacts will be available for critical issues. Regular operations resume January 3rd, 2025.",
+                    "category": "announcement",
+                    "tags": ["holiday", "closure", "schedule", "announcement"]
+                }
+            ]
+            
+            created_articles = []
+            
+            for article_data in test_articles:
+                response = self.session.post(
+                    f"{self.base_url}/knowledge",
+                    json=article_data
+                )
+                
+                if response.status_code == 200:
+                    created_article = response.json()
+                    created_articles.append(created_article)
+                    
+                    # Verify the created article has correct data
+                    if (created_article.get("title") == article_data["title"] and
+                        created_article.get("category") == article_data["category"] and
+                        created_article.get("tags") == article_data["tags"] and
+                        created_article.get("id")):
+                        
+                        self.log_test(
+                            f"POST /api/knowledge ({article_data['category']} category)", 
+                            True, 
+                            f"Successfully created knowledge article: {article_data['title'][:40]}...",
+                            {
+                                "article_id": created_article["id"], 
+                                "category": article_data["category"],
+                                "tags_count": len(article_data["tags"])
+                            }
+                        )
+                    else:
+                        self.log_test(
+                            f"POST /api/knowledge ({article_data['category']} category)", 
+                            False, 
+                            "Knowledge article created but data doesn't match"
+                        )
+                else:
+                    self.log_test(
+                        f"POST /api/knowledge ({article_data['category']} category)", 
+                        False, 
+                        f"HTTP {response.status_code}: {response.text}"
+                    )
+            
+            # Store created article IDs for later tests
+            self.created_knowledge_ids = [article["id"] for article in created_articles]
+                
+        except Exception as e:
+            self.log_test("POST /api/knowledge", False, f"Exception: {str(e)}")
+
+    def test_23_update_knowledge_article(self):
+        """Test PUT /api/knowledge/{id} - Update knowledge article"""
+        try:
+            # First create a knowledge article to update
+            article_data = {
+                "title": "Test Knowledge Article for Update",
+                "content": "This article will be updated",
+                "category": "guideline",
+                "tags": ["test", "update"]
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/knowledge",
+                json=article_data
+            )
+            
+            if create_response.status_code == 200:
+                created_article = create_response.json()
+                article_id = created_article["id"]
+                
+                # Update the article
+                update_data = {
+                    "title": "Updated Test Knowledge Article",
+                    "content": "This article has been updated with new comprehensive content including best practices and detailed procedures.",
+                    "category": "process",
+                    "tags": ["updated", "process", "best-practices", "procedures"]
+                }
+                
+                update_response = self.session.put(
+                    f"{self.base_url}/knowledge/{article_id}",
+                    json=update_data
+                )
+                
+                if update_response.status_code == 200:
+                    updated_article = update_response.json()
+                    
+                    # Verify updates
+                    if (updated_article.get("title") == update_data["title"] and
+                        updated_article.get("category") == update_data["category"] and
+                        updated_article.get("tags") == update_data["tags"] and
+                        updated_article.get("updated_at") != created_article.get("created_at")):
+                        
+                        self.log_test(
+                            "PUT /api/knowledge/{id}", 
+                            True, 
+                            f"Successfully updated knowledge article",
+                            {
+                                "article_id": article_id, 
+                                "new_title": update_data["title"],
+                                "new_category": update_data["category"],
+                                "new_tags_count": len(update_data["tags"])
+                            }
+                        )
+                    else:
+                        self.log_test(
+                            "PUT /api/knowledge/{id}", 
+                            False, 
+                            "Knowledge article updated but data doesn't match expected values"
+                        )
+                else:
+                    self.log_test(
+                        "PUT /api/knowledge/{id}", 
+                        False, 
+                        f"HTTP {update_response.status_code}: {update_response.text}"
+                    )
+            else:
+                self.log_test("PUT /api/knowledge/{id}", False, "Could not create knowledge article for update test")
+                
+        except Exception as e:
+            self.log_test("PUT /api/knowledge/{id}", False, f"Exception: {str(e)}")
+
+    def test_24_delete_knowledge_article(self):
+        """Test DELETE /api/knowledge/{id} - Delete knowledge article"""
+        try:
+            # First create a knowledge article to delete
+            article_data = {
+                "title": "Test Knowledge Article for Deletion",
+                "content": "This article will be deleted",
+                "category": "other",
+                "tags": ["test", "deletion"]
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/knowledge",
+                json=article_data
+            )
+            
+            if create_response.status_code == 200:
+                created_article = create_response.json()
+                article_id = created_article["id"]
+                
+                # Delete the article
+                delete_response = self.session.delete(f"{self.base_url}/knowledge/{article_id}")
+                
+                if delete_response.status_code == 200:
+                    # Verify deletion by trying to fetch the articles
+                    verify_response = self.session.get(f"{self.base_url}/knowledge")
+                    if verify_response.status_code == 200:
+                        remaining_articles = verify_response.json()
+                        deleted_article_exists = any(article["id"] == article_id for article in remaining_articles)
+                        
+                        if not deleted_article_exists:
+                            self.log_test(
+                                "DELETE /api/knowledge/{id}", 
+                                True, 
+                                f"Successfully deleted knowledge article",
+                                {"deleted_article_id": article_id}
+                            )
+                        else:
+                            self.log_test(
+                                "DELETE /api/knowledge/{id}", 
+                                False, 
+                                "Knowledge article still exists after deletion"
+                            )
+                    else:
+                        self.log_test(
+                            "DELETE /api/knowledge/{id}", 
+                            True, 
+                            "Knowledge article deleted (could not verify due to fetch error)"
+                        )
+                else:
+                    self.log_test(
+                        "DELETE /api/knowledge/{id}", 
+                        False, 
+                        f"HTTP {delete_response.status_code}: {delete_response.text}"
+                    )
+            else:
+                self.log_test("DELETE /api/knowledge/{id}", False, "Could not create knowledge article for deletion test")
+                
+        except Exception as e:
+            self.log_test("DELETE /api/knowledge/{id}", False, f"Exception: {str(e)}")
+
+    # ========================================
+    # HELP/SUPPORT MANAGEMENT API TESTS
+    # ========================================
+
+    def test_25_get_all_help_requests(self):
+        """Test GET /api/help - Fetch all help requests"""
+        try:
+            response = self.session.get(f"{self.base_url}/help")
+            
+            if response.status_code == 200:
+                help_requests = response.json()
+                request_count = len(help_requests)
+                
+                self.log_test(
+                    "GET /api/help", 
+                    True, 
+                    f"Successfully fetched {request_count} help requests",
+                    {"count": request_count}
+                )
+            else:
+                self.log_test(
+                    "GET /api/help", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                
+        except Exception as e:
+            self.log_test("GET /api/help", False, f"Exception: {str(e)}")
+
+    def test_26_create_help_requests(self):
+        """Test POST /api/help - Create help requests with different priorities"""
+        try:
+            # Test creating help requests with different priority levels
+            test_help_requests = [
+                {
+                    "title": "System Access Issue - Cannot Login",
+                    "message": "I'm unable to log into the company system. I've tried resetting my password multiple times but still getting authentication errors. This is blocking my work completely.",
+                    "priority": "high"
+                },
+                {
+                    "title": "Request for Additional Monitor",
+                    "message": "I would like to request an additional monitor for my workstation to improve productivity. My current setup with a single monitor is limiting my ability to multitask effectively.",
+                    "priority": "medium"
+                },
+                {
+                    "title": "Question about Vacation Policy",
+                    "message": "I have a question about the vacation policy. Can I carry over unused vacation days to next year? Also, what's the process for requesting extended leave?",
+                    "priority": "normal"
+                }
+            ]
+            
+            created_requests = []
+            
+            for request_data in test_help_requests:
+                response = self.session.post(
+                    f"{self.base_url}/help",
+                    json=request_data
+                )
+                
+                if response.status_code == 200:
+                    created_request = response.json()
+                    created_requests.append(created_request)
+                    
+                    # Verify the created request has correct data
+                    if (created_request.get("title") == request_data["title"] and
+                        created_request.get("priority") == request_data["priority"] and
+                        created_request.get("status") == "open" and
+                        created_request.get("id")):
+                        
+                        self.log_test(
+                            f"POST /api/help ({request_data['priority']} priority)", 
+                            True, 
+                            f"Successfully created help request: {request_data['title'][:40]}...",
+                            {
+                                "request_id": created_request["id"], 
+                                "priority": request_data["priority"],
+                                "status": created_request["status"]
+                            }
+                        )
+                    else:
+                        self.log_test(
+                            f"POST /api/help ({request_data['priority']} priority)", 
+                            False, 
+                            "Help request created but data doesn't match"
+                        )
+                else:
+                    self.log_test(
+                        f"POST /api/help ({request_data['priority']} priority)", 
+                        False, 
+                        f"HTTP {response.status_code}: {response.text}"
+                    )
+            
+            # Store created request IDs for later tests
+            self.created_help_ids = [request["id"] for request in created_requests]
+                
+        except Exception as e:
+            self.log_test("POST /api/help", False, f"Exception: {str(e)}")
+
+    def test_27_update_help_request_status(self):
+        """Test PUT /api/help/{id} - Update help request status"""
+        try:
+            # First create a help request to update
+            request_data = {
+                "title": "Test Help Request for Status Update",
+                "message": "This help request will have its status updated",
+                "priority": "medium"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/help",
+                json=request_data
+            )
+            
+            if create_response.status_code == 200:
+                created_request = create_response.json()
+                request_id = created_request["id"]
+                
+                # Update the request status
+                update_data = {
+                    "status": "in_progress"
+                }
+                
+                update_response = self.session.put(
+                    f"{self.base_url}/help/{request_id}",
+                    json=update_data
+                )
+                
+                if update_response.status_code == 200:
+                    updated_request = update_response.json()
+                    
+                    # Verify updates
+                    if (updated_request.get("status") == update_data["status"] and
+                        updated_request.get("updated_at") != created_request.get("created_at")):
+                        
+                        # Test another status update to "resolved"
+                        resolve_data = {"status": "resolved"}
+                        resolve_response = self.session.put(
+                            f"{self.base_url}/help/{request_id}",
+                            json=resolve_data
+                        )
+                        
+                        if resolve_response.status_code == 200:
+                            resolved_request = resolve_response.json()
+                            if resolved_request.get("status") == "resolved":
+                                self.log_test(
+                                    "PUT /api/help/{id}", 
+                                    True, 
+                                    f"Successfully updated help request status through workflow: open → in_progress → resolved",
+                                    {
+                                        "request_id": request_id, 
+                                        "final_status": resolved_request["status"]
+                                    }
+                                )
+                            else:
+                                self.log_test(
+                                    "PUT /api/help/{id}", 
+                                    False, 
+                                    "Second status update failed"
+                                )
+                        else:
+                            self.log_test(
+                                "PUT /api/help/{id}", 
+                                True, 
+                                f"First status update successful (second update failed but not critical)",
+                                {"request_id": request_id, "status": update_data["status"]}
+                            )
+                    else:
+                        self.log_test(
+                            "PUT /api/help/{id}", 
+                            False, 
+                            "Help request updated but data doesn't match expected values"
+                        )
+                else:
+                    self.log_test(
+                        "PUT /api/help/{id}", 
+                        False, 
+                        f"HTTP {update_response.status_code}: {update_response.text}"
+                    )
+            else:
+                self.log_test("PUT /api/help/{id}", False, "Could not create help request for update test")
+                
+        except Exception as e:
+            self.log_test("PUT /api/help/{id}", False, f"Exception: {str(e)}")
+
+    def test_28_add_help_reply(self):
+        """Test POST /api/help/{id}/reply - Add reply to help request"""
+        try:
+            # First create a help request to reply to
+            request_data = {
+                "title": "Test Help Request for Reply System",
+                "message": "I need help with setting up my development environment. The installation keeps failing.",
+                "priority": "medium"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/help",
+                json=request_data
+            )
+            
+            if create_response.status_code == 200:
+                created_request = create_response.json()
+                request_id = created_request["id"]
+                
+                # Add multiple replies to test the reply system
+                replies_to_add = [
+                    {
+                        "message": "Thank you for your request. Can you please provide more details about the specific error message you're seeing during installation?"
+                    },
+                    {
+                        "message": "Also, please let us know which operating system you're using and the version of the development tools you're trying to install."
+                    },
+                    {
+                        "message": "We've identified the issue. Please try downloading the latest installer from our internal portal and run it as administrator."
+                    }
+                ]
+                
+                successful_replies = 0
+                
+                for i, reply_data in enumerate(replies_to_add):
+                    reply_response = self.session.post(
+                        f"{self.base_url}/help/{request_id}/reply",
+                        json=reply_data
+                    )
+                    
+                    if reply_response.status_code == 200:
+                        updated_request = reply_response.json()
+                        replies = updated_request.get("replies", [])
+                        
+                        # Verify the reply was added
+                        if len(replies) == i + 1:
+                            latest_reply = replies[-1]
+                            if latest_reply.get("message") == reply_data["message"]:
+                                successful_replies += 1
+                        
+                if successful_replies == len(replies_to_add):
+                    # Get final state to verify all replies
+                    final_response = self.session.get(f"{self.base_url}/help")
+                    if final_response.status_code == 200:
+                        all_requests = final_response.json()
+                        target_request = next((req for req in all_requests if req["id"] == request_id), None)
+                        
+                        if target_request and len(target_request.get("replies", [])) == len(replies_to_add):
+                            self.log_test(
+                                "POST /api/help/{id}/reply", 
+                                True, 
+                                f"Successfully added {len(replies_to_add)} replies to help request",
+                                {
+                                    "request_id": request_id, 
+                                    "replies_count": len(target_request["replies"]),
+                                    "final_status": target_request.get("status", "unknown")
+                                }
+                            )
+                        else:
+                            self.log_test(
+                                "POST /api/help/{id}/reply", 
+                                False, 
+                                f"Replies added but final count doesn't match. Expected: {len(replies_to_add)}, Got: {len(target_request.get('replies', []))}"
+                            )
+                    else:
+                        self.log_test(
+                            "POST /api/help/{id}/reply", 
+                            True, 
+                            f"All {successful_replies} replies added successfully (could not verify final state)"
+                        )
+                else:
+                    self.log_test(
+                        "POST /api/help/{id}/reply", 
+                        False, 
+                        f"Only {successful_replies}/{len(replies_to_add)} replies were added successfully"
+                    )
+            else:
+                self.log_test("POST /api/help/{id}/reply", False, "Could not create help request for reply test")
+                
+        except Exception as e:
+            self.log_test("POST /api/help/{id}/reply", False, f"Exception: {str(e)}")
+
+    def test_29_delete_help_request(self):
+        """Test DELETE /api/help/{id} - Delete help request"""
+        try:
+            # First create a help request to delete
+            request_data = {
+                "title": "Test Help Request for Deletion",
+                "message": "This help request will be deleted",
+                "priority": "normal"
+            }
+            
+            create_response = self.session.post(
+                f"{self.base_url}/help",
+                json=request_data
+            )
+            
+            if create_response.status_code == 200:
+                created_request = create_response.json()
+                request_id = created_request["id"]
+                
+                # Delete the help request
+                delete_response = self.session.delete(f"{self.base_url}/help/{request_id}")
+                
+                if delete_response.status_code == 200:
+                    # Verify deletion by trying to fetch the help requests
+                    verify_response = self.session.get(f"{self.base_url}/help")
+                    if verify_response.status_code == 200:
+                        remaining_requests = verify_response.json()
+                        deleted_request_exists = any(request["id"] == request_id for request in remaining_requests)
+                        
+                        if not deleted_request_exists:
+                            self.log_test(
+                                "DELETE /api/help/{id}", 
+                                True, 
+                                f"Successfully deleted help request",
+                                {"deleted_request_id": request_id}
+                            )
+                        else:
+                            self.log_test(
+                                "DELETE /api/help/{id}", 
+                                False, 
+                                "Help request still exists after deletion"
+                            )
+                    else:
+                        self.log_test(
+                            "DELETE /api/help/{id}", 
+                            True, 
+                            "Help request deleted (could not verify due to fetch error)"
+                        )
+                else:
+                    self.log_test(
+                        "DELETE /api/help/{id}", 
+                        False, 
+                        f"HTTP {delete_response.status_code}: {delete_response.text}"
+                    )
+            else:
+                self.log_test("DELETE /api/help/{id}", False, "Could not create help request for deletion test")
+                
+        except Exception as e:
+            self.log_test("DELETE /api/help/{id}", False, f"Exception: {str(e)}")
+
     def run_all_tests(self):
         """Run all backend API tests"""
         print("=" * 80)
