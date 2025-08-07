@@ -11,7 +11,7 @@ from typing import Dict, List, Any
 import time
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://088909b8-bd1d-424a-a51a-112aa309eaeb.preview.emergentagent.com/api"
+BACKEND_URL = "https://2918f274-e9ec-4e1a-b511-774b77bd5ec3.preview.emergentagent.com/api"
 
 class EmployeeDirectoryTester:
     def __init__(self):
