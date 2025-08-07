@@ -75,13 +75,24 @@ const HierarchyBuilder = () => {
       }
     });
 
-    // Get managers who have direct reports
-    const managersWithDirectReports = [...childrenMap.entries()]
-      .filter(([managerId, children]) => children.length > 0)
-      .map(([managerId]) => empMap.get(managerId))
+    // Find true root managers (those who don't report to anyone but have people in the hierarchy)
+    const employeesInHierarchy = new Set();
+    const managersInHierarchy = new Set();
+    
+    hierarchyData.forEach(rel => {
+      employeesInHierarchy.add(rel.employeeId);
+      managersInHierarchy.add(rel.reportsTo);
+    });
+    
+    // Root managers are those who:
+    // 1. Are managers in the hierarchy (have people reporting to them)
+    // 2. Are NOT employees in the hierarchy (don't report to anyone themselves)
+    const rootManagers = [...managersInHierarchy]
+      .filter(managerId => !employeesInHierarchy.has(managerId))
+      .map(managerId => empMap.get(managerId))
       .filter(Boolean);
 
-    return { empMap, childrenMap, topLevel: managersWithDirectReports };
+    return { empMap, childrenMap, topLevel: rootManagers };
   }, [hierarchyData, employees]);
 
   const handleAddRelationship = async () => {
