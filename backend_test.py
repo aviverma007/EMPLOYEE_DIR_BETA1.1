@@ -545,9 +545,241 @@ class EmployeeDirectoryTester:
         print("All tests completed!")
         return passed, failed
 
+    def test_hierarchy_scenario_specific(self):
+        """Test specific hierarchy scenario: Anirudh→Chandan, Binay→Chandan, Chandan→Ranjit Sarkar"""
+        print("\n" + "="*80)
+        print("TESTING SPECIFIC HIERARCHY SCENARIO")
+        print("="*80)
+        
+        try:
+            # Step 1: Clear existing hierarchy to start fresh
+            print("Step 1: Clearing existing hierarchy...")
+            clear_response = self.session.delete(f"{self.base_url}/hierarchy/clear")
+            if clear_response.status_code == 200:
+                print("✅ Hierarchy cleared successfully")
+            else:
+                print(f"⚠️  Warning: Could not clear hierarchy: {clear_response.status_code}")
+            
+            # Step 2: Get employees to find our test subjects
+            print("\nStep 2: Finding employees for hierarchy test...")
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("Hierarchy Scenario Test", False, "Could not fetch employees")
+                return
+            
+            employees = emp_response.json()
+            
+            # Find employees by name (case-insensitive search)
+            anirudh = None
+            binay = None
+            chandan = None
+            ranjit = None
+            
+            for emp in employees:
+                name_lower = emp.get("name", "").lower()
+                if "anirudh" in name_lower:
+                    anirudh = emp
+                elif "binay" in name_lower:
+                    binay = emp
+                elif "chandan" in name_lower:
+                    chandan = emp
+                elif "ranjit" in name_lower and "sarkar" in name_lower:
+                    ranjit = emp
+            
+            # If we can't find specific names, use first 4 employees for testing
+            if not all([anirudh, binay, chandan, ranjit]):
+                print("⚠️  Could not find all specific employees by name, using first 4 employees for testing")
+                if len(employees) >= 4:
+                    anirudh = employees[0]
+                    binay = employees[1] 
+                    chandan = employees[2]
+                    ranjit = employees[3]
+                    print(f"Using: {anirudh['name']} as Anirudh, {binay['name']} as Binay, {chandan['name']} as Chandan, {ranjit['name']} as Ranjit")
+                else:
+                    self.log_test("Hierarchy Scenario Test", False, "Not enough employees for testing")
+                    return
+            else:
+                print(f"✅ Found employees: Anirudh={anirudh['name']}, Binay={binay['name']}, Chandan={chandan['name']}, Ranjit={ranjit['name']}")
+            
+            # Step 3: Create hierarchy relationships
+            print("\nStep 3: Creating hierarchy relationships...")
+            
+            relationships_to_create = [
+                {"employeeId": anirudh["id"], "reportsTo": chandan["id"], "description": f"{anirudh['name']} reports to {chandan['name']}"},
+                {"employeeId": binay["id"], "reportsTo": chandan["id"], "description": f"{binay['name']} reports to {chandan['name']}"},
+                {"employeeId": chandan["id"], "reportsTo": ranjit["id"], "description": f"{chandan['name']} reports to {ranjit['name']}"}
+            ]
+            
+            created_relationships = []
+            
+            for rel in relationships_to_create:
+                relation_data = {
+                    "employeeId": rel["employeeId"],
+                    "reportsTo": rel["reportsTo"]
+                }
+                
+                create_response = self.session.post(
+                    f"{self.base_url}/hierarchy",
+                    json=relation_data
+                )
+                
+                if create_response.status_code == 200:
+                    created_rel = create_response.json()
+                    created_relationships.append(created_rel)
+                    print(f"✅ Created: {rel['description']}")
+                else:
+                    print(f"❌ Failed to create: {rel['description']} - {create_response.status_code}: {create_response.text}")
+            
+            # Step 4: Verify relationships were stored correctly
+            print("\nStep 4: Verifying stored relationships...")
+            hierarchy_response = self.session.get(f"{self.base_url}/hierarchy")
+            
+            if hierarchy_response.status_code == 200:
+                stored_hierarchy = hierarchy_response.json()
+                print(f"✅ Retrieved {len(stored_hierarchy)} hierarchy relationships")
+                
+                # Verify each expected relationship exists
+                expected_relationships = [
+                    (anirudh["id"], chandan["id"]),
+                    (binay["id"], chandan["id"]),
+                    (chandan["id"], ranjit["id"])
+                ]
+                
+                found_relationships = []
+                for rel in stored_hierarchy:
+                    found_relationships.append((rel["employeeId"], rel["reportsTo"]))
+                
+                all_found = True
+                for expected in expected_relationships:
+                    if expected in found_relationships:
+                        print(f"✅ Verified relationship: {expected[0]} → {expected[1]}")
+                    else:
+                        print(f"❌ Missing relationship: {expected[0]} → {expected[1]}")
+                        all_found = False
+                
+                # Step 5: Test tree structure building capability
+                print("\nStep 5: Testing tree structure building capability...")
+                
+                # Build a simple tree structure from the relationships
+                def build_hierarchy_tree(relationships):
+                    """Build a tree structure from hierarchy relationships"""
+                    # Create employee lookup
+                    emp_lookup = {emp["id"]: emp["name"] for emp in [anirudh, binay, chandan, ranjit]}
+                    
+                    # Find who reports to whom
+                    reports_to = {}
+                    subordinates = {}
+                    
+                    for rel in relationships:
+                        emp_id = rel["employeeId"]
+                        manager_id = rel["reportsTo"]
+                        
+                        reports_to[emp_id] = manager_id
+                        
+                        if manager_id not in subordinates:
+                            subordinates[manager_id] = []
+                        subordinates[manager_id].append(emp_id)
+                    
+                    # Find root managers (those who don't report to anyone in our test set)
+                    all_employees = set([anirudh["id"], binay["id"], chandan["id"], ranjit["id"]])
+                    root_managers = []
+                    
+                    for emp_id in all_employees:
+                        if emp_id not in reports_to:
+                            root_managers.append(emp_id)
+                    
+                    return {
+                        "reports_to": reports_to,
+                        "subordinates": subordinates,
+                        "root_managers": root_managers,
+                        "employee_names": emp_lookup
+                    }
+                
+                tree_structure = build_hierarchy_tree(stored_hierarchy)
+                
+                # Verify tree structure
+                expected_root = ranjit["id"]  # Ranjit should be the root
+                expected_chandan_subordinates = {anirudh["id"], binay["id"]}  # Anirudh and Binay should report to Chandan
+                
+                if expected_root in tree_structure["root_managers"]:
+                    print(f"✅ Correct root manager: {tree_structure['employee_names'][expected_root]}")
+                else:
+                    print(f"❌ Expected root manager {tree_structure['employee_names'][expected_root]} not found in roots: {[tree_structure['employee_names'][r] for r in tree_structure['root_managers']]}")
+                    all_found = False
+                
+                chandan_subordinates = set(tree_structure["subordinates"].get(chandan["id"], []))
+                if chandan_subordinates == expected_chandan_subordinates:
+                    subordinate_names = [tree_structure['employee_names'][sub] for sub in chandan_subordinates]
+                    print(f"✅ Correct subordinates for {chandan['name']}: {subordinate_names}")
+                else:
+                    print(f"❌ Incorrect subordinates for {chandan['name']}")
+                    all_found = False
+                
+                # Print the complete tree structure
+                print(f"\nComplete Tree Structure:")
+                print(f"Root: {tree_structure['employee_names'][ranjit['id']]}")
+                print(f"  └── {tree_structure['employee_names'][chandan['id']]}")
+                for sub_id in tree_structure["subordinates"].get(chandan["id"], []):
+                    print(f"      ├── {tree_structure['employee_names'][sub_id]}")
+                
+                if all_found and len(created_relationships) == 3:
+                    self.log_test(
+                        "Hierarchy Scenario Test", 
+                        True, 
+                        "Successfully created and verified hierarchical relationships with proper tree structure",
+                        {
+                            "relationships_created": len(created_relationships),
+                            "tree_root": tree_structure['employee_names'][ranjit['id']],
+                            "middle_manager": tree_structure['employee_names'][chandan['id']],
+                            "subordinates": [tree_structure['employee_names'][sub] for sub in tree_structure["subordinates"].get(chandan["id"], [])]
+                        }
+                    )
+                else:
+                    self.log_test(
+                        "Hierarchy Scenario Test", 
+                        False, 
+                        f"Hierarchy relationships not properly established. Created: {len(created_relationships)}/3, All verified: {all_found}"
+                    )
+            else:
+                self.log_test("Hierarchy Scenario Test", False, f"Could not retrieve hierarchy: {hierarchy_response.status_code}")
+                
+        except Exception as e:
+            self.log_test("Hierarchy Scenario Test", False, f"Exception during hierarchy scenario test: {str(e)}")
+
 if __name__ == "__main__":
     tester = EmployeeDirectoryTester()
-    passed, failed = tester.run_all_tests()
+    
+    # Run the specific hierarchy scenario test as requested
+    print("Running specific hierarchy management test as requested...")
+    tester.test_hierarchy_scenario_specific()
+    
+    # Also run the general hierarchy tests for completeness
+    print("\nRunning general hierarchy API tests...")
+    tester.test_6_get_hierarchy()
+    tester.test_7_create_hierarchy_relation()
+    tester.test_8_delete_hierarchy_relation()
+    tester.test_9_clear_all_hierarchy()
+    
+    # Summary of hierarchy-focused tests
+    print("\n" + "="*80)
+    print("HIERARCHY TEST SUMMARY")
+    print("="*80)
+    
+    hierarchy_results = [r for r in tester.test_results if "hierarchy" in r["test"].lower()]
+    passed = sum(1 for result in hierarchy_results if result["success"])
+    failed = len(hierarchy_results) - passed
+    
+    print(f"Hierarchy Tests: {len(hierarchy_results)}")
+    print(f"Passed: {passed}")
+    print(f"Failed: {failed}")
+    
+    if failed > 0:
+        print("\nFAILED HIERARCHY TESTS:")
+        for result in hierarchy_results:
+            if not result["success"]:
+                print(f"❌ {result['test']}: {result['message']}")
+    
+    print("\nHierarchy testing completed!")
     
     # Exit with appropriate code
     sys.exit(0 if failed == 0 else 1)
