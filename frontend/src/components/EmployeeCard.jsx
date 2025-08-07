@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Phone, Mail, MapPin, Calendar, Briefcase, Camera, Upload } from "lucide-react";
+import { User, Camera, Upload, Eye } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -8,7 +8,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
 
-const EmployeeCard = ({ employees, onImageUpdate }) => {
+const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
 
@@ -33,14 +33,14 @@ const EmployeeCard = ({ employees, onImageUpdate }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {employees.map((employee) => (
-        <Card key={employee.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white group">
+        <Card key={employee.id} className="hover:shadow-lg transition-all duration-300 border-0 shadow-sm bg-white group cursor-pointer">
           <CardContent className="p-6">
             <div className="flex flex-col items-center space-y-4">
               {/* Profile Image */}
               <div className="relative">
-                <div className="w-20 h-20 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
                   {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
                     <img 
                       src={employee.profileImage} 
@@ -52,17 +52,20 @@ const EmployeeCard = ({ employees, onImageUpdate }) => {
                       }}
                     />
                   ) : null}
-                  <User className="h-10 w-10 text-gray-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
+                  <User className="h-8 w-8 text-gray-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
                 </div>
                 
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
                       size="sm"
-                      className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full p-0 bg-slate-900 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => setSelectedEmployee(employee)}
+                      className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full p-0 bg-slate-900 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedEmployee(employee);
+                      }}
                     >
-                      <Camera className="h-4 w-4" />
+                      <Camera className="h-3 w-3" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
@@ -88,48 +91,27 @@ const EmployeeCard = ({ employees, onImageUpdate }) => {
                 </Dialog>
               </div>
 
-              {/* Employee Info */}
-              <div className="text-center space-y-2">
-                <h3 className="font-semibold text-lg text-slate-900">{employee.name}</h3>
+              {/* Employee Info - Condensed View */}
+              <div className="text-center space-y-2" onClick={() => onEmployeeClick(employee)}>
+                <h3 className="font-semibold text-lg text-slate-900 hover:text-blue-600 transition-colors">{employee.name}</h3>
                 <Badge variant="secondary" className="text-xs">
                   {employee.id}
                 </Badge>
-                <p className="text-sm font-medium text-slate-600">{employee.grade}</p>
-              </div>
-
-              {/* Contact Info */}
-              <div className="w-full space-y-3 text-sm">
-                <div className="flex items-center space-x-2">
-                  <Briefcase className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{employee.department}</span>
-                </div>
+                <p className="text-sm font-medium text-slate-600">{employee.department}</p>
                 
-                <div className="flex items-center space-x-2">
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{employee.location}</span>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">{employee.mobile}</span>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600 text-xs">{employee.email}</span>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-gray-600">Joined {new Date(employee.dateOfJoining).toLocaleDateString()}</span>
-                </div>
-
-                {employee.reportingManager && employee.reportingManager !== "*" && (
-                  <div className="pt-2 border-t border-gray-100">
-                    <p className="text-xs text-gray-500">Reports to:</p>
-                    <p className="text-sm font-medium text-slate-600">{employee.reportingManager}</p>
-                  </div>
-                )}
+                {/* View Details Button */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEmployeeClick(employee);
+                  }}
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>View Details</span>
+                </Button>
               </div>
             </div>
           </CardContent>

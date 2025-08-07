@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Phone, Mail, MapPin, Calendar, Briefcase, Camera, Upload } from "lucide-react";
+import { User, Camera, Upload, Eye } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -9,7 +9,7 @@ import { Label } from "./ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { toast } from "sonner";
 
-const EmployeeList = ({ employees, onImageUpdate }) => {
+const EmployeeList = ({ employees, onImageUpdate, onEmployeeClick }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
 
@@ -43,14 +43,12 @@ const EmployeeList = ({ employees, onImageUpdate }) => {
               <TableHead>Employee</TableHead>
               <TableHead>Department</TableHead>
               <TableHead>Location</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Reporting Manager</TableHead>
-              <TableHead>Joined</TableHead>
+              <TableHead className="w-32">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {employees.map((employee) => (
-              <TableRow key={employee.id} className="hover:bg-slate-50">
+              <TableRow key={employee.id} className="hover:bg-slate-50 cursor-pointer">
                 <TableCell>
                   <div className="relative group">
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
@@ -73,7 +71,10 @@ const EmployeeList = ({ employees, onImageUpdate }) => {
                         <Button
                           size="sm"
                           className="absolute -top-1 -right-1 h-6 w-6 rounded-full p-0 bg-slate-900 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => setSelectedEmployee(employee)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedEmployee(employee);
+                          }}
                         >
                           <Camera className="h-3 w-3" />
                         </Button>
@@ -102,47 +103,34 @@ const EmployeeList = ({ employees, onImageUpdate }) => {
                   </div>
                 </TableCell>
                 
-                <TableCell>
+                <TableCell onClick={() => onEmployeeClick(employee)}>
                   <div>
-                    <p className="font-semibold text-slate-900">{employee.name}</p>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="outline" className="text-xs">{employee.id}</Badge>
-                      <span className="text-sm text-gray-600">{employee.grade}</span>
-                    </div>
+                    <p className="font-semibold text-slate-900 hover:text-blue-600 transition-colors">{employee.name}</p>
+                    <Badge variant="outline" className="text-xs mt-1">{employee.id}</Badge>
                   </div>
                 </TableCell>
                 
-                <TableCell>
+                <TableCell onClick={() => onEmployeeClick(employee)}>
                   <span className="text-sm text-gray-700">{employee.department}</span>
                 </TableCell>
                 
-                <TableCell>
+                <TableCell onClick={() => onEmployeeClick(employee)}>
                   <span className="text-sm text-gray-700">{employee.location}</span>
                 </TableCell>
                 
                 <TableCell>
-                  <div className="space-y-1">
-                    <div className="flex items-center space-x-2">
-                      <Phone className="h-3 w-3 text-gray-400" />
-                      <span className="text-sm text-gray-700">{employee.mobile}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-600">{employee.email}</span>
-                    </div>
-                  </div>
-                </TableCell>
-                
-                <TableCell>
-                  <span className="text-sm text-gray-700">
-                    {employee.reportingManager === "*" ? "Top Level" : employee.reportingManager}
-                  </span>
-                </TableCell>
-                
-                <TableCell>
-                  <span className="text-sm text-gray-700">
-                    {new Date(employee.dateOfJoining).toLocaleDateString()}
-                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEmployeeClick(employee);
+                    }}
+                    className="flex items-center space-x-2"
+                  >
+                    <Eye className="h-4 w-4" />
+                    <span>Details</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
