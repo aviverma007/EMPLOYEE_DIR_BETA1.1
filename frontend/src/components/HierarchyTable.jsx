@@ -13,7 +13,7 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
 
   if (hierarchyData.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-blue-500">
         <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
         <p>No reporting relationships to display in table format.</p>
       </div>
