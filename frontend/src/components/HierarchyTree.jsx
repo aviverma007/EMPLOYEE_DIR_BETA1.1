@@ -212,10 +212,10 @@ const HierarchyTree = ({ hierarchyStructure }) => {
     );
   }
 
-  const buildCloudTree = (employee) => {
+  const buildBoxTree = (employee) => {
     const children = childrenMap.get(employee.id) || [];
     return (
-      <CloudNode 
+      <BoxNode 
         key={employee.id}
         employee={employee} 
         children={children}
