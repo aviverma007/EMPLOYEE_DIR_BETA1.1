@@ -70,7 +70,7 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
               
               <TableCell>
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
                     {manager.profileImage && manager.profileImage !== "/api/placeholder/150/150" ? (
                       <img 
                         src={manager.profileImage} 
