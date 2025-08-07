@@ -7,7 +7,7 @@ import { Badge } from "./ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useAuth } from "../context/AuthContext";
-import { mockEmployees, departments, locations, loadAllEmployeesFromExcel } from "../mock";
+import { employeeAPI, utilityAPI } from "../services/api";
 import EmployeeCard from "./EmployeeCard";
 import EmployeeList from "./EmployeeList";
 
@@ -18,12 +18,32 @@ const EmployeeDirectory = () => {
   const [locationFilter, setLocationFilter] = useState("All Locations");
   const [viewMode, setViewMode] = useState("grid");
   const [employees, setEmployees] = useState([]);
+  const [departments, setDepartments] = useState(["All Departments"]);
+  const [locations, setLocations] = useState(["All Locations"]);
   const [loading, setLoading] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   
   const { isAdmin } = useAuth();
+
+  // Load departments and locations on mount
+  useEffect(() => {
+    const loadFilters = async () => {
+      try {
+        const [depts, locs] = await Promise.all([
+          utilityAPI.getDepartments(),
+          utilityAPI.getLocations()
+        ]);
+        setDepartments(depts);
+        setLocations(locs);
+      } catch (error) {
+        console.error("Error loading filters:", error);
+      }
+    };
+
+    loadFilters();
+  }, []);
 
   // Debounce search term
   useEffect(() => {
@@ -34,85 +54,65 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Load employees based on user role - only for admin
+  // Load employees on mount for admin users, and on search for regular users
   useEffect(() => {
     const loadEmployees = async () => {
-      try {
-        if (isAdmin()) {
-          // Admin can see all employees immediately
+      // Always allow search - both admin and regular users can search
+      if (debouncedSearchTerm.trim().length > 0 || isAdmin()) {
+        try {
           setLoading(true);
-          const allEmployees = await loadAllEmployeesFromExcel();
-          setEmployees(allEmployees);
+          const searchParams = {
+            search: debouncedSearchTerm,
+            department: departmentFilter,
+            location: locationFilter
+          };
+          
+          const employeeData = await employeeAPI.getAll(searchParams);
+          setEmployees(employeeData);
           setHasSearched(true);
-        } else {
-          // Regular users start with empty list
+        } catch (error) {
+          console.error("Error loading employees:", error);
           setEmployees([]);
-          setHasSearched(false);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error loading employees:", error);
-        setEmployees(mockEmployees);
-      } finally {
-        setLoading(false);
+      } else if (!isAdmin() && debouncedSearchTerm.trim().length === 0) {
+        // Clear results when search is cleared for regular users
+        setEmployees([]);
+        setHasSearched(false);
       }
     };
 
     loadEmployees();
-  }, [isAdmin]);
+  }, [debouncedSearchTerm, departmentFilter, locationFilter, isAdmin]);
 
-  // Handle search for regular users
-  useEffect(() => {
-    if (!isAdmin() && debouncedSearchTerm.trim().length > 0) {
-      const performSearch = async () => {
-        setLoading(true);
-        try {
-          const allEmployees = await loadAllEmployeesFromExcel();
-          setEmployees(allEmployees);
-          setHasSearched(true);
-        } catch (error) {
-          console.error("Error loading employees:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      performSearch();
-    } else if (!isAdmin() && debouncedSearchTerm.trim().length === 0 && hasSearched) {
-      // Clear results when search is cleared for regular users
-      setEmployees([]);
-      setHasSearched(false);
-    }
-  }, [debouncedSearchTerm, isAdmin]);
-
-  // Filter and search logic
+  // Filter employees based on current filters (client-side filtering for better performance)
   const filteredEmployees = useMemo(() => {
     if (!hasSearched && !isAdmin()) {
       return [];
     }
+    return employees;
+  }, [employees, hasSearched, isAdmin]);
 
-    return employees.filter(employee => {
-      const matchesSearch = 
-        employee.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        employee.id.includes(debouncedSearchTerm) ||
-        employee.department.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        employee.location.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        employee.grade.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-        employee.mobile.includes(debouncedSearchTerm);
-
-      const matchesDepartment = departmentFilter === "All Departments" || 
-        employee.department === departmentFilter;
-
-      const matchesLocation = locationFilter === "All Locations" || 
-        employee.location === locationFilter;
-
-      return matchesSearch && matchesDepartment && matchesLocation;
-    });
-  }, [employees, debouncedSearchTerm, departmentFilter, locationFilter, hasSearched, isAdmin]);
-
-  const handleImageUpdate = (employeeId, newImage) => {
-    // Both admin and employees can update images now
-    setEmployees(prev => prev.map(emp => 
-      emp.id === employeeId ? { ...emp, profileImage: newImage } : emp
-    ));
+  const handleImageUpdate = async (employeeId, newImageUrl) => {
+    try {
+      // Update on backend
+      await employeeAPI.updateImage(employeeId, newImageUrl);
+      
+      // Update local state
+      setEmployees(prev => prev.map(emp => 
+        emp.id === employeeId ? { ...emp, profileImage: newImageUrl } : emp
+      ));
+      
+      // Update selected employee if it's being viewed
+      if (selectedEmployee && selectedEmployee.id === employeeId) {
+        setSelectedEmployee({ ...selectedEmployee, profileImage: newImageUrl });
+      }
+      
+    } catch (error) {
+      console.error("Error updating image:", error);
+      throw error; // Re-throw so EmployeeCard can show error
+    }
   };
 
   const handleEmployeeClick = (employee) => {
@@ -146,14 +146,14 @@ const EmployeeDirectory = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
               <Input
-                placeholder={!isAdmin() ? "Search to view employees (name, employee code, department, location, designation, mobile)..." : "Search by name, employee code, department, location, designation, mobile..."}
+                placeholder="Search by name, employee code, department, location, designation, mobile..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-11 border-blue-200 focus:border-blue-400"
               />
             </div>
 
-            {/* Filters - Always show for both admin and regular users when they have searched */}
+            {/* Filters - Show for both admin and regular users when they have searched */}
             {(isAdmin() || hasSearched) && (
               <>
                 {/* Department Filter */}
@@ -216,7 +216,7 @@ const EmployeeDirectory = () => {
             <User className="h-12 w-12 mx-auto mb-4 text-blue-400" />
             <h3 className="text-lg font-semibold text-blue-900 mb-2">Search to View Employees</h3>
             <p className="text-blue-600">
-              As an employee, you need to search using keywords to view employee information. 
+              Search using keywords to view employee information. 
               Try searching by name, department, location, or other criteria.
             </p>
           </CardContent>
@@ -228,7 +228,7 @@ const EmployeeDirectory = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-4">
             <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
-              {filteredEmployees.length} of {employees.length} employees found
+              {filteredEmployees.length} employees found
             </Badge>
             {(searchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations") && (
               <Button
@@ -363,18 +363,6 @@ const EmployeeDirectory = () => {
                       </p>
                     </div>
                   </div>
-                  
-                  {selectedEmployee.reportingManager && selectedEmployee.reportingManager !== "*" && (
-                    <div className="flex items-center space-x-3">
-                      <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
-                        <span className="text-xs text-blue-600">👤</span>
-                      </div>
-                      <div>
-                        <p className="text-sm text-blue-500">Reports To</p>
-                        <p className="font-medium text-blue-900">{selectedEmployee.reportingManager}</p>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
