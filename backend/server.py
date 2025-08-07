@@ -43,6 +43,76 @@ api_router = APIRouter(prefix="/api")
 # Initialize Excel parser
 excel_parser = ExcelParser()
 
+# Helper functions for image processing
+def save_base64_image(base64_data: str, employee_id: str) -> str:
+    """Convert base64 image data to file and return URL"""
+    try:
+        # Remove data:image/jpeg;base64, or similar prefix
+        if ',' in base64_data:
+            header, data = base64_data.split(',', 1)
+            
+            # Determine file extension from header
+            if 'image/jpeg' in header or 'image/jpg' in header:
+                ext = 'jpg'
+            elif 'image/png' in header:
+                ext = 'png'
+            elif 'image/gif' in header:
+                ext = 'gif'
+            elif 'image/webp' in header:
+                ext = 'webp'
+            else:
+                ext = 'jpg'  # default
+        else:
+            data = base64_data
+            ext = 'jpg'  # default
+        
+        # Decode base64 data
+        image_data = base64.b64decode(data)
+        
+        # Generate unique filename
+        filename = f"{employee_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        file_path = UPLOAD_DIR / filename
+        
+        # Save the image file
+        with open(file_path, 'wb') as f:
+            f.write(image_data)
+        
+        # Return the URL path
+        return f"/uploads/images/{filename}"
+        
+    except Exception as e:
+        logging.error(f"Error saving base64 image: {str(e)}")
+        raise HTTPException(status_code=400, detail="Invalid image data")
+
+def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
+    """Save uploaded file and return URL"""
+    try:
+        # Validate file type
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+        if file.content_type not in allowed_types:
+            raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.")
+        
+        # Get file extension
+        ext = mimetypes.guess_extension(file.content_type) or '.jpg'
+        if ext.startswith('.'):
+            ext = ext[1:]
+        
+        # Generate unique filename
+        filename = f"{employee_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        file_path = UPLOAD_DIR / filename
+        
+        # Save the file
+        with open(file_path, 'wb') as buffer:
+            content = file.file.read()
+            buffer.write(content)
+        
+        # Return the URL path
+        return f"/uploads/images/{filename}"
+        
+    except Exception as e:
+        logging.error(f"Error saving uploaded file: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to save image file")
+
 # Employee Management Endpoints
 
 @api_router.get("/employees", response_model=List[Employee])
