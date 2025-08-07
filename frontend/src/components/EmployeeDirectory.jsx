@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Search, Grid3X3, List, User, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
