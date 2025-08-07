@@ -140,15 +140,31 @@ const HierarchyBuilder = () => {
     return employee ? employee.name : employeeId;
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading employee data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header with View Toggle */}
+      {/* Header with View Toggle and Save Button */}
       <Card className="border-0 shadow-sm bg-white">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center space-x-2">
               <Network className="h-5 w-5" />
               <span>Hierarchy Builder</span>
+              {hasUnsavedChanges && (
+                <Badge variant="secondary" className="ml-2">
+                  Unsaved Changes
+                </Badge>
+              )}
             </CardTitle>
             
             <div className="flex space-x-2">
@@ -170,6 +186,17 @@ const HierarchyBuilder = () => {
                 <TableIcon className="h-4 w-4" />
                 <span>Table View</span>
               </Button>
+              
+              {hasUnsavedChanges && (
+                <Button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
+                >
+                  <Save className="h-4 w-4" />
+                  <span>{isSaving ? "Saving..." : "Save Changes"}</span>
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
