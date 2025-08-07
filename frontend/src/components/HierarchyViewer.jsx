@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Users, Network, Table as TableIcon, Eye } from "lucide-react";
+import { Network, TableIcon, Eye, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { mockEmployees, mockHierarchy, loadAllEmployeesFromExcel } from "../mock";
+import { employeeAPI, hierarchyAPI } from "../services/api";
 import HierarchyTree from "./HierarchyTree";
 import HierarchyTable from "./HierarchyTable";
+import { toast } from "sonner";
 
 const HierarchyViewer = () => {
   const [hierarchyData, setHierarchyData] = useState(mockHierarchy);
