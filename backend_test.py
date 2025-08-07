@@ -941,37 +941,9 @@ class EmployeeDirectoryTester:
 if __name__ == "__main__":
     tester = EmployeeDirectoryTester()
     
-    # Run the specific hierarchy scenario test as requested
-    print("Running specific hierarchy management test as requested...")
-    tester.test_hierarchy_scenario_specific()
-    
-    # Also run the general hierarchy tests for completeness
-    print("\nRunning general hierarchy API tests...")
-    tester.test_6_get_hierarchy()
-    tester.test_7_create_hierarchy_relation()
-    tester.test_8_delete_hierarchy_relation()
-    tester.test_9_clear_all_hierarchy()
-    
-    # Summary of hierarchy-focused tests
-    print("\n" + "="*80)
-    print("HIERARCHY TEST SUMMARY")
-    print("="*80)
-    
-    hierarchy_results = [r for r in tester.test_results if "hierarchy" in r["test"].lower()]
-    passed = sum(1 for result in hierarchy_results if result["success"])
-    failed = len(hierarchy_results) - passed
-    
-    print(f"Hierarchy Tests: {len(hierarchy_results)}")
-    print(f"Passed: {passed}")
-    print(f"Failed: {failed}")
-    
-    if failed > 0:
-        print("\nFAILED HIERARCHY TESTS:")
-        for result in hierarchy_results:
-            if not result["success"]:
-                print(f"❌ {result['test']}: {result['message']}")
-    
-    print("\nHierarchy testing completed!")
+    # Run comprehensive backend tests focusing on Excel and image functionality
+    print("Running comprehensive backend API tests...")
+    passed, failed = tester.run_all_tests()
     
     # Exit with appropriate code
     sys.exit(0 if failed == 0 else 1)
