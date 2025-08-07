@@ -155,10 +155,10 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
                 <BoxNode 
                   key={child.id}
                   employee={child} 
-                  children={[]} // For now, only show direct reports
+                  childrenMap={childrenMap}
                   level={level + 1}
-                  isExpanded={true}
-                  onToggle={() => {}}
+                  isExpanded={isExpanded}
+                  onToggle={onToggle}
                 />
               ))}
             </div>
