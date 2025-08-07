@@ -355,6 +355,401 @@ async def remove_hierarchy_relation(employee_id: str):
         logging.error(f"Error removing hierarchy relation: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to remove hierarchy relation")
 
+# News Management Endpoints
+
+@api_router.get("/news", response_model=List[News])
+async def get_news():
+    """Get all news items"""
+    try:
+        news_cursor = db.news.find().sort("created_at", -1)
+        news_docs = await news_cursor.to_list(100)
+        
+        result = []
+        for doc in news_docs:
+            doc.pop('_id', None)
+            result.append(News(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching news: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch news")
+
+@api_router.post("/news", response_model=News)
+async def create_news(news: NewsCreate):
+    """Create new news item"""
+    try:
+        new_news = News(
+            title=news.title,
+            content=news.content,
+            priority=news.priority
+        )
+        
+        news_dict = new_news.dict()
+        await db.news.insert_one(news_dict)
+        
+        return new_news
+        
+    except Exception as e:
+        logging.error(f"Error creating news: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create news")
+
+@api_router.put("/news/{news_id}", response_model=News)
+async def update_news(news_id: str, news: NewsUpdate):
+    """Update news item"""
+    try:
+        update_data = {k: v for k, v in news.dict().items() if v is not None}
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.news.update_one(
+                {"id": news_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="News item not found")
+        
+        # Get updated news
+        news_doc = await db.news.find_one({"id": news_id})
+        if not news_doc:
+            raise HTTPException(status_code=404, detail="News item not found")
+        
+        news_doc.pop('_id', None)
+        return News(**news_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating news: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update news")
+
+@api_router.delete("/news/{news_id}")
+async def delete_news(news_id: str):
+    """Delete news item"""
+    try:
+        result = await db.news.delete_one({"id": news_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="News item not found")
+        
+        return {"message": "News item deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting news: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete news")
+
+# Task Management Endpoints
+
+@api_router.get("/tasks", response_model=List[Task])
+async def get_tasks():
+    """Get all tasks"""
+    try:
+        tasks_cursor = db.tasks.find().sort("created_at", -1)
+        tasks_docs = await tasks_cursor.to_list(200)
+        
+        result = []
+        for doc in tasks_docs:
+            doc.pop('_id', None)
+            result.append(Task(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching tasks: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch tasks")
+
+@api_router.post("/tasks", response_model=Task)
+async def create_task(task: TaskCreate):
+    """Create new task"""
+    try:
+        # Parse due_date if provided
+        due_date = None
+        if task.due_date:
+            try:
+                due_date = datetime.fromisoformat(task.due_date.replace('Z', '+00:00'))
+            except:
+                due_date = datetime.fromisoformat(task.due_date)
+        
+        new_task = Task(
+            title=task.title,
+            description=task.description,
+            assigned_to=task.assigned_to,
+            priority=task.priority,
+            status=task.status,
+            due_date=due_date
+        )
+        
+        task_dict = new_task.dict()
+        await db.tasks.insert_one(task_dict)
+        
+        return new_task
+        
+    except Exception as e:
+        logging.error(f"Error creating task: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create task")
+
+@api_router.put("/tasks/{task_id}", response_model=Task)
+async def update_task(task_id: str, task: TaskUpdate):
+    """Update task"""
+    try:
+        update_data = {k: v for k, v in task.dict().items() if v is not None}
+        
+        # Handle due_date parsing
+        if 'due_date' in update_data and update_data['due_date']:
+            try:
+                update_data['due_date'] = datetime.fromisoformat(update_data['due_date'].replace('Z', '+00:00'))
+            except:
+                update_data['due_date'] = datetime.fromisoformat(update_data['due_date'])
+        
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.tasks.update_one(
+                {"id": task_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Task not found")
+        
+        # Get updated task
+        task_doc = await db.tasks.find_one({"id": task_id})
+        if not task_doc:
+            raise HTTPException(status_code=404, detail="Task not found")
+        
+        task_doc.pop('_id', None)
+        return Task(**task_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating task: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update task")
+
+@api_router.delete("/tasks/{task_id}")
+async def delete_task(task_id: str):
+    """Delete task"""
+    try:
+        result = await db.tasks.delete_one({"id": task_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Task not found")
+        
+        return {"message": "Task deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting task: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete task")
+
+# Knowledge Management Endpoints
+
+@api_router.get("/knowledge", response_model=List[Knowledge])
+async def get_knowledge():
+    """Get all knowledge articles"""
+    try:
+        knowledge_cursor = db.knowledge.find().sort("created_at", -1)
+        knowledge_docs = await knowledge_cursor.to_list(100)
+        
+        result = []
+        for doc in knowledge_docs:
+            doc.pop('_id', None)
+            result.append(Knowledge(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching knowledge: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch knowledge articles")
+
+@api_router.post("/knowledge", response_model=Knowledge)
+async def create_knowledge(knowledge: KnowledgeCreate):
+    """Create new knowledge article"""
+    try:
+        new_knowledge = Knowledge(
+            title=knowledge.title,
+            content=knowledge.content,
+            category=knowledge.category,
+            tags=knowledge.tags
+        )
+        
+        knowledge_dict = new_knowledge.dict()
+        await db.knowledge.insert_one(knowledge_dict)
+        
+        return new_knowledge
+        
+    except Exception as e:
+        logging.error(f"Error creating knowledge: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create knowledge article")
+
+@api_router.put("/knowledge/{knowledge_id}", response_model=Knowledge)
+async def update_knowledge(knowledge_id: str, knowledge: KnowledgeUpdate):
+    """Update knowledge article"""
+    try:
+        update_data = {k: v for k, v in knowledge.dict().items() if v is not None}
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.knowledge.update_one(
+                {"id": knowledge_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Knowledge article not found")
+        
+        # Get updated knowledge
+        knowledge_doc = await db.knowledge.find_one({"id": knowledge_id})
+        if not knowledge_doc:
+            raise HTTPException(status_code=404, detail="Knowledge article not found")
+        
+        knowledge_doc.pop('_id', None)
+        return Knowledge(**knowledge_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating knowledge: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update knowledge article")
+
+@api_router.delete("/knowledge/{knowledge_id}")
+async def delete_knowledge(knowledge_id: str):
+    """Delete knowledge article"""
+    try:
+        result = await db.knowledge.delete_one({"id": knowledge_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Knowledge article not found")
+        
+        return {"message": "Knowledge article deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting knowledge: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete knowledge article")
+
+# Help/Support Management Endpoints
+
+@api_router.get("/help", response_model=List[Help])
+async def get_help_requests():
+    """Get all help requests"""
+    try:
+        help_cursor = db.help.find().sort("created_at", -1)
+        help_docs = await help_cursor.to_list(100)
+        
+        result = []
+        for doc in help_docs:
+            doc.pop('_id', None)
+            result.append(Help(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching help requests: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch help requests")
+
+@api_router.post("/help", response_model=Help)
+async def create_help_request(help: HelpCreate):
+    """Create new help request"""
+    try:
+        new_help = Help(
+            title=help.title,
+            message=help.message,
+            priority=help.priority
+        )
+        
+        help_dict = new_help.dict()
+        await db.help.insert_one(help_dict)
+        
+        return new_help
+        
+    except Exception as e:
+        logging.error(f"Error creating help request: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create help request")
+
+@api_router.put("/help/{help_id}", response_model=Help)
+async def update_help_request(help_id: str, help: HelpUpdate):
+    """Update help request status"""
+    try:
+        update_data = {k: v for k, v in help.dict().items() if v is not None}
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.help.update_one(
+                {"id": help_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Help request not found")
+        
+        # Get updated help request
+        help_doc = await db.help.find_one({"id": help_id})
+        if not help_doc:
+            raise HTTPException(status_code=404, detail="Help request not found")
+        
+        help_doc.pop('_id', None)
+        return Help(**help_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating help request: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update help request")
+
+@api_router.post("/help/{help_id}/reply", response_model=Help)
+async def add_help_reply(help_id: str, reply: HelpReplyCreate):
+    """Add reply to help request"""
+    try:
+        new_reply = HelpReply(message=reply.message)
+        
+        result = await db.help.update_one(
+            {"id": help_id},
+            {
+                "$push": {"replies": new_reply.dict()},
+                "$set": {"updated_at": datetime.utcnow()}
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Help request not found")
+        
+        # Get updated help request
+        help_doc = await db.help.find_one({"id": help_id})
+        if not help_doc:
+            raise HTTPException(status_code=404, detail="Help request not found")
+        
+        help_doc.pop('_id', None)
+        return Help(**help_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error adding help reply: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to add reply")
+
+@api_router.delete("/help/{help_id}")
+async def delete_help_request(help_id: str):
+    """Delete help request"""
+    try:
+        result = await db.help.delete_one({"id": help_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Help request not found")
+        
+        return {"message": "Help request deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting help request: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete help request")
+
 # Utility Endpoints
 
 @api_router.get("/departments")
