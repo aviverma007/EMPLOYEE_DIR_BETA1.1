@@ -31,7 +31,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
         <>
           {/* Horizontal line to parent */}
           <div 
-            className="absolute bg-gray-600 h-0.5"
+            className="absolute bg-gray-400 h-0.5"
             style={{
               left: -60,
               top: `${parseInt(boxStyle.size.height.replace('h-', '')) * 4 + 8}px`,
@@ -41,7 +41,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
           
           {/* Vertical line from parent */}
           <div 
-            className="absolute bg-gray-600 w-0.5"
+            className="absolute bg-gray-400 w-0.5"
             style={{
               left: -60,
               top: -30,
