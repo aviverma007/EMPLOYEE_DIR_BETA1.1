@@ -30,6 +30,13 @@ db = client[os.environ['DB_NAME']]
 # Create the main app without a prefix
 app = FastAPI(title="Employee Directory API", version="1.0.0")
 
+# Create uploads directory if it doesn't exist
+UPLOAD_DIR = ROOT_DIR / "uploads" / "images"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Serve static files for images
+app.mount("/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="uploads")
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
