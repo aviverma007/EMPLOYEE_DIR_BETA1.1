@@ -8,8 +8,16 @@ class ExcelParser:
         if file_path:
             self.file_path = file_path
         else:
-            # Default to the Excel file in the app directory
-            self.file_path =r"C:\EmployeeDirectoryServer\EMPLOYEE_DIR\backend\employee_directory.xlsx"
+            # Default to the Excel file in the backend directory
+            current_dir = Path(__file__).parent
+            self.file_path = str(current_dir / "employee_directory.xlsx")
+            
+            # Fallback to app directory if not found in backend
+            if not os.path.exists(self.file_path):
+                app_dir = current_dir.parent
+                fallback_path = str(app_dir / "employee_directory.xlsx")
+                if os.path.exists(fallback_path):
+                    self.file_path = fallback_path
     
     def parse_excel_to_employees(self) -> List[Dict[str, Any]]:
         """Parse Excel file and return list of employee dictionaries"""
