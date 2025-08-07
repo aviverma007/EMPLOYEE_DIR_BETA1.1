@@ -20,32 +20,38 @@ const EmployeeDirectory = () => {
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState(["All Departments"]);
   const [locations, setLocations] = useState(["All Locations"]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
   
   const { isAdmin } = useAuth();
 
-  // Load departments and locations on mount
+  // Load all data on mount - same for both admin and regular users
   useEffect(() => {
-    const loadFilters = async () => {
+    const loadAllData = async () => {
       try {
-        const [depts, locs] = await Promise.all([
+        setLoading(true);
+        const [employeeData, depts, locs] = await Promise.all([
+          employeeAPI.getAll(), // Load all employees upfront
           utilityAPI.getDepartments(),
           utilityAPI.getLocations()
         ]);
+        
+        setEmployees(employeeData);
         setDepartments(depts);
         setLocations(locs);
       } catch (error) {
-        console.error("Error loading filters:", error);
+        console.error("Error loading data:", error);
+        setEmployees([]);
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadFilters();
+    loadAllData();
   }, []);
 
-  // Debounce search term
+  // Debounce search term for better performance
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -54,45 +60,37 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  // Load employees on mount for admin users, and on search for regular users
-  useEffect(() => {
-    const loadEmployees = async () => {
-      // Always allow search - both admin and regular users can search
-      if (debouncedSearchTerm.trim().length > 0 || isAdmin()) {
-        try {
-          setLoading(true);
-          const searchParams = {
-            search: debouncedSearchTerm,
-            department: departmentFilter,
-            location: locationFilter
-          };
-          
-          const employeeData = await employeeAPI.getAll(searchParams);
-          setEmployees(employeeData);
-          setHasSearched(true);
-        } catch (error) {
-          console.error("Error loading employees:", error);
-          setEmployees([]);
-        } finally {
-          setLoading(false);
-        }
-      } else if (!isAdmin() && debouncedSearchTerm.trim().length === 0) {
-        // Clear results when search is cleared for regular users
-        setEmployees([]);
-        setHasSearched(false);
-      }
-    };
-
-    loadEmployees();
-  }, [debouncedSearchTerm, departmentFilter, locationFilter, isAdmin]);
-
-  // Filter employees based on current filters (client-side filtering for better performance)
+  // Client-side filtering - same logic for both admin and regular users
   const filteredEmployees = useMemo(() => {
-    if (!hasSearched && !isAdmin()) {
-      return [];
+    let filtered = employees;
+
+    // Apply search filter
+    if (debouncedSearchTerm.trim().length > 0) {
+      const searchLower = debouncedSearchTerm.toLowerCase();
+      filtered = filtered.filter(employee => {
+        return (
+          employee.name.toLowerCase().includes(searchLower) ||
+          employee.id.includes(debouncedSearchTerm) ||
+          employee.department.toLowerCase().includes(searchLower) ||
+          employee.location.toLowerCase().includes(searchLower) ||
+          employee.grade.toLowerCase().includes(searchLower) ||
+          employee.mobile.includes(debouncedSearchTerm)
+        );
+      });
     }
-    return employees;
-  }, [employees, hasSearched, isAdmin]);
+
+    // Apply department filter
+    if (departmentFilter !== "All Departments") {
+      filtered = filtered.filter(employee => employee.department === departmentFilter);
+    }
+
+    // Apply location filter
+    if (locationFilter !== "All Locations") {
+      filtered = filtered.filter(employee => employee.location === locationFilter);
+    }
+
+    return filtered;
+  }, [employees, debouncedSearchTerm, departmentFilter, locationFilter]);
 
   const handleImageUpdate = async (employeeId, newImageUrl) => {
     try {
@@ -125,12 +123,13 @@ const EmployeeDirectory = () => {
     setSelectedEmployee(null);
   };
 
+  // Show loading only on initial data load
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-blue-600">Loading employee data...</p>
+          <p className="mt-4 text-blue-600">Loading employee directory...</p>
         </div>
       </div>
     );
@@ -142,7 +141,7 @@ const EmployeeDirectory = () => {
       <Card className="border-blue-200 shadow-sm bg-white">
         <CardHeader className="pb-4 bg-blue-50">
           <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Bar */}
+            {/* Search Bar - Same for both admin and regular users */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
               <Input
@@ -151,105 +150,94 @@ const EmployeeDirectory = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-11 border-blue-200 focus:border-blue-400"
               />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSearchTerm("")}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-blue-100"
+                >
+                  <X className="h-4 w-4 text-blue-500" />
+                </Button>
+              )}
             </div>
 
-            {/* Filters - Show for both admin and regular users when they have searched */}
-            {(isAdmin() || hasSearched) && (
-              <>
-                {/* Department Filter */}
-                <div className="w-full lg:w-48">
-                  <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                    <SelectTrigger className="h-11 border-blue-200">
-                      <SelectValue placeholder="Department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {departments.map(dept => (
-                        <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* Filters - Always show for both user types */}
+            <div className="w-full lg:w-48">
+              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <SelectTrigger className="h-11 border-blue-200">
+                  <SelectValue placeholder="Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map(dept => (
+                    <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                {/* Location Filter */}
-                <div className="w-full lg:w-48">
-                  <Select value={locationFilter} onValueChange={setLocationFilter}>
-                    <SelectTrigger className="h-11 border-blue-200">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {locations.map(location => (
-                        <SelectItem key={location} value={location}>{location}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            <div className="w-full lg:w-48">
+              <Select value={locationFilter} onValueChange={setLocationFilter}>
+                <SelectTrigger className="h-11 border-blue-200">
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  {locations.map(location => (
+                    <SelectItem key={location} value={location}>{location}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-                {/* View Toggle */}
-                <div className="flex space-x-2">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className={`h-11 px-3 ${viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className={`h-11 px-3 ${viewMode === "list" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </>
-            )}
+            {/* View Toggle */}
+            <div className="flex space-x-2">
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className={`h-11 px-3 ${viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className={`h-11 px-3 ${viewMode === "list" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
       </Card>
 
-      {/* User Instructions */}
-      {!isAdmin() && !hasSearched && (
-        <Card className="border-blue-200 shadow-sm bg-blue-50">
-          <CardContent className="p-6 text-center">
-            <User className="h-12 w-12 mx-auto mb-4 text-blue-400" />
-            <h3 className="text-lg font-semibold text-blue-900 mb-2">Search to View Employees</h3>
-            <p className="text-blue-600">
-              Search using keywords to view employee information. 
-              Try searching by name, department, location, or other criteria.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Results Summary */}
-      {(isAdmin() || hasSearched) && (
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
-              {filteredEmployees.length} employees found
-            </Badge>
-            {(searchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations") && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSearchTerm("");
-                  setDepartmentFilter("All Departments");
-                  setLocationFilter("All Locations");
-                }}
-                className="text-blue-600 hover:bg-blue-50"
-              >
-                Clear filters
-              </Button>
-            )}
-          </div>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
+            {filteredEmployees.length} of {employees.length} employees
+            {debouncedSearchTerm && ` matching "${debouncedSearchTerm}"`}
+          </Badge>
+          {(searchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearchTerm("");
+                setDepartmentFilter("All Departments");
+                setLocationFilter("All Locations");
+              }}
+              className="text-blue-600 hover:bg-blue-50"
+            >
+              Clear filters
+            </Button>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Employee Display */}
-      {(isAdmin() || hasSearched) && (
+      {filteredEmployees.length > 0 ? (
         viewMode === "grid" ? (
           <EmployeeCard 
             employees={filteredEmployees} 
@@ -263,6 +251,18 @@ const EmployeeDirectory = () => {
             onEmployeeClick={handleEmployeeClick}
           />
         )
+      ) : (
+        <Card className="p-8 text-center border-blue-200 bg-blue-50">
+          <div className="text-blue-500">
+            <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <h3 className="text-lg font-semibold text-blue-900 mb-2">No employees found</h3>
+            <p>
+              {debouncedSearchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations"
+                ? "Try adjusting your search criteria or filters."
+                : "No employee data available."}
+            </p>
+          </div>
+        </Card>
       )}
 
       {/* Employee Detail Modal */}
