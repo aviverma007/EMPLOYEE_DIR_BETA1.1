@@ -15,7 +15,11 @@ import mimetypes
 from models import (
     Employee, EmployeeCreate, EmployeeUpdate, 
     HierarchyRelation, HierarchyRelationCreate,
-    RefreshResponse
+    RefreshResponse,
+    News, NewsCreate, NewsUpdate,
+    Task, TaskCreate, TaskUpdate,
+    Knowledge, KnowledgeCreate, KnowledgeUpdate,
+    Help, HelpCreate, HelpUpdate, HelpReply, HelpReplyCreate
 )
 from excel_parser import ExcelParser
 
