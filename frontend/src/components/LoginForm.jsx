@@ -8,15 +8,15 @@ import { toast } from 'sonner';
 const LoginForm = () => {
   const { login } = useAuth();
 
-  const handleLogin = (role, name, empId) => {
+  const handleLogin = () => {
     const userData = {
-      name,
-      role,
-      employeeId: empId,
+      name: 'Administrator',
+      role: 'admin',
+      employeeId: 'ADMIN001',
       loginTime: new Date().toISOString()
     };
     login(userData);
-    toast.success(`Welcome! Logged in as ${role}`);
+    toast.success('Welcome Administrator!');
   };
 
   return (
@@ -39,36 +39,22 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {/* Access Buttons */}
+        {/* Login Button */}
         <Card className="border-blue-200 shadow-lg">
           <CardHeader className="bg-blue-50">
-            <CardTitle className="text-blue-900 text-center">Choose Access Level</CardTitle>
+            <CardTitle className="text-blue-900 text-center">Administrator Access</CardTitle>
           </CardHeader>
-          <CardContent className="p-6 space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <Button
-                onClick={() => handleLogin('admin', 'Administrator', 'ADMIN001')}
-                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
-              >
-                <Shield className="h-6 w-6 mr-3" />
-                <div className="text-left">
-                  <div className="font-semibold">Administrator</div>
-                  <div className="text-sm opacity-90">Full access to all features</div>
-                </div>
-              </Button>
-              
-              <Button
-                onClick={() => handleLogin('user', 'Employee', 'EMP001')}
-                variant="outline"
-                className="w-full h-16 border-blue-200 text-blue-700 hover:bg-blue-50 font-medium text-lg"
-              >
-                <User className="h-6 w-6 mr-3" />
-                <div className="text-left">
-                  <div className="font-semibold">Employee</div>
-                  <div className="text-sm opacity-70">Search and view employee directory</div>
-                </div>
-              </Button>
-            </div>
+          <CardContent className="p-6">
+            <Button
+              onClick={handleLogin}
+              className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
+            >
+              <Shield className="h-6 w-6 mr-3" />
+              <div className="text-left">
+                <div className="font-semibold">Enter Admin Dashboard</div>
+                <div className="text-sm opacity-90">Full access to all features</div>
+              </div>
+            </Button>
           </CardContent>
         </Card>
       </div>
