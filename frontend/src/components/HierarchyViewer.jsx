@@ -140,12 +140,12 @@ const HierarchyViewer = () => {
         </CardContent>
       </Card>
 
-      {/* Hierarchy Display */}
+      {/* Hierarchy Visualization */}
       {hierarchyData.length > 0 ? (
         <Card className="border-blue-200 shadow-sm bg-white">
           <CardHeader className="bg-blue-50">
-            <CardTitle className="text-blue-900">
-              {viewMode === "tree" ? "Hierarchy Tree" : "Reporting Relationships"}
+            <CardTitle className="text-lg text-blue-900">
+              {viewMode === "tree" ? "Organizational Cloud Structure" : "Hierarchy Table"}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -157,16 +157,14 @@ const HierarchyViewer = () => {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-blue-200 shadow-sm bg-white">
-          <CardContent className="p-8 text-center">
-            <div className="text-blue-500">
-              <Users className="h-16 w-16 mx-auto mb-4 opacity-50" />
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">No Hierarchy Defined</h3>
-              <p className="text-blue-600">
-                No organizational hierarchy has been set up yet. 
-                Contact your administrator to define reporting relationships.
-              </p>
-            </div>
+        <Card className="border-blue-200 shadow-sm bg-blue-50">
+          <CardContent className="p-12 text-center">
+            <Users className="h-16 w-16 mx-auto mb-4 text-blue-400 opacity-50" />
+            <h3 className="text-xl font-semibold text-blue-900 mb-2">No Hierarchy Structure</h3>
+            <p className="text-blue-600">
+              The organizational hierarchy has not been set up yet. 
+              Please contact an administrator to configure reporting relationships.
+            </p>
           </CardContent>
         </Card>
       )}
