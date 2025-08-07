@@ -145,7 +145,7 @@ const HierarchyBuilder = () => {
   };
 
   const getEmployeeName = (employeeId) => {
-    const employee = availableEmployees.find(emp => emp.id === employeeId);
+    const employee = employees.find(emp => emp.id === employeeId);
     return employee ? employee.name : employeeId;
   };
 
