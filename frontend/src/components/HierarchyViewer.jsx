@@ -8,27 +8,32 @@ import HierarchyTable from "./HierarchyTable";
 import { toast } from "sonner";
 
 const HierarchyViewer = () => {
-  const [hierarchyData, setHierarchyData] = useState(mockHierarchy);
-  const [viewMode, setViewMode] = useState("tree"); // tree or table
+  const [hierarchyData, setHierarchyData] = useState([]);
+  const [viewMode, setViewMode] = useState("tree");
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load all employees on component mount
+  // Load all employees and hierarchy data on component mount
   useEffect(() => {
-    const loadEmployees = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const allEmployees = await loadAllEmployeesFromExcel();
-        setEmployees(allEmployees);
+        const [employeeData, hierarchyDataFromAPI] = await Promise.all([
+          employeeAPI.getAll(),
+          hierarchyAPI.getAll()
+        ]);
+        
+        setEmployees(employeeData);
+        setHierarchyData(hierarchyDataFromAPI);
       } catch (error) {
-        console.error("Error loading employees:", error);
-        setEmployees(mockEmployees);
+        console.error("Error loading data:", error);
+        toast.error("Error loading organizational hierarchy");
       } finally {
         setLoading(false);
       }
     };
 
-    loadEmployees();
+    loadData();
   }, []);
 
   // Build hierarchy structure for tree view
