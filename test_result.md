@@ -133,7 +133,10 @@ backend:
         -comment: "Complete hierarchy API with create, read, delete operations. Validation for existing relationships and employee existence."
         -working: true
         -agent: "testing"
-        -comment: "All hierarchy management APIs tested and working correctly: GET /api/hierarchy, POST /api/hierarchy with proper validation (no duplicates, employee existence checks), DELETE /api/hierarchy/{id}, and DELETE /api/hierarchy/clear. Fixed minor route ordering issue where /hierarchy/clear was conflicting with /hierarchy/{id} - moved clear route before parameterized route. All tests now pass."
+        -comment: "All hierarchy management APIs tested and working correctly: GET /api/hierarchy, POST /api/hierarchy with proper validation (no duplicates, employee existence checks), DELETE /api/hierarchy/{id}, and DELETE /api/hierarchy/clear. Fixed minor route ordering issue where /hierarchy/clear was conflicting with /hierarchy/clear was conflicting with /hierarchy/{id} - moved clear route before parameterized route. All tests now pass."
+        -working: true
+        -agent: "testing"
+        -comment: "Re-tested hierarchy management with specific user scenario: Successfully created and verified hierarchical relationships (Anirudh Verma→Chandan Khurana, Binay Kumar→Chandan Khurana, Chandan Khurana→Ranjit Sarkar). All relationships stored correctly in database. Tree structure building capability verified - correctly identifies Ranjit Sarkar as root manager with proper subordinate chains. Fixed openpyxl dependency issue that was preventing Excel data loading. All 5 hierarchy-focused tests passed successfully."
 
   - task: "Excel Data Integration"
     implemented: true
