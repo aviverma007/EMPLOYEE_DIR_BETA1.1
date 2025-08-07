@@ -42,13 +42,18 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
     }
   };
 
-  const handleImageSubmit = () => {
+  const handleImageSubmit = async () => {
     if (imagePreview && selectedEmployee) {
-      onImageUpdate(selectedEmployee.id, imagePreview);
-      toast.success("Profile image updated successfully!");
-      setImageFile(null);
-      setImagePreview("");
-      setSelectedEmployee(null);
+      try {
+        await onImageUpdate(selectedEmployee.id, imagePreview);
+        toast.success("Profile image updated successfully!");
+        setImageFile(null);
+        setImagePreview("");
+        setSelectedEmployee(null);
+      } catch (error) {
+        console.error("Error updating image:", error);
+        toast.error("Failed to update profile image. Please try again.");
+      }
     }
   };
 
