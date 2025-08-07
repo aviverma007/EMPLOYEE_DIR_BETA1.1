@@ -214,14 +214,14 @@ const HierarchyTree = ({ hierarchyStructure }) => {
   };
 
   return (
-    <div className="relative bg-gradient-to-br from-gray-50 via-white to-gray-100 p-8 rounded-xl border-2 border-gray-200 overflow-x-auto">
+    <div className="relative bg-white p-8 rounded-xl border-2 border-gray-200 overflow-x-auto">
       <div className="relative z-10 flex flex-col space-y-10 min-w-max">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-3 bg-white px-6 py-3 rounded-lg border border-gray-300 shadow-md mb-4">
-            <div className="w-6 h-4 bg-blue-600 rounded"></div>
+          <div className="inline-flex items-center space-x-3 bg-gray-100 px-6 py-3 rounded-lg border border-gray-300 shadow-md mb-4">
+            <div className="w-6 h-4 bg-gray-700 rounded"></div>
             <h4 className="text-xl font-bold text-gray-900">Organizational Structure</h4>
-            <div className="w-6 h-4 bg-blue-600 rounded"></div>
+            <div className="w-6 h-4 bg-gray-700 rounded"></div>
           </div>
           <p className="text-gray-700 font-medium">Interactive hierarchy visualization with reporting relationships</p>
         </div>
