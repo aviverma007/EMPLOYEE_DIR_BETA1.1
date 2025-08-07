@@ -174,6 +174,9 @@ frontend:
         -working: "NA"
         -agent: "main"
         -comment: "Admin interface for managing reporting relationships. Tree and table views implemented. Status needs verification."
+        -working: "NA"
+        -agent: "main"
+        -comment: "Fixed hierarchy tree building logic to show unified hierarchical structure. Updated logic to find true root managers (those who don't report to anyone) and build complete recursive trees showing proper chains like Ranjit Sarkar → Chandan → [Anirudh, Binay]. Modified HierarchyBuilder.jsx and HierarchyTree.jsx for correct tree visualization."
 
   - task: "Authentication System"
     implemented: true
