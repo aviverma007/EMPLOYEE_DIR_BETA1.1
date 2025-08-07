@@ -39,7 +39,7 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
             <TableRow key={relation.employeeId} className="hover:bg-slate-50">
               <TableCell>
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
                     {employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? (
                       <img 
                         src={employee.profileImage} 
