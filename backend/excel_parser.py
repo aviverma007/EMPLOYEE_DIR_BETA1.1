@@ -9,7 +9,7 @@ class ExcelParser:
             self.file_path = file_path
         else:
             # Default to the Excel file in the app directory
-            self.file_path = "/app/employee_directory.xlsx"
+            self.file_path =r"C:\EmployeeDirectoryServer\EMPLOYEE_DIR\backend\employee_directory.xlsx"
     
     def parse_excel_to_employees(self) -> List[Dict[str, Any]]:
         """Parse Excel file and return list of employee dictionaries"""
