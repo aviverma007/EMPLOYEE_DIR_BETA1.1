@@ -99,7 +99,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
             {hasChildren && (
               <div className="flex flex-col items-center space-y-2 flex-shrink-0">
                 {/* Team Count Badge */}
-                <Badge className="bg-white text-black border-white text-xs px-2 py-1">
+                <Badge className="bg-gray-800 text-white border-gray-800 text-xs px-2 py-1">
                   <Users className="h-3 w-3 mr-1" />
                   <span className="font-bold">{children.length}</span>
                 </Badge>
@@ -109,7 +109,7 @@ const BoxNode = ({ employee, childrenMap, level = 0, isExpanded, onToggle }) => 
                   variant="ghost"
                   size="sm"
                   onClick={() => onToggle(employee.id)}
-                  className="h-6 w-6 p-0 text-white hover:bg-white hover:bg-opacity-20 rounded border border-white border-opacity-30"
+                  className="h-6 w-6 p-0 text-gray-700 hover:bg-gray-200 rounded border border-gray-400"
                 >
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" />
