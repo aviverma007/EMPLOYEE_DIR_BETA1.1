@@ -161,14 +161,21 @@ async def get_employees(
 
 @api_router.put("/employees/{employee_id}/image", response_model=Employee)
 async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
-    """Update employee profile image (admin functionality)"""
+    """Update employee profile image (supports URL or base64 data)"""
     try:
+        image_url = update_data.profileImage
+        
+        # Check if it's base64 data
+        if image_url.startswith('data:image/'):
+            # Convert base64 to file and get URL
+            image_url = save_base64_image(image_url, employee_id)
+        
         # Update employee in database
         result = await db.employees.update_one(
             {"id": employee_id},
             {
                 "$set": {
-                    "profileImage": update_data.profileImage,
+                    "profileImage": image_url,
                     "lastUpdated": datetime.utcnow()
                 }
             }
@@ -190,6 +197,41 @@ async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
     except Exception as e:
         logging.error(f"Error updating employee image: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to update employee image")
+
+@api_router.post("/employees/{employee_id}/upload-image", response_model=Employee)
+async def upload_employee_image(employee_id: str, file: UploadFile = File(...)):
+    """Upload employee profile image file"""
+    try:
+        # Save uploaded file
+        image_url = save_uploaded_file(file, employee_id)
+        
+        # Update employee in database
+        result = await db.employees.update_one(
+            {"id": employee_id},
+            {
+                "$set": {
+                    "profileImage": image_url,
+                    "lastUpdated": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        
+        # Get updated employee
+        employee_doc = await db.employees.find_one({"id": employee_id})
+        if not employee_doc:
+            raise HTTPException(status_code=404, detail="Employee not found")
+        
+        employee_doc.pop('_id', None)
+        return Employee(**employee_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error uploading employee image: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to upload employee image")
 
 @api_router.post("/refresh-excel", response_model=RefreshResponse)
 async def refresh_excel_data():
