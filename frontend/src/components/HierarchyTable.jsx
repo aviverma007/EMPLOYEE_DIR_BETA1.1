@@ -36,7 +36,7 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
           const manager = getEmployeeInfo(relation.reportsTo);
           
           return (
-            <TableRow key={relation.employeeId} className="hover:bg-slate-50">
+            <TableRow key={relation.employeeId} className="hover:bg-blue-50 border-blue-100">
               <TableCell>
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
@@ -54,12 +54,12 @@ const HierarchyTable = ({ hierarchyData, employees }) => {
                     <User className="h-4 w-4 text-blue-500" style={{display: employee.profileImage && employee.profileImage !== "/api/placeholder/150/150" ? 'none' : 'block'}} />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900">{employee.name}</p>
+                    <p className="font-medium text-blue-900">{employee.name}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="outline" className="text-xs">{employee.id}</Badge>
-                      <span className="text-xs text-gray-600">{employee.department}</span>
+                      <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">{employee.id}</Badge>
+                      <span className="text-xs text-blue-600">{employee.department}</span>
                     </div>
-                    <p className="text-xs text-gray-500">{employee.grade}</p>
+                    <p className="text-xs text-blue-500">{employee.grade}</p>
                   </div>
                 </div>
               </TableCell>
