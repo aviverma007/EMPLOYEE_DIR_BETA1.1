@@ -1,40 +1,45 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Users, Plus, Trash2, RotateCcw, Network, Table as TableIcon, Save, Shield } from "lucide-react";
+import { Users, Plus, Trash2, RotateCcw, Network, Table as TableIcon, Save, Shield, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
-import { mockEmployees, mockHierarchy, loadAllEmployeesFromExcel } from "../mock";
+import { employeeAPI, hierarchyAPI } from "../services/api";
 import HierarchyTree from "./HierarchyTree";
 import HierarchyTable from "./HierarchyTable";
 import SearchableSelect from "./ui/searchable-select";
 import { toast } from "sonner";
 
 const HierarchyBuilder = () => {
-  const [hierarchyData, setHierarchyData] = useState([]); // Start with empty array
+  const [hierarchyData, setHierarchyData] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedManager, setSelectedManager] = useState("");
-  const [viewMode, setViewMode] = useState("tree"); // tree or table
+  const [viewMode, setViewMode] = useState("tree");
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load all employees on component mount
+  // Load all employees and hierarchy data on component mount
   useEffect(() => {
-    const loadEmployees = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const allEmployees = await loadAllEmployeesFromExcel();
-        setEmployees(allEmployees);
+        const [employeeData, hierarchyDataFromAPI] = await Promise.all([
+          employeeAPI.getAll(),
+          hierarchyAPI.getAll()
+        ]);
+        
+        setEmployees(employeeData);
+        setHierarchyData(hierarchyDataFromAPI);
       } catch (error) {
-        console.error("Error loading employees:", error);
-        setEmployees(mockEmployees);
+        console.error("Error loading data:", error);
+        toast.error("Error loading employee and hierarchy data");
       } finally {
         setLoading(false);
       }
     };
 
-    loadEmployees();
+    loadData();
   }, []);
 
   // Get available employees for dropdown with search-friendly format
@@ -49,7 +54,7 @@ const HierarchyBuilder = () => {
   // Get available managers (all employees can be managers)
   const availableManagers = availableEmployees;
 
-  // Build hierarchy structure for specific employee relationships only
+  // Build hierarchy structure for visualization
   const hierarchyStructure = useMemo(() => {
     const empMap = new Map(employees.map(emp => [emp.id, emp]));
     const childrenMap = new Map();
@@ -70,13 +75,7 @@ const HierarchyBuilder = () => {
       }
     });
 
-    // Return only employees involved in relationships (not all top-level employees)
-    const employeesInRelationships = new Set();
-    hierarchyData.forEach(rel => {
-      employeesInRelationships.add(rel.employeeId);
-      employeesInRelationships.add(rel.reportsTo);
-    });
-    
+    // Get managers who have direct reports
     const managersWithDirectReports = [...childrenMap.entries()]
       .filter(([managerId, children]) => children.length > 0)
       .map(([managerId]) => empMap.get(managerId))
@@ -85,7 +84,7 @@ const HierarchyBuilder = () => {
     return { empMap, childrenMap, topLevel: managersWithDirectReports };
   }, [hierarchyData, employees]);
 
-  const handleAddRelationship = () => {
+  const handleAddRelationship = async () => {
     if (!selectedEmployee || !selectedManager) {
       toast.error("Please select both employee and manager");
       return;
@@ -103,44 +102,43 @@ const HierarchyBuilder = () => {
       return;
     }
 
-    // Add new relationship
-    const newRelation = {
-      employeeId: selectedEmployee,
-      reportsTo: selectedManager
-    };
-
-    setHierarchyData(prev => [...prev, newRelation]);
-    setSelectedEmployee("");
-    setSelectedManager("");
-    setHasUnsavedChanges(true);
-    toast.success("Reporting relationship added! Click Save to persist changes.");
-  };
-
-  const handleRemoveRelationship = (employeeId) => {
-    setHierarchyData(prev => prev.filter(rel => rel.employeeId !== employeeId));
-    setHasUnsavedChanges(true);
-    toast.success("Reporting relationship removed! Click Save to persist changes.");
-  };
-
-  const handleClearAll = () => {
-    setHierarchyData([]);
-    setHasUnsavedChanges(true);
-    toast.success("All reporting relationships cleared! Click Save to persist changes.");
-  };
-
-  const handleSave = async () => {
     try {
-      setIsSaving(true);
-      
-      // Simulate API call to save hierarchy data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setHasUnsavedChanges(false);
-      toast.success("Hierarchy changes saved successfully!");
+      // Create new relationship via API
+      const newRelation = await hierarchyAPI.create({
+        employeeId: selectedEmployee,
+        reportsTo: selectedManager
+      });
+
+      // Update local state
+      setHierarchyData(prev => [...prev, newRelation]);
+      setSelectedEmployee("");
+      setSelectedManager("");
+      toast.success("Reporting relationship added successfully!");
     } catch (error) {
-      toast.error("Failed to save hierarchy changes");
-    } finally {
-      setIsSaving(false);
+      console.error("Error adding relationship:", error);
+      toast.error("Failed to add reporting relationship");
+    }
+  };
+
+  const handleRemoveRelationship = async (employeeId) => {
+    try {
+      await hierarchyAPI.remove(employeeId);
+      setHierarchyData(prev => prev.filter(rel => rel.employeeId !== employeeId));
+      toast.success("Reporting relationship removed successfully!");
+    } catch (error) {
+      console.error("Error removing relationship:", error);
+      toast.error("Failed to remove reporting relationship");
+    }
+  };
+
+  const handleClearAll = async () => {
+    try {
+      await hierarchyAPI.clearAll();
+      setHierarchyData([]);
+      toast.success("All reporting relationships cleared successfully!");
+    } catch (error) {
+      console.error("Error clearing relationships:", error);
+      toast.error("Failed to clear reporting relationships");
     }
   };
 
@@ -154,7 +152,7 @@ const HierarchyBuilder = () => {
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-blue-600">Loading employee data...</p>
+          <p className="mt-4 text-blue-600">Loading employee and hierarchy data...</p>
         </div>
       </div>
     );
@@ -162,18 +160,13 @@ const HierarchyBuilder = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header with View Toggle and Save Button */}
+      {/* Header with View Toggle */}
       <Card className="border-blue-200 shadow-sm bg-white">
         <CardHeader className="pb-4 bg-blue-50">
           <div className="flex justify-between items-center">
             <CardTitle className="flex items-center space-x-2 text-blue-900">
               <Shield className="h-5 w-5" />
               <span>Hierarchy Builder</span>
-              {hasUnsavedChanges && (
-                <Badge variant="secondary" className="ml-2 bg-orange-100 text-orange-700">
-                  Unsaved Changes
-                </Badge>
-              )}
             </CardTitle>
             
             <div className="flex space-x-2">
@@ -188,7 +181,7 @@ const HierarchyBuilder = () => {
                 }`}
               >
                 <Network className="h-4 w-4" />
-                <span>Tree View</span>
+                <span>Cloud View</span>
               </Button>
               <Button
                 variant={viewMode === "table" ? "default" : "outline"}
@@ -203,17 +196,6 @@ const HierarchyBuilder = () => {
                 <TableIcon className="h-4 w-4" />
                 <span>Table View</span>
               </Button>
-              
-              {hasUnsavedChanges && (
-                <Button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
-                >
-                  <Save className="h-4 w-4" />
-                  <span>{isSaving ? "Saving..." : "Save Changes"}</span>
-                </Button>
-              )}
             </div>
           </div>
         </CardHeader>
@@ -309,11 +291,13 @@ const HierarchyBuilder = () => {
         </CardContent>
       </Card>
 
-      {/* Relationship Tree Display - Only show when there are relationships */}
+      {/* Hierarchy Visualization */}
       {hierarchyData.length > 0 && (
         <Card className="border-blue-200 shadow-sm bg-white">
           <CardHeader className="bg-blue-50">
-            <CardTitle className="text-lg text-blue-900">Relationship Tree View</CardTitle>
+            <CardTitle className="text-lg text-blue-900">
+              {viewMode === "tree" ? "Organizational Cloud Structure" : "Hierarchy Table"}
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             {viewMode === "tree" ? (
