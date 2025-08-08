@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from "./components/ui/dropdown-menu";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import LoginForm from "./components/LoginForm";
 import EmployeeDirectory from "./components/EmployeeDirectory";
@@ -9,12 +15,16 @@ import HierarchyBuilder from "./components/HierarchyBuilder";
 import HierarchyViewer from "./components/HierarchyViewer";
 import Header from "./components/Header";
 import { Toaster } from "./components/ui/sonner";
+import { ChevronDown } from "lucide-react";
+import { Button } from "./components/ui/button";
 
 // Import new components
 import Home from "./components/Home";
 import Work from "./components/Work";
 import Knowledge from "./components/Knowledge";
 import Help from "./components/Help";
+import PO from "./components/PO";
+import PS from "./components/PS";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
