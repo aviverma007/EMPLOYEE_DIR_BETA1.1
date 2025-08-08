@@ -130,12 +130,16 @@ const AppContent = () => {
                   </TabsContent>
                   
                   <TabsContent value="directory" className="mt-6">
-                    <div className="space-y-6">
-                      <EmployeeDirectory />
-                      <div className="border-t border-blue-200 pt-6">
-                        <HierarchyBuilder />
+                    {activeDirectorySection === "directory" && (
+                      <div className="space-y-6">
+                        <EmployeeDirectory />
+                        <div className="border-t border-blue-200 pt-6">
+                          <HierarchyBuilder />
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    {activeDirectorySection === "po" && <PO />}
+                    {activeDirectorySection === "ps" && <PS />}
                   </TabsContent>
                   
                   <TabsContent value="work" className="mt-6">
