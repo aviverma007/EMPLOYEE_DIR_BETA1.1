@@ -55,12 +55,56 @@ const AppContent = () => {
                     >
                       Home
                     </TabsTrigger>
-                    <TabsTrigger 
-                      value="directory" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
-                    >
-                      Employee Directory
-                    </TabsTrigger>
+                    
+                    {/* Employee Directory Dropdown */}
+                    <div className="relative">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className={`h-full w-full text-sm font-medium rounded-md ${
+                              activeTab === "directory" 
+                                ? "bg-blue-600 text-white" 
+                                : "text-blue-700 hover:bg-blue-50"
+                            } flex items-center justify-center gap-1`}
+                            onClick={() => setActiveTab("directory")}
+                          >
+                            Employee Directory
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="center" className="w-48">
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setActiveTab("directory");
+                              setActiveDirectorySection("directory");
+                            }}
+                            className="cursor-pointer"
+                          >
+                            Employee Directory
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setActiveTab("directory");
+                              setActiveDirectorySection("po");
+                            }}
+                            className="cursor-pointer"
+                          >
+                            PO
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setActiveTab("directory");
+                              setActiveDirectorySection("ps");
+                            }}
+                            className="cursor-pointer"
+                          >
+                            PS
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    
                     <TabsTrigger 
                       value="work" 
                       className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
