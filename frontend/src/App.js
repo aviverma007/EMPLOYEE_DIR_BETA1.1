@@ -29,6 +29,7 @@ import PS from "./components/PS";
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
+  const [activeDirectorySection, setActiveDirectorySection] = useState("directory");
 
   useEffect(() => {
     initializeAuth();
