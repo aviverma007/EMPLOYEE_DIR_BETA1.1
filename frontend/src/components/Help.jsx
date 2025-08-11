@@ -133,6 +133,43 @@ const Help = () => {
     }
   };
 
+  const handleClearResolved = async () => {
+    const resolvedMessages = messages.filter(msg => msg.status === 'resolved');
+    if (resolvedMessages.length === 0) {
+      toast.info('No resolved requests to clear');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to delete all ${resolvedMessages.length} resolved help requests? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const deletePromises = resolvedMessages.map(msg => 
+        fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help/${msg.id}`, {
+          method: 'DELETE',
+        })
+      );
+
+      const responses = await Promise.all(deletePromises);
+      const successful = responses.filter(response => response.ok).length;
+      const failed = responses.length - successful;
+
+      if (successful > 0) {
+        toast.success(`Successfully cleared ${successful} resolved requests${failed > 0 ? ` (${failed} failed)` : ''}`);
+        fetchMessages();
+      } else {
+        toast.error('Failed to clear resolved requests');
+      }
+    } catch (error) {
+      console.error('Error clearing resolved requests:', error);
+      toast.error('Failed to clear resolved requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getStatusIcon = (status) => {
     switch (status) {
       case 'resolved': return <CheckCircle className="h-4 w-4 text-green-600" />;
