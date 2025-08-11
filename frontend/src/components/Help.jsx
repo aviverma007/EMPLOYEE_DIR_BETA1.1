@@ -235,18 +235,34 @@ const Help = () => {
       </div>
 
       {/* Filter Buttons */}
-      <div className="flex gap-2 flex-wrap">
-        {['all', 'open', 'in_progress', 'resolved'].map((status) => (
+      <div className="flex gap-2 flex-wrap justify-between items-center">
+        <div className="flex gap-2 flex-wrap">
+          {['all', 'open', 'in_progress', 'resolved'].map((status) => (
+            <Button
+              key={status}
+              onClick={() => setFilter(status)}
+              variant={filter === status ? "default" : "outline"}
+              size="sm"
+              className={filter === status ? "bg-blue-600 hover:bg-blue-700" : ""}
+            >
+              {status === 'all' ? 'All Requests' : status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            </Button>
+          ))}
+        </div>
+        
+        {/* Clear Resolved Button */}
+        {messages.filter(msg => msg.status === 'resolved').length > 0 && (
           <Button
-            key={status}
-            onClick={() => setFilter(status)}
-            variant={filter === status ? "default" : "outline"}
+            onClick={handleClearResolved}
+            variant="outline"
             size="sm"
-            className={filter === status ? "bg-blue-600 hover:bg-blue-700" : ""}
+            className="text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400"
+            disabled={loading}
           >
-            {status === 'all' ? 'All Requests' : status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            <Trash2 className="h-4 w-4 mr-2" />
+            Clear All Resolved ({messages.filter(msg => msg.status === 'resolved').length})
           </Button>
-        ))}
+        )}
       </div>
 
       {/* Add Form */}
