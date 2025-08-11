@@ -1,7 +1,27 @@
-import pandas as pd
 import os
 from typing import List, Dict, Any
 from pathlib import Path
+
+# Try to import pandas with proper error handling
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: pandas not available: {e}")
+    PANDAS_AVAILABLE = False
+
+# Ensure openpyxl is available for Excel operations
+try:
+    import openpyxl
+    OPENPYXL_AVAILABLE = True
+except ImportError:
+    try:
+        import pandas as pd
+        # Try to trigger the openpyxl import through pandas
+        pd.read_excel("dummy_test.xlsx")  # This will fail but will show the right error
+    except Exception:
+        pass
+    OPENPYXL_AVAILABLE = False
 
 class ExcelParser:
     def __init__(self, file_path: str = None):
