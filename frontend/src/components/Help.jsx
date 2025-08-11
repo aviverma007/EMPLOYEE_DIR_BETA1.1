@@ -44,6 +44,7 @@ const Help = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`, {
         method: 'POST',
         headers: {
@@ -53,16 +54,22 @@ const Help = () => {
       });
 
       if (response.ok) {
-        toast.success('Help request submitted successfully');
+        const savedRequest = await response.json();
+        toast.success('Help request submitted and saved successfully');
+        console.log('Request saved with ID:', savedRequest.id);
+        
         setFormData({ title: '', message: '', priority: 'normal' });
         setShowAddForm(false);
         fetchMessages();
       } else {
-        throw new Error('Failed to submit help request');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to submit help request');
       }
     } catch (error) {
       console.error('Error submitting help request:', error);
-      toast.error('Failed to submit help request');
+      toast.error(`Failed to submit help request: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
