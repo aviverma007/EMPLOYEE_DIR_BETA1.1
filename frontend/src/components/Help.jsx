@@ -345,8 +345,19 @@ const Help = () => {
                 />
               </div>
               <div className="flex gap-2">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Submit Request
+                <Button 
+                  type="submit" 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <Clock className="h-4 w-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Submit Request'
+                  )}
                 </Button>
                 <Button 
                   type="button" 
@@ -355,6 +366,7 @@ const Help = () => {
                     setShowAddForm(false);
                     setFormData({ title: '', message: '', priority: 'normal' });
                   }}
+                  disabled={saving}
                 >
                   Cancel
                 </Button>
