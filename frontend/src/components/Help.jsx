@@ -53,8 +53,12 @@ const Help = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    
     try {
-      setLoading(true);
+      // Show saving indicator
+      toast.info('Saving your help request...', { duration: 1000 });
+      
       const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`, {
         method: 'POST',
         headers: {
@@ -65,8 +69,18 @@ const Help = () => {
 
       if (response.ok) {
         const savedRequest = await response.json();
-        toast.success('Help request submitted and saved successfully');
-        console.log('Request saved with ID:', savedRequest.id);
+        
+        // Verify the request was saved by fetching it back
+        const verifyResponse = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`);
+        const allRequests = await verifyResponse.json();
+        const wasSaved = allRequests.find(req => req.id === savedRequest.id);
+        
+        if (wasSaved) {
+          toast.success(`Help request saved successfully! Request ID: ${savedRequest.id}`);
+          console.log('✅ Request verified as saved:', savedRequest.id);
+        } else {
+          toast.warning('Request submitted but verification failed. Please refresh to check.');
+        }
         
         setFormData({ title: '', message: '', priority: 'normal' });
         setShowAddForm(false);
@@ -78,8 +92,11 @@ const Help = () => {
     } catch (error) {
       console.error('Error submitting help request:', error);
       toast.error(`Failed to submit help request: ${error.message}`);
+      
+      // Don't clear form data on error so user doesn't lose their work
+      console.log('Form data preserved due to error');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
