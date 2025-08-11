@@ -41,13 +41,19 @@ class ExcelParser:
     
     def parse_excel_to_employees(self) -> List[Dict[str, Any]]:
         """Parse Excel file and return list of employee dictionaries"""
+        if not PANDAS_AVAILABLE:
+            raise ImportError("pandas is not installed. Please install pandas to parse Excel files.")
+        
         try:
             # Check if file exists
             if not os.path.exists(self.file_path):
                 raise FileNotFoundError(f"Excel file not found at {self.file_path}")
             
-            # Read Excel file
-            df = pd.read_excel(self.file_path)
+            # Read Excel file with explicit engine specification
+            try:
+                df = pd.read_excel(self.file_path, engine='openpyxl')
+            except ImportError as ie:
+                raise ImportError(f"openpyxl is required for Excel file reading. Please install: pip install openpyxl. Error: {ie}")
             
             # Fill NaN values with empty strings or appropriate defaults
             df = df.fillna('')
@@ -96,9 +102,17 @@ class ExcelParser:
             
             return employees
             
+        except ImportError as ie:
+            # Re-raise import errors with clearer message
+            raise ie
+        except FileNotFoundError as fe:
+            # Re-raise file errors
+            raise fe
         except Exception as e:
-            print(f"Error parsing Excel file: {str(e)}")
-            raise e
+            # Log other errors but provide more context
+            error_msg = f"Unexpected error parsing Excel file: {str(e)}"
+            print(error_msg)
+            raise RuntimeError(error_msg) from e
     
     def get_unique_departments(self) -> List[str]:
         """Get unique departments from Excel file"""
