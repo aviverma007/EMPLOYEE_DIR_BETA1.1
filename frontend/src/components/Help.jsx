@@ -32,10 +32,19 @@ const Help = () => {
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
+        console.log(`Loaded ${data.length} help requests from backend`);
+      } else {
+        throw new Error('Failed to fetch help messages');
       }
     } catch (error) {
       console.error('Error fetching help messages:', error);
-      toast.error('Failed to load help messages');
+      toast.error('Failed to load help messages. Please try again.');
+      
+      // Retry mechanism
+      setTimeout(() => {
+        console.log('Retrying to fetch help messages...');
+        fetchMessages();
+      }, 3000);
     } finally {
       setLoading(false);
     }
