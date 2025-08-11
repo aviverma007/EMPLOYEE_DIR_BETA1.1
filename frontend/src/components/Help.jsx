@@ -20,6 +20,7 @@ const Help = () => {
     message: ''
   });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
