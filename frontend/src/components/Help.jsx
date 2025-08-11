@@ -225,10 +225,18 @@ const Help = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header with Status Info */}
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-blue-900">Help & Support</h2>
-          <p className="text-blue-600 mt-1">Submit support requests and track their progress</p>
+          <div className="flex items-center gap-4 mt-1">
+            <p className="text-blue-600">Submit support requests and track their progress</p>
+            {messages.length > 0 && (
+              <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                {messages.length} total requests • {messages.filter(m => m.status === 'open').length} open • {messages.filter(m => m.status === 'resolved').length} resolved
+              </div>
+            )}
+          </div>
         </div>
         <Button
           onClick={() => {
@@ -237,6 +245,7 @@ const Help = () => {
             setFormData({ title: '', message: '', priority: 'normal' });
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white"
+          disabled={loading}
         >
           <PlusCircle className="h-4 w-4 mr-2" />
           New Request
