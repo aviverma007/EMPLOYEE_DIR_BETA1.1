@@ -260,56 +260,56 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
-                  {/* New Joinees Vertical Scrolling Display */}
+                  {/* New Joinees Vertical Scrolling Display - 3 at a time */}
                   {employees.length > 0 ? (
                     <div className="flex-1 flex flex-col">
-                      <div className="overflow-hidden h-24 relative">
+                      <div className="space-y-1 h-20 overflow-hidden relative">
                         <div 
                           className="transition-transform duration-1000 ease-in-out"
                           style={{ 
-                            transform: `translateY(-${currentJoineeIndex * 24}px)` 
+                            transform: `translateY(-${(currentJoineeIndex) * 21}px)` 
                           }}
                         >
-                          {/* Duplicate employees for seamless scrolling */}
-                          {employees.concat(employees.slice(0, 3)).map((employee, idx) => (
+                          {/* Create extended array for seamless scrolling */}
+                          {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
                             <div 
                               key={`${employee.id}-${idx}`}
-                              className="h-6 flex items-center justify-between bg-blue-50 rounded mb-1 px-2 py-1 text-xs"
+                              className="h-5 bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between"
                             >
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <span className="font-semibold text-blue-900 truncate flex-1">
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="font-semibold text-blue-900 truncate mr-2">
                                     {employee.name}
                                   </span>
-                                  <span className="text-blue-600 ml-2 flex-shrink-0">
-                                    {employee.id}
-                                  </span>
+                                  <div className="flex items-center space-x-2 flex-shrink-0">
+                                    <span className="text-blue-600">
+                                      {employee.id}
+                                    </span>
+                                    <span className="text-blue-500">
+                                      {employee.department.length > 8 ? employee.department.substring(0, 8) + '..' : employee.department}
+                                    </span>
+                                    <span className="text-blue-400">
+                                      {formatDate(employee.dateOfJoining).split(',')[0]}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           ))}
                         </div>
-                        
-                        {/* Show 3 visible items with additional info */}
-                        <div className="absolute inset-0 pointer-events-none">
-                          <div className="h-6"></div>
-                          <div className="h-6 flex items-center justify-center">
-                            <div className="bg-blue-100 bg-opacity-80 rounded px-2 py-0.5">
-                              <span className="text-blue-700 text-xs font-medium">
-                                {employees[currentJoineeIndex + 1]?.department} • {formatDate(employees[currentJoineeIndex + 1]?.dateOfJoining)}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                       
-                      {/* Progress indicator for vertical scroll */}
+                      {/* Progress indicator */}
                       <div className="flex justify-center mt-2 space-x-1">
-                        {employees.slice(0, Math.min(8, employees.length)).map((_, idx) => (
+                        {employees.slice(0, Math.min(10, employees.length)).map((_, idx) => (
                           <div
                             key={idx}
-                            className={`w-1 h-1 rounded-full transition-all ${
-                              idx === currentJoineeIndex ? 'bg-blue-600 w-3' : 'bg-blue-300'
+                            className={`h-1 rounded-full transition-all duration-300 ${
+                              idx === currentJoineeIndex 
+                                ? 'bg-blue-600 w-4' 
+                                : idx === (currentJoineeIndex + 1) % employees.length
+                                ? 'bg-blue-500 w-2'
+                                : 'bg-blue-300 w-1'
                             }`}
                           />
                         ))}
