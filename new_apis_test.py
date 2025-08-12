@@ -13,7 +13,7 @@ import time
 from datetime import datetime, timedelta
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://web-modifier-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://modify-app-2.preview.emergentagent.com/api"
 
 class NewAPIsTester:
     def __init__(self):

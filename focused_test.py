@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime, timedelta
 
-BACKEND_URL = "https://web-modifier-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://modify-app-2.preview.emergentagent.com/api"
 
 def test_meeting_room_booking():
     """Test meeting room booking after timezone fix"""
