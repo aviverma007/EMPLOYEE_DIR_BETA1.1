@@ -767,52 +767,28 @@ async def get_meeting_rooms(
         # Check if we need to initialize with default rooms
         count = await db.meeting_rooms.count_documents({})
         if count == 0:
-            # Initialize with IFC meeting rooms
+            # Initialize with meeting rooms as per user requirements
             default_rooms = [
-                # IFC - 11th Floor
+                # IFC - 11th Floor (1 room)
                 {
                     'id': 'ifc-11-001',
                     'name': 'IFC Conference Room 11A',
                     'capacity': 8,
                     'location': 'IFC',
-                    'floor': '11th Floor',
+                    'floor': '11',
                     'status': 'vacant',
                     'current_booking': None,
-                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference'],
+                    'amenities': ['TV Screen', 'Whiteboard', 'Video Conference'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 },
-                {
-                    'id': 'ifc-11-002',
-                    'name': 'IFC Meeting Room 11B',
-                    'capacity': 6,
-                    'location': 'IFC',
-                    'floor': '11th Floor',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'equipment': ['TV Screen', 'Whiteboard'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                # IFC - 12th Floor
+                # IFC - 12th Floor (1 room)
                 {
                     'id': 'ifc-12-001',
-                    'name': 'IFC Conference Room 12A',
-                    'capacity': 10,
+                    'name': 'IFC Meeting Room 12A',
+                    'capacity': 6,
                     'location': 'IFC',
-                    'floor': '12th Floor',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference', 'Projector'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-12-002',
-                    'name': 'IFC Meeting Room 12B',
-                    'capacity': 4,
-                    'location': 'IFC',
-                    'floor': '12th Floor',
+                    'floor': '12',
                     'status': 'occupied',
                     'current_booking': {
                         'id': str(uuid.uuid4()),
@@ -823,20 +799,20 @@ async def get_meeting_rooms(
                         'remarks': 'Team sync meeting',
                         'created_at': datetime.utcnow()
                     },
-                    'equipment': ['TV Screen', 'Whiteboard'],
+                    'amenities': ['TV Screen', 'Whiteboard'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 },
-                # IFC - 14th Floor
+                # IFC - 14th Floor (8 rooms as requested)
                 {
                     'id': 'ifc-14-001',
                     'name': 'IFC Executive Room 14A',
                     'capacity': 12,
                     'location': 'IFC',
-                    'floor': '14th Floor',
+                    'floor': '14',
                     'status': 'vacant',
                     'current_booking': None,
-                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
+                    'amenities': ['Large TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 },
@@ -845,10 +821,10 @@ async def get_meeting_rooms(
                     'name': 'IFC Board Room 14B',
                     'capacity': 16,
                     'location': 'IFC',
-                    'floor': '14th Floor',
+                    'floor': '14',
                     'status': 'vacant',
                     'current_booking': None,
-                    'equipment': ['Large TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
+                    'amenities': ['Large TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System', 'Conference Phone'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 },
@@ -857,10 +833,119 @@ async def get_meeting_rooms(
                     'name': 'IFC Meeting Room 14C',
                     'capacity': 6,
                     'location': 'IFC',
-                    'floor': '14th Floor',
+                    'floor': '14',
                     'status': 'vacant',
                     'current_booking': None,
-                    'equipment': ['TV Screen', 'Whiteboard'],
+                    'amenities': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-004',
+                    'name': 'IFC Meeting Room 14D',
+                    'capacity': 8,
+                    'location': 'IFC',
+                    'floor': '14',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard', 'Video Conference'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-005',
+                    'name': 'IFC Meeting Room 14E',
+                    'capacity': 4,
+                    'location': 'IFC',
+                    'floor': '14',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-006',
+                    'name': 'IFC Conference Room 14F',
+                    'capacity': 10,
+                    'location': 'IFC',
+                    'floor': '14',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard', 'Video Conference', 'Projector'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-007',
+                    'name': 'IFC Meeting Room 14G',
+                    'capacity': 6,
+                    'location': 'IFC',
+                    'floor': '14',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-008',
+                    'name': 'IFC Training Room 14H',
+                    'capacity': 20,
+                    'location': 'IFC',
+                    'floor': '14',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['Large TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                # Other locations - 1 room each, 1 floor each
+                {
+                    'id': 'central-75-001',
+                    'name': 'Central Office Meeting Room',
+                    'capacity': 8,
+                    'location': 'Central Office 75',
+                    'floor': '1',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'office-75-001',
+                    'name': 'Office 75 Conference Room',
+                    'capacity': 6,
+                    'location': 'Office 75',
+                    'floor': '1',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'noida-001',
+                    'name': 'Noida Meeting Room',
+                    'capacity': 10,
+                    'location': 'Noida',
+                    'floor': '1',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard', 'Video Conference'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'project-office-001',
+                    'name': 'Project Office Meeting Room',
+                    'capacity': 4,
+                    'location': 'Project Office',
+                    'floor': '1',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'amenities': ['TV Screen', 'Whiteboard'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 }
