@@ -91,89 +91,6 @@ const Policies = () => {
     }
   };
 
-  const handleCreatePolicy = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/policies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(policyForm),
-      });
-
-      if (response.ok) {
-        setShowCreateDialog(false);
-        setPolicyForm({
-          title: "",
-          content: "",
-          category: "hr",
-          effective_date: "",
-          version: "1.0"
-        });
-        fetchPolicies();
-        alert('Policy created successfully!');
-      } else {
-        const error = await response.json();
-        alert(`Error creating policy: ${error.detail}`);
-      }
-    } catch (error) {
-      console.error('Error creating policy:', error);
-      alert('Failed to create policy');
-    }
-  };
-
-  const handleUpdatePolicy = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/policies/${selectedPolicy.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(policyForm),
-      });
-
-      if (response.ok) {
-        setShowEditDialog(false);
-        setPolicyForm({
-          title: "",
-          content: "",
-          category: "hr",
-          effective_date: "",
-          version: "1.0"
-        });
-        setSelectedPolicy(null);
-        fetchPolicies();
-        alert('Policy updated successfully!');
-      } else {
-        const error = await response.json();
-        alert(`Error updating policy: ${error.detail}`);
-      }
-    } catch (error) {
-      console.error('Error updating policy:', error);
-      alert('Failed to update policy');
-    }
-  };
-
-  const handleDeletePolicy = async (policyId) => {
-    if (window.confirm('Are you sure you want to delete this policy?')) {
-      try {
-        const response = await fetch(`${backendUrl}/api/policies/${policyId}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          fetchPolicies();
-          alert('Policy deleted successfully!');
-        } else {
-          alert('Failed to delete policy');
-        }
-      } catch (error) {
-        console.error('Error deleting policy:', error);
-        alert('Failed to delete policy');
-      }
-    }
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
     const date = new Date(dateString);
@@ -189,18 +106,6 @@ const Policies = () => {
       ...prev,
       [section]: !prev[section]
     }));
-  };
-
-  const startEdit = (policy) => {
-    setSelectedPolicy(policy);
-    setPolicyForm({
-      title: policy.title,
-      content: policy.content,
-      category: policy.category,
-      effective_date: policy.effective_date ? new Date(policy.effective_date).toISOString().split('T')[0] : "",
-      version: policy.version
-    });
-    setShowEditDialog(true);
   };
 
   const viewPolicy = (policy) => {
