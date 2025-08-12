@@ -316,8 +316,8 @@ const MeetingRooms = () => {
               variant="outline"
               onClick={() => {
                 setSearchTerm("");
-                setSelectedLocation("");
-                setSelectedFloor("");
+                setSelectedLocation("all");
+                setSelectedFloor("all");
                 setStatusFilter("all");
               }}
             >
