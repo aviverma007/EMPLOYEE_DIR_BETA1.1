@@ -260,31 +260,54 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
-                  {/* New Joinees Dynamic Display */}
+                  {/* New Joinees Vertical Scrolling Display */}
                   {employees.length > 0 ? (
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="text-center bg-blue-50 rounded-lg p-4 w-full">
-                        <div className="transition-all duration-500">
-                          <h3 className="font-semibold text-blue-900 text-lg mb-1">
-                            {employees[currentJoineeIndex]?.name}
-                          </h3>
-                          <p className="text-blue-700 text-sm mb-1">
-                            ID: {employees[currentJoineeIndex]?.id} | {employees[currentJoineeIndex]?.department}
-                          </p>
-                          <p className="text-blue-600 text-xs">
-                            Joined: {formatDate(employees[currentJoineeIndex]?.dateOfJoining)}
-                          </p>
-                        </div>
-                        <div className="flex justify-center mt-2 space-x-1">
-                          {employees.map((_, idx) => (
-                            <div
-                              key={idx}
-                              className={`w-1.5 h-1.5 rounded-full transition-all ${
-                                idx === currentJoineeIndex ? 'bg-blue-600' : 'bg-blue-300'
-                              }`}
-                            />
+                    <div className="flex-1 flex flex-col">
+                      <div className="overflow-hidden h-32">
+                        <div 
+                          className="transition-transform duration-700 ease-in-out"
+                          style={{ 
+                            transform: `translateY(-${currentJoineeIndex * 32}px)` 
+                          }}
+                        >
+                          {employees.concat(employees).map((employee, idx) => (
+                            <div 
+                              key={`${employee.id}-${idx}`}
+                              className="h-8 flex items-center justify-between bg-blue-50 rounded mb-1 px-2 py-1"
+                            >
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between">
+                                  <span className="font-medium text-blue-900 text-xs truncate">
+                                    {employee.name}
+                                  </span>
+                                  <span className="text-blue-600 text-xs ml-2">
+                                    {employee.id}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between mt-0.5">
+                                  <span className="text-blue-700 text-xs truncate">
+                                    {employee.department}
+                                  </span>
+                                  <span className="text-blue-500 text-xs ml-2">
+                                    {formatDate(employee.dateOfJoining)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
                           ))}
                         </div>
+                      </div>
+                      
+                      {/* Progress indicator for vertical scroll */}
+                      <div className="flex justify-center mt-2 space-x-1">
+                        {Array.from({ length: Math.max(1, Math.ceil((employees.length - 2) / 1)) }).map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`w-1.5 h-1.5 rounded-full transition-all ${
+                              idx === Math.floor(currentJoineeIndex / 1) ? 'bg-blue-600' : 'bg-blue-300'
+                            }`}
+                          />
+                        ))}
                       </div>
                     </div>
                   ) : (
