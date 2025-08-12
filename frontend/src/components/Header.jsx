@@ -48,17 +48,17 @@ const Header = () => {
         <div className="flex justify-between items-center">
           {/* Left side - Logo and Company Name */}
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <img 
                 src="https://customer-assets.emergentagent.com/job_site-modifier-3/artifacts/j921etso_2%5B2%5D.png"
                 alt="SmartWorld Logo"
-                className="h-12 w-12 object-contain rounded-lg"
+                className="h-16 w-16 object-contain rounded-lg"
               />
               <div>
-                <h1 className="text-xl font-bold text-blue-900">
+                <h1 className="text-2xl font-bold text-blue-900">
                   SMARTWORLD DEVELOPERS Pvt. Ltd.
                 </h1>
-                <p className="text-sm text-blue-600">
+                <p className="text-base text-blue-600">
                   Employee Management System
                 </p>
               </div>
