@@ -11,20 +11,17 @@ import {
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import LoginForm from "./components/LoginForm";
 import EmployeeDirectory from "./components/EmployeeDirectory";
-import HierarchyBuilder from "./components/HierarchyBuilder";
-import HierarchyViewer from "./components/HierarchyViewer";
 import Header from "./components/Header";
 import { Toaster } from "./components/ui/sonner";
 import { ChevronDown } from "lucide-react";
 import { Button } from "./components/ui/button";
 
-// Import new components
+// Import components
 import Home from "./components/Home";
-import Work from "./components/Work";
-import Knowledge from "./components/Knowledge";
+import Policies from "./components/Policies";
+import Workflows from "./components/Workflows";
+import ComingSoon from "./components/ComingSoon";
 import Help from "./components/Help";
-import PO from "./components/PO";
-import PS from "./components/PS";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
@@ -46,12 +43,12 @@ const AppContent = () => {
           <Route path="/" element={
             <div className="w-full">
               <Header />
-              <div className="container mx-auto px-4 py-8 max-w-7xl">
+              <div className="container mx-auto px-4 py-6 max-w-7xl">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-5 max-w-4xl mx-auto mb-8 h-12 bg-white shadow-sm border border-blue-200">
+                  <TabsList className="grid w-full grid-cols-7 max-w-5xl mx-auto mb-6 h-12 bg-white shadow-sm border border-blue-200 rounded-lg">
                     <TabsTrigger 
                       value="home" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
                     >
                       Home
                     </TabsTrigger>
@@ -83,43 +80,37 @@ const AppContent = () => {
                           >
                             Employee Directory
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              setActiveTab("directory");
-                              setActiveDirectorySection("po");
-                            }}
-                            className="cursor-pointer"
-                          >
-                            PO
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              setActiveTab("directory");
-                              setActiveDirectorySection("ps");
-                            }}
-                            className="cursor-pointer"
-                          >
-                            PS
-                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
                     
                     <TabsTrigger 
-                      value="work" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
+                      value="policies" 
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
                     >
-                      Work
+                      Policies
                     </TabsTrigger>
                     <TabsTrigger 
-                      value="knowledge" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
+                      value="workflows" 
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
                     >
-                      Knowledge
+                      Workflows
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="coming-soon-1" 
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
+                    >
+                      Coming Soon
+                    </TabsTrigger>
+                    <TabsTrigger 
+                      value="coming-soon-2" 
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
+                    >
+                      Coming Soon
                     </TabsTrigger>
                     <TabsTrigger 
                       value="help" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700"
+                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
                     >
                       Help
                     </TabsTrigger>
@@ -130,24 +121,23 @@ const AppContent = () => {
                   </TabsContent>
                   
                   <TabsContent value="directory" className="mt-6">
-                    {activeDirectorySection === "directory" && (
-                      <div className="space-y-6">
-                        <EmployeeDirectory />
-                        <div className="border-t border-blue-200 pt-6">
-                          <HierarchyBuilder />
-                        </div>
-                      </div>
-                    )}
-                    {activeDirectorySection === "po" && <PO />}
-                    {activeDirectorySection === "ps" && <PS />}
+                    <EmployeeDirectory />
                   </TabsContent>
                   
-                  <TabsContent value="work" className="mt-6">
-                    <Work />
+                  <TabsContent value="policies" className="mt-6">
+                    <Policies />
                   </TabsContent>
                   
-                  <TabsContent value="knowledge" className="mt-6">
-                    <Knowledge />
+                  <TabsContent value="workflows" className="mt-6">
+                    <Workflows />
+                  </TabsContent>
+                  
+                  <TabsContent value="coming-soon-1" className="mt-6">
+                    <ComingSoon title="Feature 1" />
+                  </TabsContent>
+                  
+                  <TabsContent value="coming-soon-2" className="mt-6">
+                    <ComingSoon title="Feature 2" />
                   </TabsContent>
                   
                   <TabsContent value="help" className="mt-6">

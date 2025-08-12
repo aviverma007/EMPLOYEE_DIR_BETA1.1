@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Building2, RefreshCw, LogOut, Shield, User } from "lucide-react";
+import { RefreshCw, LogOut, Shield, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useAuth } from "../context/AuthContext";
@@ -44,38 +44,44 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-lg border-b-2 border-blue-200">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <div className="container mx-auto px-6 py-4 max-w-7xl">
         <div className="flex justify-between items-center">
+          {/* Left side - Logo and Company Name */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-600 rounded-lg">
-                <Building2 className="h-8 w-8 text-white" />
-              </div>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_site-modifier-3/artifacts/j921etso_2%5B2%5D.png"
+                alt="SmartWorld Logo"
+                className="h-12 w-12 object-contain rounded-lg"
+              />
               <div>
-                <h1 className="text-2xl font-bold text-blue-900">
+                <h1 className="text-xl font-bold text-blue-900">
                   SMARTWORLD DEVELOPERS Pvt. Ltd.
                 </h1>
-                <p className="text-sm text-blue-600 mt-1">
+                <p className="text-sm text-blue-600">
                   Employee Management System
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          {/* Right side - Profile, Refresh, Logout */}
+          <div className="flex items-center space-x-3">
             {/* User Info */}
             <div className="flex items-center space-x-3">
               <div className="text-right">
                 <p className="text-sm font-medium text-blue-900">{user?.name}</p>
-                <p className="text-xs text-blue-600">ID: {user?.employeeId}</p>
+                <div className="flex items-center justify-end space-x-2">
+                  <p className="text-xs text-blue-600">ID: {user?.employeeId}</p>
+                  <Badge 
+                    variant={isAdmin() ? "default" : "secondary"} 
+                    className={`text-xs ${isAdmin() ? "bg-blue-600" : "bg-blue-100 text-blue-700"}`}
+                  >
+                    {isAdmin() ? <Shield className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
+                    {isAdmin() ? "Admin" : "Employee"}
+                  </Badge>
+                </div>
               </div>
-              <Badge 
-                variant={isAdmin() ? "default" : "secondary"} 
-                className={isAdmin() ? "bg-blue-600" : "bg-blue-100 text-blue-700"}
-              >
-                {isAdmin() ? <Shield className="h-3 w-3 mr-1" /> : <User className="h-3 w-3 mr-1" />}
-                {isAdmin() ? "Administrator" : "Employee"}
-              </Badge>
             </div>
 
             {/* Action Buttons */}
@@ -84,18 +90,19 @@ const Header = () => {
                 <Button 
                   onClick={handleRefresh}
                   disabled={isRefreshing}
+                  size="sm"
                   variant="outline"
-                  className="flex items-center space-x-2 hover:bg-blue-50 border-blue-200"
+                  className="flex items-center space-x-1 hover:bg-blue-50 border-blue-200"
                 >
                   <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  <span>{isRefreshing ? 'Refreshing...' : 'Sync Excel'}</span>
                 </Button>
               )}
               
               <Button 
                 onClick={handleLogout}
+                size="sm"
                 variant="outline"
-                className="flex items-center space-x-2 hover:bg-red-50 border-red-200 text-red-600"
+                className="flex items-center space-x-1 hover:bg-red-50 border-red-200 text-red-600"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Logout</span>
