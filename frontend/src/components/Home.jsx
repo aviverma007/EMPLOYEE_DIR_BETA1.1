@@ -44,24 +44,19 @@ const Home = () => {
         const response = await fetch(`${backendUrl}/api/employees`);
         if (response.ok) {
           const data = await response.json();
-          // Filter employees who joined in July 2024 or later
+          // Filter employees who joined in July 2025 or later
           const recentJoinees = data.filter(emp => {
-            const joinDate = new Date(emp.date_of_joining);
-            const july2024 = new Date('2024-07-01');
-            return joinDate >= july2024;
-          }).sort((a, b) => new Date(b.date_of_joining) - new Date(a.date_of_joining));
+            const joinDate = new Date(emp.dateOfJoining);
+            const july2025 = new Date('2025-07-01');
+            return joinDate >= july2025;
+          }).sort((a, b) => new Date(b.dateOfJoining) - new Date(a.dateOfJoining));
           
-          setEmployees(recentJoinees.slice(0, 10)); // Show only latest 10
+          setEmployees(recentJoinees.slice(0, 15)); // Show latest 15 employees
         }
       } catch (error) {
         console.error('Error fetching employees:', error);
-        // Fallback data for demonstration
-        setEmployees([
-          { id: 'EMP001', name: 'Rajesh Kumar', date_of_joining: '2024-07-15' },
-          { id: 'EMP002', name: 'Priya Sharma', date_of_joining: '2024-07-22' },
-          { id: 'EMP003', name: 'Amit Singh', date_of_joining: '2024-08-05' },
-          { id: 'EMP004', name: 'Sunita Gupta', date_of_joining: '2024-08-12' }
-        ]);
+        // Fallback data for demonstration - none as we want real data from July 2025
+        setEmployees([]);
       }
     };
     
