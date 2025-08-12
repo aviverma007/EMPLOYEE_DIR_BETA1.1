@@ -71,7 +71,7 @@ const Help = () => {
         const savedRequest = await response.json();
         
         // Verify the request was saved by fetching it back
-        const verifyResponse = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`);
+        const verifyResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help`);
         const allRequests = await verifyResponse.json();
         const wasSaved = allRequests.find(req => req.id === savedRequest.id);
         
