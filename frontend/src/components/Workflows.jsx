@@ -77,11 +77,11 @@ const Workflows = () => {
       );
     }
 
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(workflow => workflow.category === selectedCategory);
     }
 
-    if (selectedStatus) {
+    if (selectedStatus && selectedStatus !== "all") {
       filtered = filtered.filter(workflow => workflow.status === selectedStatus);
     }
 
