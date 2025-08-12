@@ -236,7 +236,7 @@ const MeetingRooms = () => {
                 <SelectValue placeholder="Select Location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
                 {Object.keys(locationConfig).map((location) => (
                   <SelectItem key={location} value={location}>
                     {location}
