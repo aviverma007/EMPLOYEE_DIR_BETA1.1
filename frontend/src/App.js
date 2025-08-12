@@ -136,8 +136,8 @@ const AppContent = () => {
                     <Workflows />
                   </TabsContent>
                   
-                  <TabsContent value="coming-soon-1" className="mt-2">
-                    <ComingSoon title="Feature 1" />
+                  <TabsContent value="meeting-rooms" className="mt-2">
+                    <MeetingRooms />
                   </TabsContent>
                   
                   <TabsContent value="coming-soon-2" className="mt-2">
