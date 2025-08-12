@@ -20,7 +20,10 @@ from models import (
     Task, TaskCreate, TaskUpdate,
     Knowledge, KnowledgeCreate, KnowledgeUpdate,
     Help, HelpCreate, HelpUpdate, HelpReply, HelpReplyCreate,
-    MeetingRoom, MeetingRoomCreate, MeetingRoomUpdate, MeetingRoomBooking, MeetingRoomBookingCreate
+    MeetingRoom, MeetingRoomCreate, MeetingRoomUpdate, MeetingRoomBooking, MeetingRoomBookingCreate,
+    Policy, PolicyCreate, PolicyUpdate,
+    Workflow, WorkflowCreate, WorkflowUpdate, WorkflowStep,
+    AttendanceRecord, AttendanceCreate, AttendanceUpdate
 )
 from excel_parser import ExcelParser
 
