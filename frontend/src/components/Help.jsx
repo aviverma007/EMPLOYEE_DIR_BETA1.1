@@ -127,7 +127,7 @@ const Help = () => {
 
   const handleStatusUpdate = async (messageId, newStatus) => {
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help/${messageId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help/${messageId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
