@@ -263,7 +263,7 @@ const Home = () => {
                   {/* New Joinees Vertical Scrolling Display - 3 at a time */}
                   {employees.length > 0 ? (
                     <div className="flex-1 flex flex-col">
-                      <div className="space-y-1 h-20 overflow-hidden relative">
+                      <div className="space-y-1 h-32 overflow-hidden relative">
                         <div 
                           className="transition-transform duration-1000 ease-in-out"
                           style={{ 
