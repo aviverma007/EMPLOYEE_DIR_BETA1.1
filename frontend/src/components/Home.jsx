@@ -286,7 +286,7 @@ const Home = () => {
                     </div>
                   ) : (
                     <div className="flex-1 flex items-center justify-center text-blue-700">
-                      <p className="text-sm">Loading new joinees...</p>
+                      <p className="text-sm">Loading joinees from July 2025...</p>
                     </div>
                   )}
                 </div>
