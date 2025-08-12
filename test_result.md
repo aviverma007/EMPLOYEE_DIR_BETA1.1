@@ -389,16 +389,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "News Management API"
-    - "Task Management API" 
-    - "Knowledge Management API"
-    - "Help/Support Management API"
-    - "Home Component - News Feed"
-    - "Work Component - Task Management"
-    - "Knowledge Component - Company Info"
-    - "Help Component - Support System"
-    - "Updated App Structure - 5 Tab Navigation"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
