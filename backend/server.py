@@ -19,7 +19,8 @@ from models import (
     News, NewsCreate, NewsUpdate,
     Task, TaskCreate, TaskUpdate,
     Knowledge, KnowledgeCreate, KnowledgeUpdate,
-    Help, HelpCreate, HelpUpdate, HelpReply, HelpReplyCreate
+    Help, HelpCreate, HelpUpdate, HelpReply, HelpReplyCreate,
+    MeetingRoom, MeetingRoomCreate, MeetingRoomUpdate
 )
 from excel_parser import ExcelParser
 
