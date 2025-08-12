@@ -80,12 +80,12 @@ const MeetingRooms = () => {
     }
 
     // Location filter
-    if (selectedLocation) {
+    if (selectedLocation && selectedLocation !== "all") {
       filtered = filtered.filter(room => room.location === selectedLocation);
     }
 
     // Floor filter
-    if (selectedFloor) {
+    if (selectedFloor && selectedFloor !== "all") {
       filtered = filtered.filter(room => room.floor === selectedFloor);
     }
 
