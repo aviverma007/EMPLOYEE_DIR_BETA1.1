@@ -151,7 +151,7 @@ const Help = () => {
     if (!confirm('Are you sure you want to delete this help request?')) return;
     
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help/${messageId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help/${messageId}`, {
         method: 'DELETE',
       });
 
