@@ -278,19 +278,23 @@ const Home = () => {
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between text-xs">
-                                  <span className="font-semibold text-blue-900 truncate mr-2">
-                                    {employee.name}
-                                  </span>
-                                  <div className="flex items-center space-x-2 flex-shrink-0">
-                                    <span className="text-blue-600">
-                                      {employee.id}
-                                    </span>
-                                    <span className="text-blue-500">
-                                      {employee.department.length > 8 ? employee.department.substring(0, 8) + '..' : employee.department}
-                                    </span>
-                                    <span className="text-blue-400">
-                                      {formatDate(employee.dateOfJoining).split(',')[0]}
-                                    </span>
+                                  <div className="flex flex-col flex-1 min-w-0">
+                                    <div className="flex items-center justify-between">
+                                      <span className="font-semibold text-blue-900 truncate mr-2">
+                                        {employee.id} - {employee.name}
+                                      </span>
+                                      <span className="text-blue-400 flex-shrink-0 text-[10px]">
+                                        {formatDate(employee.dateOfJoining).split(',')[0]}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-[10px] mt-0.5">
+                                      <span className="text-blue-600 truncate">
+                                        {employee.grade || 'N/A'}
+                                      </span>
+                                      <span className="text-blue-500 truncate">
+                                        {employee.department.length > 12 ? employee.department.substring(0, 12) + '..' : employee.department}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
