@@ -147,7 +147,7 @@ const Home = () => {
     {
       title: "NEW JOINEES",
       icon: <Users className="h-6 w-6" />,
-      description: "Welcome our new team members",
+      description: "New team members since July 2025",
       color: "bg-white border-2 border-blue-200",
       textColor: "text-blue-900",
       interactive: true
