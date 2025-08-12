@@ -751,6 +751,221 @@ async def delete_help_request(help_id: str):
         logging.error(f"Error deleting help request: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to delete help request")
 
+# Meeting Room Management Endpoints
+
+@api_router.get("/meeting-rooms", response_model=List[MeetingRoom])
+async def get_meeting_rooms():
+    """Get all meeting rooms"""
+    try:
+        # Check if rooms exist in database, if not initialize with default rooms
+        room_count = await db.meeting_rooms.count_documents({})
+        
+        if room_count == 0:
+            # Initialize with default rooms
+            default_rooms = [
+                {
+                    'id': 'oval-14',
+                    'name': 'OVAL MEETING ROOM',
+                    'capacity': 10,
+                    'location': 'Floor 14',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'petronas',
+                    'name': 'Petronas Meeting Room',
+                    'capacity': 5,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'global-center',
+                    'name': 'Global Center Meeting Room',
+                    'capacity': 5,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'louvre',
+                    'name': 'Louvre Meeting Room',
+                    'capacity': 5,
+                    'location': 'Main Building',
+                    'status': 'occupied',
+                    'occupied_by': 'Team Planning Session',
+                    'occupied_until': '15:30',
+                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'golden-gate',
+                    'name': 'Golden Gate Meeting Room',
+                    'capacity': 10,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'empire-state',
+                    'name': 'Empire State Meeting Room',
+                    'capacity': 5,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'marina-bay',
+                    'name': 'Marina Bay Meeting Room',
+                    'capacity': 4,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'burj',
+                    'name': 'Burj Meeting Room',
+                    'capacity': 5,
+                    'location': 'Main Building',
+                    'status': 'vacant',
+                    'occupied_by': '',
+                    'occupied_until': '',
+                    'equipment': ['Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'board-room',
+                    'name': 'Board Room',
+                    'capacity': 25,
+                    'location': 'Executive Floor',
+                    'status': 'occupied',
+                    'occupied_by': 'Board Meeting - Q3 Review',
+                    'occupied_until': '17:00',
+                    'equipment': ['Screen', 'Marker', 'Glass Board'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                }
+            ]
+            
+            await db.meeting_rooms.insert_many(default_rooms)
+            logging.info(f"Initialized {len(default_rooms)} meeting rooms")
+        
+        # Get all rooms from database
+        rooms_cursor = db.meeting_rooms.find()
+        rooms_docs = await rooms_cursor.to_list(50)
+        
+        result = []
+        for doc in rooms_docs:
+            doc.pop('_id', None)
+            result.append(MeetingRoom(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching meeting rooms: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch meeting rooms")
+
+@api_router.post("/meeting-rooms", response_model=MeetingRoom)
+async def create_meeting_room(room: MeetingRoomCreate):
+    """Create new meeting room"""
+    try:
+        # Check if room with same ID already exists
+        existing_room = await db.meeting_rooms.find_one({"id": room.id})
+        if existing_room:
+            raise HTTPException(status_code=400, detail="Meeting room with this ID already exists")
+        
+        new_room = MeetingRoom(
+            id=room.id,
+            name=room.name,
+            capacity=room.capacity,
+            location=room.location,
+            equipment=room.equipment
+        )
+        
+        room_dict = new_room.dict()
+        await db.meeting_rooms.insert_one(room_dict)
+        
+        return new_room
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating meeting room: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create meeting room")
+
+@api_router.put("/meeting-rooms/{room_id}", response_model=MeetingRoom)
+async def update_meeting_room(room_id: str, room: MeetingRoomUpdate):
+    """Update meeting room status"""
+    try:
+        update_data = {k: v for k, v in room.dict().items() if v is not None}
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.meeting_rooms.update_one(
+                {"id": room_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Get updated room
+        room_doc = await db.meeting_rooms.find_one({"id": room_id})
+        if not room_doc:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        room_doc.pop('_id', None)
+        return MeetingRoom(**room_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating meeting room: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update meeting room")
+
+@api_router.delete("/meeting-rooms/{room_id}")
+async def delete_meeting_room(room_id: str):
+    """Delete meeting room"""
+    try:
+        result = await db.meeting_rooms.delete_one({"id": room_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        return {"message": "Meeting room deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting meeting room: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete meeting room")
+
 # Utility Endpoints
 
 @api_router.get("/departments")
