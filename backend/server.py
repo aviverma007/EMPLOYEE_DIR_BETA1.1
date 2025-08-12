@@ -1355,6 +1355,11 @@ async def create_attendance(attendance: AttendanceCreate):
         # Calculate total hours
         total_hours = None
         if punch_in and punch_out:
+            # Ensure both datetimes have the same timezone info for calculation
+            if punch_in.tzinfo and not punch_out.tzinfo:
+                punch_out = punch_out.replace(tzinfo=punch_in.tzinfo)
+            elif punch_out.tzinfo and not punch_in.tzinfo:
+                punch_in = punch_in.replace(tzinfo=punch_out.tzinfo)
             total_hours = (punch_out - punch_in).total_seconds() / 3600
         
         new_attendance = AttendanceRecord(
