@@ -195,7 +195,7 @@ const MeetingRooms = () => {
   });
 
   const getAvailableFloors = () => {
-    if (!selectedLocation || !locationConfig[selectedLocation]) return [];
+    if (!selectedLocation || selectedLocation === "all" || !locationConfig[selectedLocation]) return [];
     return locationConfig[selectedLocation].floors;
   };
 
