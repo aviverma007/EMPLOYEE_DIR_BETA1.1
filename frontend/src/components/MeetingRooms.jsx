@@ -515,7 +515,8 @@ const MeetingRooms = () => {
                           {/* Business Hours Notice */}
                           <div className="bg-blue-50 p-3 rounded-md">
                             <div className="text-sm text-blue-800">
-                              <strong>Business Hours:</strong> 9:00 AM - 8:00 PM
+                              <strong>Business Hours:</strong> 9:00 AM - 8:00 PM<br/>
+                              <strong>Booking Period:</strong> Up to 30 days in advance
                             </div>
                           </div>
 
