@@ -88,7 +88,7 @@ const EmployeeDirectory = () => {
         employee.id.toLowerCase().includes(debouncedSearchTerms.employeeId.toLowerCase());
       
       const deptMatch = !debouncedSearchTerms.department || 
-        employee.department.toLowerCase().includes(debouncedSearchTerms.department.toLowerCase());
+        employee.department === debouncedSearchTerms.department;
       
       const locationMatch = !debouncedSearchTerms.location || 
         employee.location.toLowerCase().includes(debouncedSearchTerms.location.toLowerCase());
