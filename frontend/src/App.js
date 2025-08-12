@@ -20,7 +20,7 @@ import { Button } from "./components/ui/button";
 import Home from "./components/Home";
 import Policies from "./components/Policies";
 import Workflows from "./components/Workflows";
-import ComingSoon from "./components/ComingSoon";
+import Attendance from "./components/Attendance";
 import Help from "./components/Help";
 import MeetingRooms from "./components/MeetingRooms";
 
