@@ -70,14 +70,14 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [nameSearch, employeeIdSearch, departmentSearch, locationSearch]);
 
-  // Client-side filtering - show results based on individual search fields
+  // Client-side filtering - only show results after search is made
   const filteredEmployees = useMemo(() => {
     const hasAnySearch = debouncedSearchTerms.name || debouncedSearchTerms.employeeId || 
                         debouncedSearchTerms.department || debouncedSearchTerms.location;
     
-    // Show all employees if no search terms, or filter based on search terms
+    // Return empty array if no search terms (hide employees until search is made)
     if (!hasAnySearch) {
-      return employees;
+      return [];
     }
 
     return employees.filter(employee => {
