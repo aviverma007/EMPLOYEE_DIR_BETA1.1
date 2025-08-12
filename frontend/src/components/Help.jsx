@@ -181,7 +181,7 @@ const Help = () => {
     try {
       setLoading(true);
       const deletePromises = resolvedMessages.map(msg => 
-        fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help/${msg.id}`, {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help/${msg.id}`, {
           method: 'DELETE',
         })
       );
