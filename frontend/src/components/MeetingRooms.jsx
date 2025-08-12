@@ -25,8 +25,8 @@ const MeetingRooms = () => {
   const [loading, setLoading] = useState(true);
   
   // Filters
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedFloor, setSelectedFloor] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedFloor, setSelectedFloor] = useState("all");
   
   // Form state
   const [bookingForm, setBookingForm] = useState({
