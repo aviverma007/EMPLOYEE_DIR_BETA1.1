@@ -266,8 +266,8 @@ const MeetingRooms = () => {
             <Button
               variant="outline"
               onClick={() => {
-                setSelectedLocation("");
-                setSelectedFloor("");
+                setSelectedLocation("all");
+                setSelectedFloor("all");
               }}
             >
               Clear Filters
