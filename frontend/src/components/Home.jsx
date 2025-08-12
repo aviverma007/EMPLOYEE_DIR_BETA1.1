@@ -25,6 +25,8 @@ const Home = () => {
   ]);
   const [newTodoText, setNewTodoText] = useState("");
   const [showAddTodo, setShowAddTodo] = useState(false);
+  const [currentJoineeIndex, setCurrentJoineeIndex] = useState(0);
+  const [employees, setEmployees] = useState([]);
 
   // Sample banner images (you can replace with actual company images)
   const bannerImages = [
@@ -34,6 +36,38 @@ const Home = () => {
     "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&h=300&fit=crop&crop=center"
   ];
 
+  // Fetch employees data for new joinees
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+        const response = await fetch(`${backendUrl}/api/employees`);
+        if (response.ok) {
+          const data = await response.json();
+          // Filter employees who joined in July 2024 or later
+          const recentJoinees = data.filter(emp => {
+            const joinDate = new Date(emp.date_of_joining);
+            const july2024 = new Date('2024-07-01');
+            return joinDate >= july2024;
+          }).sort((a, b) => new Date(b.date_of_joining) - new Date(a.date_of_joining));
+          
+          setEmployees(recentJoinees.slice(0, 10)); // Show only latest 10
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+        // Fallback data for demonstration
+        setEmployees([
+          { id: 'EMP001', name: 'Rajesh Kumar', date_of_joining: '2024-07-15' },
+          { id: 'EMP002', name: 'Priya Sharma', date_of_joining: '2024-07-22' },
+          { id: 'EMP003', name: 'Amit Singh', date_of_joining: '2024-08-05' },
+          { id: 'EMP004', name: 'Sunita Gupta', date_of_joining: '2024-08-12' }
+        ]);
+      }
+    };
+    
+    fetchEmployees();
+  }, []);
+
   // Auto-scroll banner every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,6 +75,16 @@ const Home = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, [bannerImages.length]);
+
+  // Auto-scroll new joinees every 2 seconds
+  useEffect(() => {
+    if (employees.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentJoineeIndex(prev => (prev + 1) % employees.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [employees.length]);
 
   // Navigate banner manually
   const navigateBanner = (direction) => {
@@ -62,7 +106,6 @@ const Home = () => {
       setTodoItems([...todoItems, newItem]);
       setNewTodoText("");
       setShowAddTodo(false);
-      // Save to localStorage (profile storage)
       localStorage.setItem('userTodos', JSON.stringify([...todoItems, newItem]));
     }
   };
@@ -89,55 +132,65 @@ const Home = () => {
     }
   }, []);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
   const tiles = [
     {
       title: "PICTURES",
       icon: <Image className="h-6 w-6" />,
       description: "Company gallery and events",
-      color: "bg-gradient-to-br from-purple-500 to-pink-500",
+      color: "bg-blue-600",
       textColor: "text-white"
     },
     {
       title: "NEW JOINEES",
       icon: <Users className="h-6 w-6" />,
       description: "Welcome our new team members",
-      color: "bg-gradient-to-br from-green-500 to-teal-500",
-      textColor: "text-white"
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900",
+      interactive: true
     },
     {
       title: "CELEBRATIONS",
       icon: <PartyPopper className="h-6 w-6" />,
       description: "Birthdays, anniversaries & achievements",
-      color: "bg-gradient-to-br from-orange-500 to-red-500",
+      color: "bg-blue-600",
       textColor: "text-white"
     },
     {
       title: "TO DO LIST",
       icon: <CheckSquare className="h-6 w-6" />,
       description: "Your personal task manager",
-      color: "bg-gradient-to-br from-blue-500 to-cyan-500",
-      textColor: "text-white",
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900",
       interactive: true
     },
     {
       title: "WORKFLOW",
       icon: <Workflow className="h-6 w-6" />,
       description: "Process management & tracking",
-      color: "bg-gradient-to-br from-indigo-500 to-purple-500",
+      color: "bg-blue-600",
       textColor: "text-white"
     },
     {
       title: "DAILY COMPANY NEWS",
       icon: <Newspaper className="h-6 w-6" />,
       description: "Latest updates and announcements",
-      color: "bg-gradient-to-br from-yellow-500 to-orange-500",
-      textColor: "text-white"
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900"
     }
   ];
 
   return (
-    <div className="space-y-4">
-      {/* Compact Banner Section - Reduced height */}
+    <div className="h-full flex flex-col space-y-4">
+      {/* Compact Banner Section */}
       <div className="relative w-full h-48 rounded-lg shadow-md overflow-hidden">
         <div 
           className="flex transition-transform duration-500 ease-in-out h-full"
@@ -191,39 +244,76 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Compact Tiles Section - Optimized for single screen view */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Tiles Section - Equal Height Grid */}
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-auto`}
+            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
           >
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 flex-shrink-0">
               <div className="flex items-center space-x-2">
                 {tile.icon}
                 <CardTitle className="text-base font-bold">{tile.title}</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
-              {tile.interactive && tile.title === "TO DO LIST" ? (
-                <div className="space-y-2">
+            <CardContent className="pt-0 flex-1 flex flex-col">
+              {tile.interactive && tile.title === "NEW JOINEES" ? (
+                <div className="flex-1 flex flex-col">
+                  <p className="text-xs opacity-90 mb-3">{tile.description}</p>
+                  
+                  {/* New Joinees Dynamic Display */}
+                  {employees.length > 0 ? (
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="text-center bg-blue-50 rounded-lg p-4 w-full">
+                        <div className="transition-all duration-500">
+                          <h3 className="font-semibold text-blue-900 text-lg mb-1">
+                            {employees[currentJoineeIndex]?.name}
+                          </h3>
+                          <p className="text-blue-700 text-sm mb-1">
+                            ID: {employees[currentJoineeIndex]?.id}
+                          </p>
+                          <p className="text-blue-600 text-xs">
+                            Joined: {formatDate(employees[currentJoineeIndex]?.date_of_joining)}
+                          </p>
+                        </div>
+                        <div className="flex justify-center mt-2 space-x-1">
+                          {employees.map((_, idx) => (
+                            <div
+                              key={idx}
+                              className={`w-1.5 h-1.5 rounded-full transition-all ${
+                                idx === currentJoineeIndex ? 'bg-blue-600' : 'bg-blue-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center text-blue-700">
+                      <p className="text-sm">Loading new joinees...</p>
+                    </div>
+                  )}
+                </div>
+              ) : tile.interactive && tile.title === "TO DO LIST" ? (
+                <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-2">{tile.description}</p>
                   
                   {/* Todo Items - Compact version */}
-                  <div className="space-y-1.5 max-h-24 overflow-y-auto">
+                  <div className="flex-1 space-y-1.5 max-h-24 overflow-y-auto">
                     {todoItems.slice(0, 3).map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2 bg-white bg-opacity-20 rounded p-1.5">
+                      <div key={item.id} className="flex items-center space-x-2 bg-blue-50 rounded p-1.5">
                         <Checkbox
                           checked={item.completed}
                           onCheckedChange={() => toggleTodoItem(item.id)}
-                          className="border-white h-3 w-3"
+                          className="border-blue-400 h-3 w-3"
                         />
-                        <span className={`flex-1 text-xs ${item.completed ? 'line-through opacity-70' : ''}`}>
+                        <span className={`flex-1 text-xs text-blue-900 ${item.completed ? 'line-through opacity-70' : ''}`}>
                           {item.text}
                         </span>
                         <button
                           onClick={() => removeTodoItem(item.id)}
-                          className="text-white hover:text-red-200 transition-colors"
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -233,19 +323,19 @@ const Home = () => {
 
                   {/* Add Todo - Compact */}
                   {showAddTodo ? (
-                    <div className="space-y-1.5">
+                    <div className="mt-auto space-y-1.5">
                       <Input
                         value={newTodoText}
                         onChange={(e) => setNewTodoText(e.target.value)}
                         placeholder="Enter new task..."
-                        className="bg-white text-gray-800 placeholder-gray-500 h-8 text-xs"
+                        className="bg-blue-50 text-blue-900 placeholder-blue-500 border-blue-200 h-8 text-xs"
                         onKeyPress={(e) => e.key === 'Enter' && addTodoItem()}
                       />
                       <div className="flex space-x-1">
                         <Button 
                           size="sm" 
                           onClick={addTodoItem}
-                          className="bg-white text-blue-600 hover:bg-gray-100 h-7 px-2 text-xs"
+                          className="bg-blue-600 text-white hover:bg-blue-700 h-7 px-2 text-xs"
                         >
                           Add
                         </Button>
@@ -256,7 +346,7 @@ const Home = () => {
                             setShowAddTodo(false);
                             setNewTodoText("");
                           }}
-                          className="border-white text-white hover:bg-white hover:text-blue-600 h-7 px-2 text-xs"
+                          className="border-blue-400 text-blue-600 hover:bg-blue-50 h-7 px-2 text-xs"
                         >
                           Cancel
                         </Button>
@@ -266,7 +356,7 @@ const Home = () => {
                     <Button
                       size="sm"
                       onClick={() => setShowAddTodo(true)}
-                      className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white border-white border h-7 text-xs"
+                      className="mt-auto bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-200 border h-7 text-xs"
                     >
                       <Plus className="h-3 w-3 mr-1" />
                       Add Task
@@ -274,7 +364,9 @@ const Home = () => {
                   )}
                 </div>
               ) : (
-                <p className="text-xs opacity-90">{tile.description}</p>
+                <div className="flex-1 flex items-start">
+                  <p className="text-xs opacity-90">{tile.description}</p>
+                </div>
               )}
             </CardContent>
           </Card>
