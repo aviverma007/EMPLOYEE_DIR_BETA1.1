@@ -754,120 +754,110 @@ async def delete_help_request(help_id: str):
 # Meeting Room Management Endpoints
 
 @api_router.get("/meeting-rooms", response_model=List[MeetingRoom])
-async def get_meeting_rooms():
-    """Get all meeting rooms"""
+async def get_meeting_rooms(
+    location: Optional[str] = Query(None, description="Filter by location"),
+    floor: Optional[str] = Query(None, description="Filter by floor"),
+    status: Optional[str] = Query(None, description="Filter by status: vacant, occupied")
+):
+    """Fetch all meeting rooms with filters"""
     try:
-        # Check if rooms exist in database, if not initialize with default rooms
-        room_count = await db.meeting_rooms.count_documents({})
-        
-        if room_count == 0:
-            # Initialize with default rooms
+        # Check if we need to initialize with default rooms
+        count = await db.meeting_rooms.count_documents({})
+        if count == 0:
+            # Initialize with IFC meeting rooms
             default_rooms = [
+                # IFC - 11th Floor
                 {
-                    'id': 'oval-14',
-                    'name': 'OVAL MEETING ROOM',
+                    'id': 'ifc-11-001',
+                    'name': 'IFC Conference Room 11A',
+                    'capacity': 8,
+                    'location': 'IFC',
+                    'floor': '11th Floor',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-11-002',
+                    'name': 'IFC Meeting Room 11B',
+                    'capacity': 6,
+                    'location': 'IFC',
+                    'floor': '11th Floor',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'equipment': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                # IFC - 12th Floor
+                {
+                    'id': 'ifc-12-001',
+                    'name': 'IFC Conference Room 12A',
                     'capacity': 10,
-                    'location': 'Floor 14',
+                    'location': 'IFC',
+                    'floor': '12th Floor',
                     'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
+                    'current_booking': None,
+                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference', 'Projector'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 },
                 {
-                    'id': 'petronas',
-                    'name': 'Petronas Meeting Room',
-                    'capacity': 5,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'global-center',
-                    'name': 'Global Center Meeting Room',
-                    'capacity': 5,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'louvre',
-                    'name': 'Louvre Meeting Room',
-                    'capacity': 5,
-                    'location': 'Main Building',
-                    'status': 'occupied',
-                    'occupied_by': 'Team Planning Session',
-                    'occupied_until': '15:30',
-                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'golden-gate',
-                    'name': 'Golden Gate Meeting Room',
-                    'capacity': 10,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'empire-state',
-                    'name': 'Empire State Meeting Room',
-                    'capacity': 5,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['TV Screen', 'Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'marina-bay',
-                    'name': 'Marina Bay Meeting Room',
+                    'id': 'ifc-12-002',
+                    'name': 'IFC Meeting Room 12B',
                     'capacity': 4,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'burj',
-                    'name': 'Burj Meeting Room',
-                    'capacity': 5,
-                    'location': 'Main Building',
-                    'status': 'vacant',
-                    'occupied_by': '',
-                    'occupied_until': '',
-                    'equipment': ['Marker', 'Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'board-room',
-                    'name': 'Board Room',
-                    'capacity': 25,
-                    'location': 'Executive Floor',
+                    'location': 'IFC',
+                    'floor': '12th Floor',
                     'status': 'occupied',
-                    'occupied_by': 'Board Meeting - Q3 Review',
-                    'occupied_until': '17:00',
-                    'equipment': ['Screen', 'Marker', 'Glass Board'],
+                    'current_booking': {
+                        'id': str(uuid.uuid4()),
+                        'employee_id': 'EMP001',
+                        'employee_name': 'John Doe',
+                        'start_time': datetime.utcnow().replace(hour=14, minute=0, second=0, microsecond=0),
+                        'end_time': datetime.utcnow().replace(hour=15, minute=30, second=0, microsecond=0),
+                        'remarks': 'Team sync meeting',
+                        'created_at': datetime.utcnow()
+                    },
+                    'equipment': ['TV Screen', 'Whiteboard'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                # IFC - 14th Floor
+                {
+                    'id': 'ifc-14-001',
+                    'name': 'IFC Executive Room 14A',
+                    'capacity': 12,
+                    'location': 'IFC',
+                    'floor': '14th Floor',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'equipment': ['TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-002',
+                    'name': 'IFC Board Room 14B',
+                    'capacity': 16,
+                    'location': 'IFC',
+                    'floor': '14th Floor',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'equipment': ['Large TV Screen', 'Whiteboard', 'Video Conference', 'Projector', 'Audio System'],
+                    'created_at': datetime.utcnow(),
+                    'updated_at': datetime.utcnow()
+                },
+                {
+                    'id': 'ifc-14-003',
+                    'name': 'IFC Meeting Room 14C',
+                    'capacity': 6,
+                    'location': 'IFC',
+                    'floor': '14th Floor',
+                    'status': 'vacant',
+                    'current_booking': None,
+                    'equipment': ['TV Screen', 'Whiteboard'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
                 }
@@ -876,9 +866,18 @@ async def get_meeting_rooms():
             await db.meeting_rooms.insert_many(default_rooms)
             logging.info(f"Initialized {len(default_rooms)} meeting rooms")
         
-        # Get all rooms from database
-        rooms_cursor = db.meeting_rooms.find()
-        rooms_docs = await rooms_cursor.to_list(50)
+        # Build query filters
+        query_filter = {}
+        if location:
+            query_filter['location'] = location
+        if floor:
+            query_filter['floor'] = floor
+        if status:
+            query_filter['status'] = status
+        
+        # Get filtered rooms from database
+        rooms_cursor = db.meeting_rooms.find(query_filter)
+        rooms_docs = await rooms_cursor.to_list(100)
         
         result = []
         for doc in rooms_docs:
