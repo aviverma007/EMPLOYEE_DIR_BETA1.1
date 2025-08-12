@@ -106,10 +106,10 @@ const AppContent = () => {
                         Meeting Rooms
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="coming-soon-2" 
+                        value="attendance" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
-                        Coming Soon
+                        Attendance
                       </TabsTrigger>
                       <TabsTrigger 
                         value="help" 
