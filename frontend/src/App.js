@@ -22,6 +22,7 @@ import Policies from "./components/Policies";
 import Workflows from "./components/Workflows";
 import ComingSoon from "./components/ComingSoon";
 import Help from "./components/Help";
+import MeetingRooms from "./components/MeetingRooms";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
