@@ -17,11 +17,13 @@ import { ChevronDown } from "lucide-react";
 import { Button } from "./components/ui/button";
 import HierarchyBuilder from "./components/HierarchyBuilder";
 
-// Import the 5 main components as per the required structure
+// Import ALL original components - restoring full feature set
 import Home from "./components/Home";
-import Work from "./components/Work";
-import Knowledge from "./components/Knowledge";
+import Policies from "./components/Policies";
+import Workflows from "./components/Workflows";
+import Attendance from "./components/Attendance";
 import Help from "./components/Help";
+import MeetingRooms from "./components/MeetingRooms";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
