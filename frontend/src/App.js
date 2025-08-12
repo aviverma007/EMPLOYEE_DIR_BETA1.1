@@ -141,8 +141,8 @@ const AppContent = () => {
                       <MeetingRooms />
                     </TabsContent>
                     
-                    <TabsContent value="coming-soon-2" className="mt-0 h-full">
-                      <ComingSoon title="Feature 2" />
+                    <TabsContent value="attendance" className="mt-0 h-full">
+                      <Attendance />
                     </TabsContent>
                     
                     <TabsContent value="help" className="mt-0 h-full">
