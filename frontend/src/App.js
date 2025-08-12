@@ -15,14 +15,13 @@ import Header from "./components/Header";
 import { Toaster } from "./components/ui/sonner";
 import { ChevronDown } from "lucide-react";
 import { Button } from "./components/ui/button";
+import HierarchyBuilder from "./components/HierarchyBuilder";
 
-// Import components
+// Import the 5 main components as per the required structure
 import Home from "./components/Home";
-import Policies from "./components/Policies";
-import Workflows from "./components/Workflows";
-import Attendance from "./components/Attendance";
+import Work from "./components/Work";
+import Knowledge from "./components/Knowledge";
 import Help from "./components/Help";
-import MeetingRooms from "./components/MeetingRooms";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
