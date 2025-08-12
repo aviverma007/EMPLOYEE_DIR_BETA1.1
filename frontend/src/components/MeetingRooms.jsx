@@ -189,8 +189,8 @@ const MeetingRooms = () => {
   };
 
   const filteredRooms = rooms.filter(room => {
-    if (selectedLocation && room.location !== selectedLocation) return false;
-    if (selectedFloor && room.floor !== selectedFloor) return false;
+    if (selectedLocation && selectedLocation !== "all" && room.location !== selectedLocation) return false;
+    if (selectedFloor && selectedFloor !== "all" && room.floor !== selectedFloor) return false;
     return true;
   });
 
