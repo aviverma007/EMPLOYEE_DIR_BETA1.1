@@ -10,13 +10,14 @@ import { Textarea } from "./ui/textarea";
 import { 
   FileText,
   Plus,
-  Search,
-  Filter,
   Calendar,
   User,
   Edit,
   Trash2,
-  Eye
+  Eye,
+  ChevronRight,
+  ChevronDown,
+  ExternalLink
 } from "lucide-react";
 
 const Policies = () => {
