@@ -267,7 +267,7 @@ const Home = () => {
                         <div 
                           className="transition-transform duration-1000 ease-in-out"
                           style={{ 
-                            transform: `translateY(-${(currentJoineeIndex) * 21}px)` 
+                            transform: `translateY(-${(currentJoineeIndex) * 33}px)` 
                           }}
                         >
                           {/* Create extended array for seamless scrolling */}
