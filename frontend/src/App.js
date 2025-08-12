@@ -122,23 +122,19 @@ const AppContent = () => {
                     </TabsContent>
                     
                     <TabsContent value="directory" className="mt-0 h-full">
-                      <EmployeeDirectory />
+                      {activeDirectorySection === "directory" ? (
+                        <EmployeeDirectory />
+                      ) : (
+                        <HierarchyBuilder />
+                      )}
                     </TabsContent>
                     
-                    <TabsContent value="policies" className="mt-0 h-full">
-                      <Policies />
+                    <TabsContent value="work" className="mt-0 h-full">
+                      <Work />
                     </TabsContent>
                     
-                    <TabsContent value="workflows" className="mt-0 h-full">
-                      <Workflows />
-                    </TabsContent>
-                    
-                    <TabsContent value="meeting-rooms" className="mt-0 h-full">
-                      <MeetingRooms />
-                    </TabsContent>
-                    
-                    <TabsContent value="attendance" className="mt-0 h-full">
-                      <Attendance />
+                    <TabsContent value="knowledge" className="mt-0 h-full">
+                      <Knowledge />
                     </TabsContent>
                     
                     <TabsContent value="help" className="mt-0 h-full">
