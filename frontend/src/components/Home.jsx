@@ -266,10 +266,10 @@ const Home = () => {
                             {employees[currentJoineeIndex]?.name}
                           </h3>
                           <p className="text-blue-700 text-sm mb-1">
-                            ID: {employees[currentJoineeIndex]?.id}
+                            ID: {employees[currentJoineeIndex]?.id} | {employees[currentJoineeIndex]?.department}
                           </p>
                           <p className="text-blue-600 text-xs">
-                            Joined: {formatDate(employees[currentJoineeIndex]?.date_of_joining)}
+                            Joined: {formatDate(employees[currentJoineeIndex]?.dateOfJoining)}
                           </p>
                         </div>
                         <div className="flex justify-center mt-2 space-x-1">
