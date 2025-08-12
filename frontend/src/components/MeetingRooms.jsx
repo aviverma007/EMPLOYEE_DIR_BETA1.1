@@ -230,7 +230,7 @@ const MeetingRooms = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Select value={selectedLocation} onValueChange={(value) => {
               setSelectedLocation(value);
-              setSelectedFloor(""); // Reset floor when location changes
+              setSelectedFloor("all"); // Reset floor when location changes
             }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Location" />
