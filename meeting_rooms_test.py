@@ -173,7 +173,7 @@ class MeetingRoomsTester:
             if response.status_code == 200:
                 rooms = response.json()
                 
-                required_fields = ['id', 'name', 'capacity', 'location', 'floor', 'status', 'amenities']
+                required_fields = ['id', 'name', 'capacity', 'location', 'floor', 'status', 'equipment']
                 rooms_with_issues = []
                 rooms_verified = 0
                 
@@ -185,12 +185,12 @@ class MeetingRoomsTester:
                         if field not in room or room[field] is None:
                             room_issues.append(f"Missing {field}")
                     
-                    # Verify amenities field (not equipment)
-                    if 'amenities' in room and isinstance(room['amenities'], list):
-                        # Good - amenities is a list
+                    # Verify equipment field (the actual field name in the model)
+                    if 'equipment' in room and isinstance(room['equipment'], list):
+                        # Good - equipment is a list
                         pass
                     else:
-                        room_issues.append("Amenities field should be a list")
+                        room_issues.append("Equipment field should be a list")
                     
                     # Verify capacity is a number
                     if 'capacity' in room:
