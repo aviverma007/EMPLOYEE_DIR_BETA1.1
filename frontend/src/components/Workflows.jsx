@@ -370,7 +370,7 @@ const Workflows = () => {
                               <SelectValue placeholder="Select employee" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="">Unassigned</SelectItem>
+                              <SelectItem value="none">Unassigned</SelectItem>
                               {employees.map((emp) => (
                                 <SelectItem key={emp.id} value={emp.id}>
                                   {emp.name} ({emp.id})
