@@ -41,27 +41,27 @@ const MeetingRooms = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
-  // Define locations with floors and rooms
+  // Define locations with floors and rooms - updated to match backend
   const locationConfig = {
     "IFC": {
       floors: ["11", "12", "14"],
-      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+      rooms: ["Conference Room A", "Meeting Room B", "Executive Room", "Board Room", "Training Room"]
     },
     "Central Office 75": {
       floors: ["1"],
-      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+      rooms: ["Meeting Room"]
     },
     "Office 75": {
       floors: ["1"],
-      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+      rooms: ["Conference Room"]
     },
     "Noida": {
       floors: ["1"],
-      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+      rooms: ["Meeting Room"]
     },
     "Project Office": {
       floors: ["1"],
-      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+      rooms: ["Meeting Room"]
     }
   };
 
