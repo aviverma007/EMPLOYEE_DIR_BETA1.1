@@ -45,7 +45,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Navigation moved to top-left and made more compact */}
+                  {/* Navigation - 5 Tab Structure as per requirements */}
                   <div className="flex justify-start mb-4">
                     <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
                       <TabsTrigger 
@@ -55,7 +55,7 @@ const AppContent = () => {
                         Home
                       </TabsTrigger>
                       
-                      {/* Employee Directory Dropdown */}
+                      {/* Employee Directory Dropdown with Hierarchy */}
                       <div className="relative">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -82,33 +82,30 @@ const AppContent = () => {
                             >
                               Employee Directory
                             </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setActiveTab("directory");
+                                setActiveDirectorySection("hierarchy");
+                              }}
+                              className="cursor-pointer"
+                            >
+                              Hierarchy Builder
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
                       
                       <TabsTrigger 
-                        value="policies" 
+                        value="work" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
-                        Policies
+                        Work
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="workflows" 
+                        value="knowledge" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
-                        Workflows
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="meeting-rooms" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
-                      >
-                        Meeting Rooms
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="attendance" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
-                      >
-                        Attendance
+                        Knowledge
                       </TabsTrigger>
                       <TabsTrigger 
                         value="help" 
