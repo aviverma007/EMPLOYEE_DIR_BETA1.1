@@ -22,12 +22,13 @@ import {
 
 const Policies = () => {
   const [policies, setPolicies] = useState([]);
-  const [filteredPolicies, setFilteredPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // Filters
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [expandedSections, setExpandedSections] = useState({
+    hr: true,
+    it: false,
+    admin: false,
+    other: false
+  });
   
   // Form state
   const [policyForm, setPolicyForm] = useState({
