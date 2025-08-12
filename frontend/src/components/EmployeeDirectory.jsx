@@ -278,8 +278,10 @@ const EmployeeDirectory = () => {
       {/* Results Summary */}
       <div className="flex justify-between items-center">
         <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
-          {filteredEmployees.length} of {employees.length} employees
-          {hasSearched && " matching search criteria"}
+          {hasSearched 
+            ? `${filteredEmployees.length} of ${employees.length} employees matching search criteria`
+            : `${employees.length} employees available - use search to view`
+          }
         </Badge>
       </div>
 
