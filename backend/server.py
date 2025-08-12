@@ -890,33 +890,136 @@ async def get_meeting_rooms(
         logging.error(f"Error fetching meeting rooms: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to fetch meeting rooms")
 
-@api_router.post("/meeting-rooms", response_model=MeetingRoom)
-async def create_meeting_room(room: MeetingRoomCreate):
-    """Create new meeting room"""
+@api_router.post("/meeting-rooms/{room_id}/book", response_model=MeetingRoom)
+async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
+    """Book a meeting room"""
     try:
-        # Check if room with same ID already exists
-        existing_room = await db.meeting_rooms.find_one({"id": room.id})
-        if existing_room:
-            raise HTTPException(status_code=400, detail="Meeting room with this ID already exists")
+        # Validate employee exists
+        employee = await db.employees.find_one({"id": booking.employee_id})
+        if not employee:
+            raise HTTPException(status_code=400, detail="Employee not found")
         
-        new_room = MeetingRoom(
-            id=room.id,
-            name=room.name,
-            capacity=room.capacity,
-            location=room.location,
-            equipment=room.equipment
+        # Get room
+        room = await db.meeting_rooms.find_one({"id": room_id})
+        if not room:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Parse datetime strings
+        start_time = datetime.fromisoformat(booking.start_time.replace('Z', '+00:00'))
+        end_time = datetime.fromisoformat(booking.end_time.replace('Z', '+00:00'))
+        
+        # Validate booking time
+        if start_time >= end_time:
+            raise HTTPException(status_code=400, detail="End time must be after start time")
+        
+        if start_time < datetime.utcnow():
+            raise HTTPException(status_code=400, detail="Cannot book room for past time")
+        
+        # Create booking object
+        new_booking = {
+            'id': str(uuid.uuid4()),
+            'employee_id': booking.employee_id,
+            'employee_name': employee['name'],
+            'start_time': start_time,
+            'end_time': end_time,
+            'remarks': booking.remarks,
+            'created_at': datetime.utcnow()
+        }
+        
+        # Update room with booking
+        update_data = {
+            'status': 'occupied',
+            'current_booking': new_booking,
+            'updated_at': datetime.utcnow()
+        }
+        
+        result = await db.meeting_rooms.update_one(
+            {"id": room_id},
+            {"$set": update_data}
         )
         
-        room_dict = new_room.dict()
-        await db.meeting_rooms.insert_one(room_dict)
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
         
-        return new_room
+        # Return updated room
+        updated_room = await db.meeting_rooms.find_one({"id": room_id})
+        updated_room.pop('_id', None)
+        return MeetingRoom(**updated_room)
         
     except HTTPException:
         raise
     except Exception as e:
-        logging.error(f"Error creating meeting room: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to create meeting room")
+        logging.error(f"Error booking meeting room: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to book meeting room")
+
+@api_router.delete("/meeting-rooms/{room_id}/booking")
+async def cancel_booking(room_id: str):
+    """Cancel meeting room booking"""
+    try:
+        update_data = {
+            'status': 'vacant',
+            'current_booking': None,
+            'updated_at': datetime.utcnow()
+        }
+        
+        result = await db.meeting_rooms.update_one(
+            {"id": room_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        return {"message": "Booking cancelled successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error cancelling booking: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to cancel booking")
+
+@api_router.get("/meeting-rooms/locations")
+async def get_meeting_room_locations():
+    """Get all available meeting room locations"""
+    try:
+        pipeline = [
+            {"$group": {"_id": "$location"}},
+            {"$sort": {"_id": 1}}
+        ]
+        
+        locations_cursor = db.meeting_rooms.aggregate(pipeline)
+        locations_docs = await locations_cursor.to_list(50)
+        
+        locations = [doc['_id'] for doc in locations_docs if doc['_id']]
+        return {"locations": locations}
+        
+    except Exception as e:
+        logging.error(f"Error getting locations: {str(e)}")
+        return {"locations": ["IFC"]}
+
+@api_router.get("/meeting-rooms/floors")
+async def get_meeting_room_floors(location: Optional[str] = Query(None)):
+    """Get all available floors for a location"""
+    try:
+        query_filter = {}
+        if location:
+            query_filter['location'] = location
+            
+        pipeline = [
+            {"$match": query_filter},
+            {"$group": {"_id": "$floor"}},
+            {"$sort": {"_id": 1}}
+        ]
+        
+        floors_cursor = db.meeting_rooms.aggregate(pipeline)
+        floors_docs = await floors_cursor.to_list(50)
+        
+        floors = [doc['_id'] for doc in floors_docs if doc['_id']]
+        return {"floors": floors}
+        
+    except Exception as e:
+        logging.error(f"Error getting floors: {str(e)}")
+        return {"floors": ["11th Floor", "12th Floor", "14th Floor"]}
 
 @api_router.put("/meeting-rooms/{room_id}", response_model=MeetingRoom)
 async def update_meeting_room(room_id: str, room: MeetingRoomUpdate):
