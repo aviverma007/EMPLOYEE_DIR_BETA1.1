@@ -1,10 +1,9 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, Grid3X3, List, User, X } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useAuth } from "../context/AuthContext";
 import { employeeAPI, utilityAPI } from "../services/api";
@@ -32,13 +31,13 @@ const EmployeeDirectory = () => {
   
   const { isAdmin } = useAuth();
 
-  // Load all data on mount - same for both admin and regular users
+  // Load all data on mount
   useEffect(() => {
     const loadAllData = async () => {
       try {
         setLoading(true);
         const [employeeData, depts, locs] = await Promise.all([
-          employeeAPI.getAll(), // Load all employees upfront
+          employeeAPI.getAll(),
           utilityAPI.getDepartments(),
           utilityAPI.getLocations()
         ]);
@@ -57,51 +56,48 @@ const EmployeeDirectory = () => {
     loadAllData();
   }, []);
 
-  // Debounce search term for better performance
+  // Debounce search terms for better performance
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
+      setDebouncedSearchTerms({
+        name: nameSearch,
+        employeeId: employeeIdSearch,
+        department: departmentSearch,
+        location: locationSearch
+      });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [nameSearch, employeeIdSearch, departmentSearch, locationSearch]);
 
-  // Client-side filtering - only show results when user searches
+  // Client-side filtering - show results based on individual search fields
   const filteredEmployees = useMemo(() => {
-    // Don't show any employees until user starts searching
-    if (debouncedSearchTerm.trim().length === 0) {
-      return [];
+    const hasAnySearch = debouncedSearchTerms.name || debouncedSearchTerms.employeeId || 
+                        debouncedSearchTerms.department || debouncedSearchTerms.location;
+    
+    // Show all employees if no search terms, or filter based on search terms
+    if (!hasAnySearch) {
+      return employees;
     }
 
-    let filtered = employees;
+    return employees.filter(employee => {
+      const nameMatch = !debouncedSearchTerms.name || 
+        employee.name.toLowerCase().includes(debouncedSearchTerms.name.toLowerCase());
+      
+      const idMatch = !debouncedSearchTerms.employeeId || 
+        employee.id.toLowerCase().includes(debouncedSearchTerms.employeeId.toLowerCase());
+      
+      const deptMatch = !debouncedSearchTerms.department || 
+        employee.department.toLowerCase().includes(debouncedSearchTerms.department.toLowerCase());
+      
+      const locationMatch = !debouncedSearchTerms.location || 
+        employee.location.toLowerCase().includes(debouncedSearchTerms.location.toLowerCase());
 
-    // Apply search filter
-    const searchLower = debouncedSearchTerm.toLowerCase();
-    filtered = filtered.filter(employee => {
-      return (
-        employee.name.toLowerCase().includes(searchLower) ||
-        employee.id.includes(debouncedSearchTerm) ||
-        employee.department.toLowerCase().includes(searchLower) ||
-        employee.location.toLowerCase().includes(searchLower) ||
-        employee.grade.toLowerCase().includes(searchLower) ||
-        employee.mobile.includes(debouncedSearchTerm)
-      );
+      return nameMatch && idMatch && deptMatch && locationMatch;
     });
+  }, [employees, debouncedSearchTerms]);
 
-    // Apply department filter
-    if (departmentFilter !== "All Departments") {
-      filtered = filtered.filter(employee => employee.department === departmentFilter);
-    }
-
-    // Apply location filter
-    if (locationFilter !== "All Locations") {
-      filtered = filtered.filter(employee => employee.location === locationFilter);
-    }
-
-    return filtered;
-  }, [employees, debouncedSearchTerm, departmentFilter, locationFilter]);
-
-  const hasSearched = debouncedSearchTerm.trim().length > 0;
+  const hasSearched = nameSearch || employeeIdSearch || departmentSearch || locationSearch;
 
   const handleImageUpdate = async (employeeId, newImageUrl) => {
     try {
@@ -134,6 +130,13 @@ const EmployeeDirectory = () => {
     setSelectedEmployee(null);
   };
 
+  const clearAllSearches = () => {
+    setNameSearch("");
+    setEmployeeIdSearch("");
+    setDepartmentSearch("");
+    setLocationSearch("");
+  };
+
   // Show loading only on initial data load
   if (loading) {
     return (
@@ -148,24 +151,24 @@ const EmployeeDirectory = () => {
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
+      {/* Search Bars */}
       <Card className="border-blue-200 shadow-sm bg-white">
         <CardHeader className="pb-4 bg-blue-50">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search Bar - Same for both admin and regular users */}
-            <div className="relative flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Name Search */}
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
               <Input
-                placeholder="Search by name, employee code, department, location, designation, mobile..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by name..."
+                value={nameSearch}
+                onChange={(e) => setNameSearch(e.target.value)}
                 className="pl-10 h-11 border-blue-200 focus:border-blue-400"
               />
-              {searchTerm && (
+              {nameSearch && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setSearchTerm("")}
+                  onClick={() => setNameSearch("")}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-blue-100"
                 >
                   <X className="h-4 w-4 text-blue-500" />
@@ -173,40 +176,78 @@ const EmployeeDirectory = () => {
               )}
             </div>
 
-            {/* Filters - Always show for both user types */}
-            <div className="w-full lg:w-48">
-              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                <SelectTrigger className="h-11 border-blue-200">
-                  <SelectValue placeholder="Department" />
-                </SelectTrigger>
-                <SelectContent>
-                  {departments.map(dept => (
-                    <SelectItem key={dept} value={dept}>{dept}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Employee ID Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <Input
+                placeholder="Search by employee ID..."
+                value={employeeIdSearch}
+                onChange={(e) => setEmployeeIdSearch(e.target.value)}
+                className="pl-10 h-11 border-blue-200 focus:border-blue-400"
+              />
+              {employeeIdSearch && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEmployeeIdSearch("")}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-blue-100"
+                >
+                  <X className="h-4 w-4 text-blue-500" />
+                </Button>
+              )}
             </div>
 
-            <div className="w-full lg:w-48">
-              <Select value={locationFilter} onValueChange={setLocationFilter}>
-                <SelectTrigger className="h-11 border-blue-200">
-                  <SelectValue placeholder="Location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locations.map(location => (
-                    <SelectItem key={location} value={location}>{location}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Department Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <Input
+                placeholder="Search by department..."
+                value={departmentSearch}
+                onChange={(e) => setDepartmentSearch(e.target.value)}
+                className="pl-10 h-11 border-blue-200 focus:border-blue-400"
+              />
+              {departmentSearch && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDepartmentSearch("")}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-blue-100"
+                >
+                  <X className="h-4 w-4 text-blue-500" />
+                </Button>
+              )}
             </div>
 
-            {/* View Toggle */}
+            {/* Location Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
+              <Input
+                placeholder="Search by location..."
+                value={locationSearch}
+                onChange={(e) => setLocationSearch(e.target.value)}
+                className="pl-10 h-11 border-blue-200 focus:border-blue-400"
+              />
+              {locationSearch && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocationSearch("")}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-blue-100"
+                >
+                  <X className="h-4 w-4 text-blue-500" />
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* View Toggle and Clear Button */}
+          <div className="flex justify-between items-center mt-4">
             <div className="flex space-x-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className={`h-11 px-3 ${viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
+                className={`h-10 px-3 ${viewMode === "grid" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -214,37 +255,32 @@ const EmployeeDirectory = () => {
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className={`h-11 px-3 ${viewMode === "list" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
+                className={`h-10 px-3 ${viewMode === "list" ? "bg-blue-600 hover:bg-blue-700" : "border-blue-200 text-blue-700 hover:bg-blue-50"}`}
               >
                 <List className="h-4 w-4" />
               </Button>
             </div>
+
+            {hasSearched && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllSearches}
+                className="text-blue-600 hover:bg-blue-50"
+              >
+                Clear all searches
+              </Button>
+            )}
           </div>
         </CardHeader>
       </Card>
 
       {/* Results Summary */}
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
-            {filteredEmployees.length} of {employees.length} employees
-            {debouncedSearchTerm && ` matching "${debouncedSearchTerm}"`}
-          </Badge>
-          {(searchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations") && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setSearchTerm("");
-                setDepartmentFilter("All Departments");
-                setLocationFilter("All Locations");
-              }}
-              className="text-blue-600 hover:bg-blue-50"
-            >
-              Clear filters
-            </Button>
-          )}
-        </div>
+        <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
+          {filteredEmployees.length} of {employees.length} employees
+          {hasSearched && " matching search criteria"}
+        </Badge>
       </div>
 
       {/* Employee Display */}
@@ -268,15 +304,15 @@ const EmployeeDirectory = () => {
             <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-semibold text-blue-900 mb-2">No employees found</h3>
             <p>
-              {debouncedSearchTerm || departmentFilter !== "All Departments" || locationFilter !== "All Locations"
-                ? "Try adjusting your search criteria or filters."
+              {hasSearched
+                ? "Try adjusting your search criteria."
                 : "No employee data available."}
             </p>
           </div>
         </Card>
       )}
 
-      {/* Employee Detail Modal */}
+      {/* Employee Detail Modal - Updated to include reporting manager and remove joining date */}
       <Dialog open={showDetailModal} onOpenChange={closeDetailModal}>
         <DialogContent className="sm:max-w-2xl border-blue-200">
           <DialogHeader>
@@ -365,12 +401,12 @@ const EmployeeDirectory = () => {
                   
                   <div className="flex items-center space-x-3">
                     <div className="w-5 h-5 bg-blue-100 rounded flex items-center justify-center">
-                      <span className="text-xs text-blue-600">📅</span>
+                      <span className="text-xs text-blue-600">👤</span>
                     </div>
                     <div>
-                      <p className="text-sm text-blue-500">Date of Joining</p>
+                      <p className="text-sm text-blue-500">Reporting Manager</p>
                       <p className="font-medium text-blue-900">
-                        {selectedEmployee.dateOfJoining ? new Date(selectedEmployee.dateOfJoining).toLocaleDateString() : 'N/A'}
+                        {selectedEmployee.reportingManager || 'Not Assigned'}
                       </p>
                     </div>
                   </div>
