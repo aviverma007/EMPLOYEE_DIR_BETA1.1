@@ -43,104 +43,107 @@ const AppContent = () => {
           <Route path="/" element={
             <div className="w-full">
               <Header />
-              <div className="container mx-auto px-4 py-6 max-w-7xl">
+              <div className="container mx-auto px-4 py-4 max-w-7xl">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                  <TabsList className="grid w-full grid-cols-7 max-w-5xl mx-auto mb-6 h-12 bg-white shadow-sm border border-blue-200 rounded-lg">
-                    <TabsTrigger 
-                      value="home" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Home
-                    </TabsTrigger>
-                    
-                    {/* Employee Directory Dropdown */}
-                    <div className="relative">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            className={`h-full w-full text-sm font-medium rounded-md ${
-                              activeTab === "directory" 
-                                ? "bg-blue-600 text-white" 
-                                : "text-blue-700 hover:bg-blue-50"
-                            } flex items-center justify-center gap-1`}
-                            onClick={() => setActiveTab("directory")}
-                          >
-                            Employee Directory
-                            <ChevronDown className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center" className="w-48">
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              setActiveTab("directory");
-                              setActiveDirectorySection("directory");
-                            }}
-                            className="cursor-pointer"
-                          >
-                            Employee Directory
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                    
-                    <TabsTrigger 
-                      value="policies" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Policies
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="workflows" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Workflows
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="coming-soon-1" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Coming Soon
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="coming-soon-2" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Coming Soon
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="help" 
-                      className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md"
-                    >
-                      Help
-                    </TabsTrigger>
-                  </TabsList>
+                  {/* Navigation moved to top-left and made more compact */}
+                  <div className="flex justify-start mb-4">
+                    <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
+                      <TabsTrigger 
+                        value="home" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Home
+                      </TabsTrigger>
+                      
+                      {/* Employee Directory Dropdown */}
+                      <div className="relative">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className={`h-8 text-sm font-medium rounded-md px-4 py-2 ${
+                                activeTab === "directory" 
+                                  ? "bg-blue-600 text-white" 
+                                  : "text-blue-700 hover:bg-blue-50"
+                              } flex items-center justify-center gap-1`}
+                              onClick={() => setActiveTab("directory")}
+                            >
+                              Employee Directory
+                              <ChevronDown className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="center" className="w-48">
+                            <DropdownMenuItem 
+                              onClick={() => {
+                                setActiveTab("directory");
+                                setActiveDirectorySection("directory");
+                              }}
+                              className="cursor-pointer"
+                            >
+                              Employee Directory
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      
+                      <TabsTrigger 
+                        value="policies" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Policies
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="workflows" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Workflows
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="coming-soon-1" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Coming Soon
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="coming-soon-2" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Coming Soon
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="help" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Help
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
                   
-                  <TabsContent value="home" className="mt-6">
+                  <TabsContent value="home" className="mt-2">
                     <Home />
                   </TabsContent>
                   
-                  <TabsContent value="directory" className="mt-6">
+                  <TabsContent value="directory" className="mt-2">
                     <EmployeeDirectory />
                   </TabsContent>
                   
-                  <TabsContent value="policies" className="mt-6">
+                  <TabsContent value="policies" className="mt-2">
                     <Policies />
                   </TabsContent>
                   
-                  <TabsContent value="workflows" className="mt-6">
+                  <TabsContent value="workflows" className="mt-2">
                     <Workflows />
                   </TabsContent>
                   
-                  <TabsContent value="coming-soon-1" className="mt-6">
+                  <TabsContent value="coming-soon-1" className="mt-2">
                     <ComingSoon title="Feature 1" />
                   </TabsContent>
                   
-                  <TabsContent value="coming-soon-2" className="mt-6">
+                  <TabsContent value="coming-soon-2" className="mt-2">
                     <ComingSoon title="Feature 2" />
                   </TabsContent>
                   
-                  <TabsContent value="help" className="mt-6">
+                  <TabsContent value="help" className="mt-2">
                     <Help />
                   </TabsContent>
                 </Tabs>
