@@ -479,9 +479,9 @@ const Attendance = () => {
               variant="outline"
               onClick={() => {
                 setSearchTerm("");
-                setSelectedEmployee("");
+                setSelectedEmployee("all");
                 setSelectedDate("");
-                setSelectedStatus("");
+                setSelectedStatus("all");
               }}
             >
               Clear Filters
