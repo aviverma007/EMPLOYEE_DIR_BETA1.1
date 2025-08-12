@@ -71,12 +71,15 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  // Auto-scroll new joinees every 2 seconds
+  // Auto-scroll new joinees every 3 seconds (showing 3 at a time)
   useEffect(() => {
-    if (employees.length > 1) {
+    if (employees.length > 3) {
       const interval = setInterval(() => {
-        setCurrentJoineeIndex(prev => (prev + 1) % employees.length);
-      }, 2000);
+        setCurrentJoineeIndex(prev => {
+          const nextIndex = prev + 1;
+          return nextIndex + 2 >= employees.length ? 0 : nextIndex;
+        });
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [employees.length]);
