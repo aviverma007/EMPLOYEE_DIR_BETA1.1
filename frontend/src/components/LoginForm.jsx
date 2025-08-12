@@ -30,7 +30,7 @@ const LoginForm = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-blue-900">
-                SMARTWORLD DEVELOPERS Pvt. Ltd.
+                SMARTWORLD DEVELOPERS PVT. LTD.
               </h1>
               <p className="text-sm text-blue-600">
                 Employee Management System
