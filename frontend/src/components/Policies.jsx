@@ -65,7 +65,7 @@ const Policies = () => {
     }
 
     // Category filter
-    if (selectedCategory) {
+    if (selectedCategory && selectedCategory !== "all") {
       filtered = filtered.filter(policy => policy.category === selectedCategory);
     }
 
