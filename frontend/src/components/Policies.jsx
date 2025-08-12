@@ -185,86 +185,9 @@ const Policies = () => {
 
         {/* Policy Management - Right Side */}
         <div className="w-1/2 space-y-4">
-          {/* Header with Add Button */}
+          {/* Header */}
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-900">Policy Management</h2>
-            <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-              <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Policy
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Create New Policy</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label>Title</Label>
-                    <Input
-                      value={policyForm.title}
-                      onChange={(e) => setPolicyForm(prev => ({ ...prev, title: e.target.value }))}
-                      placeholder="Policy title..."
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label>Category</Label>
-                      <Select value={policyForm.category} onValueChange={(value) => setPolicyForm(prev => ({ ...prev, category: value }))}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hr">HR</SelectItem>
-                          <SelectItem value="it">IT</SelectItem>
-                          <SelectItem value="admin">ADMIN</SelectItem>
-                          <SelectItem value="other">OTHER</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div>
-                      <Label>Version</Label>
-                      <Input
-                        value={policyForm.version}
-                        onChange={(e) => setPolicyForm(prev => ({ ...prev, version: e.target.value }))}
-                        placeholder="1.0"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label>Effective Date</Label>
-                      <Input
-                        type="date"
-                        value={policyForm.effective_date}
-                        onChange={(e) => setPolicyForm(prev => ({ ...prev, effective_date: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label>Content</Label>
-                    <Textarea
-                      value={policyForm.content}
-                      onChange={(e) => setPolicyForm(prev => ({ ...prev, content: e.target.value }))}
-                      placeholder="Policy content..."
-                      rows={8}
-                    />
-                  </div>
-                  
-                  <div className="flex gap-2">
-                    <Button onClick={handleCreatePolicy} disabled={!policyForm.title || !policyForm.content}>
-                      Create Policy
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
           </div>
 
           {/* Existing Policies List */}
@@ -306,13 +229,7 @@ const Policies = () => {
                         </div>
                         <div className="flex gap-1 ml-4">
                           <Button size="sm" variant="ghost" onClick={() => viewPolicy(policy)}>
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => startEdit(policy)}>
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => handleDeletePolicy(policy.id)}>
-                            <Trash2 className="h-3 w-3" />
+                            View Policy
                           </Button>
                         </div>
                       </div>
@@ -322,8 +239,8 @@ const Policies = () => {
                 
                 {policies.length === 0 && (
                   <div className="text-center py-12">
-                    <div className="text-gray-500 text-lg">No policies created yet</div>
-                    <div className="text-gray-400 text-sm mt-2">Create your first policy to get started</div>
+                    <div className="text-gray-500 text-lg">No policies available</div>
+                    <div className="text-gray-400 text-sm mt-2">Check back later for policy updates</div>
                   </div>
                 )}
               </div>
