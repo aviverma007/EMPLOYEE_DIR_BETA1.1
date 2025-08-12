@@ -44,7 +44,7 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-lg border-b-2 border-blue-200">
-      <div className="container mx-auto px-6 py-4 max-w-7xl">
+      <div className="w-full px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Left side - Logo and Company Name */}
           <div className="flex items-center space-x-4">
@@ -52,13 +52,13 @@ const Header = () => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_site-modifier-3/artifacts/j921etso_2%5B2%5D.png"
                 alt="SmartWorld Logo"
-                className="h-16 w-16 object-contain rounded-lg"
+                className="h-20 w-20 object-contain rounded-lg"
               />
               <div>
-                <h1 className="text-2xl font-bold text-blue-900">
-                  SMARTWORLD DEVELOPERS Pvt. Ltd.
+                <h1 className="text-3xl font-bold text-blue-900">
+                  SMARTWORLD DEVELOPERS PVT. LTD.
                 </h1>
-                <p className="text-base text-blue-600">
+                <p className="text-lg text-blue-600">
                   Employee Management System
                 </p>
               </div>

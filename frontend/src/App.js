@@ -38,14 +38,14 @@ const AppContent = () => {
   }
 
   return (
-    <div className="App min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+    <div className="App min-h-screen bg-blue-50">
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
-            <div className="w-full">
+            <div className="w-full h-screen flex flex-col">
               <Header />
-              <div className="container mx-auto px-4 py-4 max-w-7xl">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <div className="flex-1 w-full px-6 py-4">
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
                   {/* Navigation moved to top-left and made more compact */}
                   <div className="flex justify-start mb-4">
                     <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
@@ -120,33 +120,35 @@ const AppContent = () => {
                     </TabsList>
                   </div>
                   
-                  <TabsContent value="home" className="mt-2">
-                    <Home />
-                  </TabsContent>
-                  
-                  <TabsContent value="directory" className="mt-2">
-                    <EmployeeDirectory />
-                  </TabsContent>
-                  
-                  <TabsContent value="policies" className="mt-2">
-                    <Policies />
-                  </TabsContent>
-                  
-                  <TabsContent value="workflows" className="mt-2">
-                    <Workflows />
-                  </TabsContent>
-                  
-                  <TabsContent value="meeting-rooms" className="mt-2">
-                    <MeetingRooms />
-                  </TabsContent>
-                  
-                  <TabsContent value="coming-soon-2" className="mt-2">
-                    <ComingSoon title="Feature 2" />
-                  </TabsContent>
-                  
-                  <TabsContent value="help" className="mt-2">
-                    <Help />
-                  </TabsContent>
+                  <div className="flex-1 overflow-auto">
+                    <TabsContent value="home" className="mt-0 h-full">
+                      <Home />
+                    </TabsContent>
+                    
+                    <TabsContent value="directory" className="mt-0 h-full">
+                      <EmployeeDirectory />
+                    </TabsContent>
+                    
+                    <TabsContent value="policies" className="mt-0 h-full">
+                      <Policies />
+                    </TabsContent>
+                    
+                    <TabsContent value="workflows" className="mt-0 h-full">
+                      <Workflows />
+                    </TabsContent>
+                    
+                    <TabsContent value="meeting-rooms" className="mt-0 h-full">
+                      <MeetingRooms />
+                    </TabsContent>
+                    
+                    <TabsContent value="coming-soon-2" className="mt-0 h-full">
+                      <ComingSoon title="Feature 2" />
+                    </TabsContent>
+                    
+                    <TabsContent value="help" className="mt-0 h-full">
+                      <Help />
+                    </TabsContent>
+                  </div>
                 </Tabs>
               </div>
               <Toaster />
