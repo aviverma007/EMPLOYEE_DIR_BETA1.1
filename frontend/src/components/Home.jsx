@@ -1,259 +1,286 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { Textarea } from './ui/textarea';
-import { Input } from './ui/input';
-import { PlusCircle, Calendar, User, Trash2, Edit3 } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Badge } from "./ui/badge";
+import { Checkbox } from "./ui/checkbox";
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  Image, 
+  Users, 
+  PartyPopper, 
+  CheckSquare, 
+  Workflow, 
+  Newspaper,
+  Plus,
+  X
+} from "lucide-react";
 
 const Home = () => {
-  const [newsItems, setNewsItems] = useState([]);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [editingNews, setEditingNews] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    priority: 'normal'
-  });
-  const [loading, setLoading] = useState(true);
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+  const [todoItems, setTodoItems] = useState([
+    { id: 1, text: "Review monthly reports", completed: false },
+    { id: 2, text: "Schedule team meeting", completed: true },
+    { id: 3, text: "Update employee profiles", completed: false }
+  ]);
+  const [newTodoText, setNewTodoText] = useState("");
+  const [showAddTodo, setShowAddTodo] = useState(false);
 
+  // Sample banner images (you can replace with actual company images)
+  const bannerImages = [
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=400&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=400&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=400&fit=crop&crop=center",
+    "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&h=400&fit=crop&crop=center"
+  ];
+
+  // Auto-scroll banner every 3 seconds
   useEffect(() => {
-    fetchNews();
+    const interval = setInterval(() => {
+      setCurrentBannerIndex(prev => (prev + 1) % bannerImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [bannerImages.length]);
+
+  // Navigate banner manually
+  const navigateBanner = (direction) => {
+    if (direction === 'next') {
+      setCurrentBannerIndex(prev => (prev + 1) % bannerImages.length);
+    } else {
+      setCurrentBannerIndex(prev => (prev - 1 + bannerImages.length) % bannerImages.length);
+    }
+  };
+
+  // Todo list functions
+  const addTodoItem = () => {
+    if (newTodoText.trim()) {
+      const newItem = {
+        id: Date.now(),
+        text: newTodoText.trim(),
+        completed: false
+      };
+      setTodoItems([...todoItems, newItem]);
+      setNewTodoText("");
+      setShowAddTodo(false);
+      // Save to localStorage (profile storage)
+      localStorage.setItem('userTodos', JSON.stringify([...todoItems, newItem]));
+    }
+  };
+
+  const toggleTodoItem = (id) => {
+    const updatedItems = todoItems.map(item =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    );
+    setTodoItems(updatedItems);
+    localStorage.setItem('userTodos', JSON.stringify(updatedItems));
+  };
+
+  const removeTodoItem = (id) => {
+    const updatedItems = todoItems.filter(item => item.id !== id);
+    setTodoItems(updatedItems);
+    localStorage.setItem('userTodos', JSON.stringify(updatedItems));
+  };
+
+  // Load todos from localStorage on component mount
+  useEffect(() => {
+    const savedTodos = localStorage.getItem('userTodos');
+    if (savedTodos) {
+      setTodoItems(JSON.parse(savedTodos));
+    }
   }, []);
 
-  const fetchNews = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/news`);
-      if (response.ok) {
-        const data = await response.json();
-        setNewsItems(data);
-      }
-    } catch (error) {
-      console.error('Error fetching news:', error);
-      toast.error('Failed to load news');
-    } finally {
-      setLoading(false);
+  const tiles = [
+    {
+      title: "PICTURES",
+      icon: <Image className="h-8 w-8" />,
+      description: "Company gallery and events",
+      color: "bg-gradient-to-br from-purple-500 to-pink-500",
+      textColor: "text-white"
+    },
+    {
+      title: "NEW JOINEES",
+      icon: <Users className="h-8 w-8" />,
+      description: "Welcome our new team members",
+      color: "bg-gradient-to-br from-green-500 to-teal-500",
+      textColor: "text-white"
+    },
+    {
+      title: "CELEBRATIONS",
+      icon: <PartyPopper className="h-8 w-8" />,
+      description: "Birthdays, anniversaries & achievements",
+      color: "bg-gradient-to-br from-orange-500 to-red-500",
+      textColor: "text-white"
+    },
+    {
+      title: "TO DO LIST",
+      icon: <CheckSquare className="h-8 w-8" />,
+      description: "Your personal task manager",
+      color: "bg-gradient-to-br from-blue-500 to-cyan-500",
+      textColor: "text-white",
+      interactive: true
+    },
+    {
+      title: "WORKFLOW",
+      icon: <Workflow className="h-8 w-8" />,
+      description: "Process management & tracking",
+      color: "bg-gradient-to-br from-indigo-500 to-purple-500",
+      textColor: "text-white"
+    },
+    {
+      title: "DAILY COMPANY NEWS",
+      icon: <Newspaper className="h-8 w-8" />,
+      description: "Latest updates and announcements",
+      color: "bg-gradient-to-br from-yellow-500 to-orange-500",
+      textColor: "text-white"
     }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const method = editingNews ? 'PUT' : 'POST';
-      const url = editingNews 
-        ? `${import.meta.env.REACT_APP_BACKEND_URL}/api/news/${editingNews.id}`
-        : `${import.meta.env.REACT_APP_BACKEND_URL}/api/news`;
-      
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        toast.success(editingNews ? 'News updated successfully' : 'News added successfully');
-        setFormData({ title: '', content: '', priority: 'normal' });
-        setShowAddForm(false);
-        setEditingNews(null);
-        fetchNews();
-      } else {
-        throw new Error('Failed to save news');
-      }
-    } catch (error) {
-      console.error('Error saving news:', error);
-      toast.error('Failed to save news');
-    }
-  };
-
-  const handleDelete = async (newsId) => {
-    if (!confirm('Are you sure you want to delete this news item?')) return;
-    
-    try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/news/${newsId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        toast.success('News deleted successfully');
-        fetchNews();
-      } else {
-        throw new Error('Failed to delete news');
-      }
-    } catch (error) {
-      console.error('Error deleting news:', error);
-      toast.error('Failed to delete news');
-    }
-  };
-
-  const handleEdit = (newsItem) => {
-    setEditingNews(newsItem);
-    setFormData({
-      title: newsItem.title,
-      content: newsItem.content,
-      priority: newsItem.priority
-    });
-    setShowAddForm(true);
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-blue-100 text-blue-800';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-blue-600">Loading daily news...</div>
-      </div>
-    );
-  }
+  ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-blue-900">Daily News</h2>
-          <p className="text-blue-600 mt-1">Stay updated with the latest company news and announcements</p>
-        </div>
-        <Button
-          onClick={() => {
-            setShowAddForm(!showAddForm);
-            setEditingNews(null);
-            setFormData({ title: '', content: '', priority: 'normal' });
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+    <div className="space-y-8">
+      {/* Banner Section */}
+      <div className="relative w-full h-64 rounded-xl shadow-lg overflow-hidden">
+        <div 
+          className="flex transition-transform duration-500 ease-in-out h-full"
+          style={{ transform: `translateX(-${currentBannerIndex * 100}%)` }}
         >
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Add News
-        </Button>
+          {bannerImages.map((image, index) => (
+            <div
+              key={index}
+              className="min-w-full h-full relative"
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h2 className="text-4xl font-bold mb-2">Welcome to SmartWorld</h2>
+                  <p className="text-xl">Building Tomorrow's Workforce Today</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Navigation Arrows */}
+        <button
+          onClick={() => navigateBanner('prev')}
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 transition-all"
+        >
+          <ChevronLeft className="h-6 w-6 text-gray-800" />
+        </button>
+        <button
+          onClick={() => navigateBanner('next')}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 rounded-full p-2 transition-all"
+        >
+          <ChevronRight className="h-6 w-6 text-gray-800" />
+        </button>
+        
+        {/* Dots Indicator */}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+          {bannerImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBannerIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                index === currentBannerIndex ? 'bg-white' : 'bg-white bg-opacity-50'
+              }`}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Add/Edit Form */}
-      {showAddForm && (
-        <Card className="border-blue-200 shadow-sm">
-          <CardHeader className="bg-blue-50">
-            <CardTitle className="text-blue-900">
-              {editingNews ? 'Edit News' : 'Add New News'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-blue-900 mb-2">Title</label>
-                <Input
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="Enter news title"
-                  required
-                  className="border-blue-200 focus:border-blue-500"
-                />
+      {/* Tiles Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {tiles.map((tile, index) => (
+          <Card 
+            key={index}
+            className={`${tile.color} ${tile.textColor} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 cursor-pointer`}
+          >
+            <CardHeader className="pb-2">
+              <div className="flex items-center space-x-3">
+                {tile.icon}
+                <CardTitle className="text-lg font-bold">{tile.title}</CardTitle>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-blue-900 mb-2">Content</label>
-                <Textarea
-                  value={formData.content}
-                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  placeholder="Enter news content"
-                  required
-                  rows={4}
-                  className="border-blue-200 focus:border-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-blue-900 mb-2">Priority</label>
-                <select
-                  value={formData.priority}
-                  onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                  className="w-full p-2 border border-blue-200 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="normal">Normal</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  {editingNews ? 'Update News' : 'Add News'}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  onClick={() => {
-                    setShowAddForm(false);
-                    setEditingNews(null);
-                    setFormData({ title: '', content: '', priority: 'normal' });
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+            </CardHeader>
+            <CardContent>
+              {tile.interactive && tile.title === "TO DO LIST" ? (
+                <div className="space-y-3">
+                  <p className="text-sm opacity-90 mb-3">{tile.description}</p>
+                  
+                  {/* Todo Items */}
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {todoItems.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2 bg-white bg-opacity-20 rounded p-2">
+                        <Checkbox
+                          checked={item.completed}
+                          onCheckedChange={() => toggleTodoItem(item.id)}
+                          className="border-white"
+                        />
+                        <span className={`flex-1 text-sm ${item.completed ? 'line-through opacity-70' : ''}`}>
+                          {item.text}
+                        </span>
+                        <button
+                          onClick={() => removeTodoItem(item.id)}
+                          className="text-white hover:text-red-200 transition-colors"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
 
-      {/* News List */}
-      <div className="space-y-4">
-        {newsItems.length === 0 ? (
-          <Card className="border-blue-200">
-            <CardContent className="p-8 text-center">
-              <div className="text-blue-600 mb-2">No news items found</div>
-              <p className="text-sm text-gray-600">Click "Add News" to create your first news item.</p>
+                  {/* Add Todo */}
+                  {showAddTodo ? (
+                    <div className="space-y-2">
+                      <Input
+                        value={newTodoText}
+                        onChange={(e) => setNewTodoText(e.target.value)}
+                        placeholder="Enter new task..."
+                        className="bg-white text-gray-800 placeholder-gray-500"
+                        onKeyPress={(e) => e.key === 'Enter' && addTodoItem()}
+                      />
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          onClick={addTodoItem}
+                          className="bg-white text-blue-600 hover:bg-gray-100"
+                        >
+                          Add
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setShowAddTodo(false);
+                            setNewTodoText("");
+                          }}
+                          className="border-white text-white hover:bg-white hover:text-blue-600"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      size="sm"
+                      onClick={() => setShowAddTodo(true)}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white border-white border"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Task
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm opacity-90">{tile.description}</p>
+              )}
             </CardContent>
           </Card>
-        ) : (
-          newsItems.map((item) => (
-            <Card key={item.id} className="border-blue-200 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-semibold text-blue-900">{item.title}</h3>
-                      <Badge className={`text-xs ${getPriorityColor(item.priority)}`}>
-                        {item.priority.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-blue-600 mb-3">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(item.created_at).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <User className="h-4 w-4" />
-                        {item.author || 'Administrator'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(item)}
-                      className="text-blue-600 hover:bg-blue-50"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDelete(item.id)}
-                      className="text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <p className="text-gray-700 leading-relaxed">{item.content}</p>
-              </CardContent>
-            </Card>
-          ))
-        )}
+        ))}
       </div>
     </div>
   );
