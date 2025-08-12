@@ -91,7 +91,7 @@ const EmployeeDirectory = () => {
         employee.department === debouncedSearchTerms.department;
       
       const locationMatch = !debouncedSearchTerms.location || 
-        employee.location.toLowerCase().includes(debouncedSearchTerms.location.toLowerCase());
+        employee.location === debouncedSearchTerms.location;
 
       return nameMatch && idMatch && deptMatch && locationMatch;
     });
