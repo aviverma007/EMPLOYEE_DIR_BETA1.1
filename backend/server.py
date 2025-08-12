@@ -1071,6 +1071,378 @@ async def delete_meeting_room(room_id: str):
         logging.error(f"Error deleting meeting room: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to delete meeting room")
 
+# Policy Management Endpoints
+
+@api_router.get("/policies", response_model=List[Policy])
+async def get_policies(category: Optional[str] = Query(None, description="Filter by category")):
+    """Fetch all policies"""
+    try:
+        query_filter = {}
+        if category:
+            query_filter['category'] = category
+            
+        policies_cursor = db.policies.find(query_filter)
+        policies_docs = await policies_cursor.to_list(100)
+        
+        result = []
+        for doc in policies_docs:
+            doc.pop('_id', None)
+            result.append(Policy(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching policies: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch policies")
+
+@api_router.post("/policies", response_model=Policy)
+async def create_policy(policy: PolicyCreate):
+    """Create new policy"""
+    try:
+        effective_date = None
+        if policy.effective_date:
+            effective_date = datetime.fromisoformat(policy.effective_date.replace('Z', '+00:00'))
+            
+        new_policy = Policy(
+            title=policy.title,
+            content=policy.content,
+            category=policy.category,
+            effective_date=effective_date,
+            version=policy.version
+        )
+        
+        policy_dict = new_policy.dict()
+        await db.policies.insert_one(policy_dict)
+        
+        return new_policy
+        
+    except Exception as e:
+        logging.error(f"Error creating policy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create policy")
+
+@api_router.put("/policies/{policy_id}", response_model=Policy)
+async def update_policy(policy_id: str, policy: PolicyUpdate):
+    """Update policy"""
+    try:
+        update_data = {k: v for k, v in policy.dict().items() if v is not None}
+        if 'effective_date' in update_data and update_data['effective_date']:
+            update_data['effective_date'] = datetime.fromisoformat(update_data['effective_date'].replace('Z', '+00:00'))
+        
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.policies.update_one(
+                {"id": policy_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Policy not found")
+        
+        # Get updated policy
+        policy_doc = await db.policies.find_one({"id": policy_id})
+        if not policy_doc:
+            raise HTTPException(status_code=404, detail="Policy not found")
+        
+        policy_doc.pop('_id', None)
+        return Policy(**policy_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating policy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update policy")
+
+@api_router.delete("/policies/{policy_id}")
+async def delete_policy(policy_id: str):
+    """Delete policy"""
+    try:
+        result = await db.policies.delete_one({"id": policy_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Policy not found")
+        
+        return {"message": "Policy deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting policy: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete policy")
+
+# Workflow Management Endpoints
+
+@api_router.get("/workflows", response_model=List[Workflow])
+async def get_workflows(
+    category: Optional[str] = Query(None, description="Filter by category"),
+    status: Optional[str] = Query(None, description="Filter by status")
+):
+    """Fetch all workflows"""
+    try:
+        query_filter = {}
+        if category:
+            query_filter['category'] = category
+        if status:
+            query_filter['status'] = status
+            
+        workflows_cursor = db.workflows.find(query_filter)
+        workflows_docs = await workflows_cursor.to_list(100)
+        
+        result = []
+        for doc in workflows_docs:
+            doc.pop('_id', None)
+            result.append(Workflow(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching workflows: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch workflows")
+
+@api_router.post("/workflows", response_model=Workflow)
+async def create_workflow(workflow: WorkflowCreate):
+    """Create new workflow"""
+    try:
+        # Convert steps to WorkflowStep objects
+        workflow_steps = []
+        for i, step_data in enumerate(workflow.steps):
+            step = WorkflowStep(
+                name=step_data.get('name', ''),
+                description=step_data.get('description', ''),
+                order=i + 1,
+                assigned_to=step_data.get('assigned_to'),
+                status=step_data.get('status', 'pending')
+            )
+            workflow_steps.append(step)
+        
+        new_workflow = Workflow(
+            name=workflow.name,
+            description=workflow.description,
+            category=workflow.category,
+            steps=workflow_steps
+        )
+        
+        workflow_dict = new_workflow.dict()
+        await db.workflows.insert_one(workflow_dict)
+        
+        return new_workflow
+        
+    except Exception as e:
+        logging.error(f"Error creating workflow: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create workflow")
+
+@api_router.put("/workflows/{workflow_id}", response_model=Workflow)
+async def update_workflow(workflow_id: str, workflow: WorkflowUpdate):
+    """Update workflow"""
+    try:
+        update_data = {k: v for k, v in workflow.dict().items() if v is not None}
+        
+        # Handle steps update
+        if 'steps' in update_data and update_data['steps']:
+            workflow_steps = []
+            for i, step_data in enumerate(update_data['steps']):
+                step = WorkflowStep(
+                    name=step_data.get('name', ''),
+                    description=step_data.get('description', ''),
+                    order=i + 1,
+                    assigned_to=step_data.get('assigned_to'),
+                    status=step_data.get('status', 'pending')
+                )
+                workflow_steps.append(step)
+            update_data['steps'] = [step.dict() for step in workflow_steps]
+        
+        if update_data:
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.workflows.update_one(
+                {"id": workflow_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Workflow not found")
+        
+        # Get updated workflow
+        workflow_doc = await db.workflows.find_one({"id": workflow_id})
+        if not workflow_doc:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        
+        workflow_doc.pop('_id', None)
+        return Workflow(**workflow_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating workflow: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update workflow")
+
+@api_router.delete("/workflows/{workflow_id}")
+async def delete_workflow(workflow_id: str):
+    """Delete workflow"""
+    try:
+        result = await db.workflows.delete_one({"id": workflow_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        
+        return {"message": "Workflow deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting workflow: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete workflow")
+
+# Attendance Management Endpoints
+
+@api_router.get("/attendance", response_model=List[AttendanceRecord])
+async def get_attendance(
+    employee_id: Optional[str] = Query(None, description="Filter by employee ID"),
+    date: Optional[str] = Query(None, description="Filter by date (YYYY-MM-DD)"),
+    status: Optional[str] = Query(None, description="Filter by status")
+):
+    """Fetch attendance records"""
+    try:
+        query_filter = {}
+        if employee_id:
+            query_filter['employee_id'] = employee_id
+        if date:
+            query_filter['date'] = date
+        if status:
+            query_filter['status'] = status
+            
+        attendance_cursor = db.attendance.find(query_filter).sort("date", -1)
+        attendance_docs = await attendance_cursor.to_list(100)
+        
+        result = []
+        for doc in attendance_docs:
+            doc.pop('_id', None)
+            result.append(AttendanceRecord(**doc))
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Error fetching attendance: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to fetch attendance")
+
+@api_router.post("/attendance", response_model=AttendanceRecord)
+async def create_attendance(attendance: AttendanceCreate):
+    """Create attendance record"""
+    try:
+        # Validate employee exists
+        employee = await db.employees.find_one({"id": attendance.employee_id})
+        if not employee:
+            raise HTTPException(status_code=400, detail="Employee not found")
+        
+        # Check if attendance already exists for this date
+        existing = await db.attendance.find_one({
+            "employee_id": attendance.employee_id,
+            "date": attendance.date
+        })
+        if existing:
+            raise HTTPException(status_code=400, detail="Attendance record already exists for this date")
+        
+        # Parse datetime strings
+        punch_in = None
+        punch_out = None
+        if attendance.punch_in:
+            punch_in = datetime.fromisoformat(attendance.punch_in.replace('Z', '+00:00'))
+        if attendance.punch_out:
+            punch_out = datetime.fromisoformat(attendance.punch_out.replace('Z', '+00:00'))
+        
+        # Calculate total hours
+        total_hours = None
+        if punch_in and punch_out:
+            total_hours = (punch_out - punch_in).total_seconds() / 3600
+        
+        new_attendance = AttendanceRecord(
+            employee_id=attendance.employee_id,
+            employee_name=employee['name'],
+            date=attendance.date,
+            punch_in=punch_in,
+            punch_out=punch_out,
+            punch_in_location=attendance.punch_in_location,
+            punch_out_location=attendance.punch_out_location,
+            total_hours=total_hours,
+            status=attendance.status,
+            remarks=attendance.remarks
+        )
+        
+        attendance_dict = new_attendance.dict()
+        await db.attendance.insert_one(attendance_dict)
+        
+        return new_attendance
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating attendance: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to create attendance")
+
+@api_router.put("/attendance/{attendance_id}", response_model=AttendanceRecord)
+async def update_attendance(attendance_id: str, attendance: AttendanceUpdate):
+    """Update attendance record"""
+    try:
+        update_data = {k: v for k, v in attendance.dict().items() if v is not None}
+        
+        # Parse datetime strings
+        if 'punch_in' in update_data and update_data['punch_in']:
+            update_data['punch_in'] = datetime.fromisoformat(update_data['punch_in'].replace('Z', '+00:00'))
+        if 'punch_out' in update_data and update_data['punch_out']:
+            update_data['punch_out'] = datetime.fromisoformat(update_data['punch_out'].replace('Z', '+00:00'))
+        
+        if update_data:
+            # Recalculate total hours if both times are updated
+            attendance_doc = await db.attendance.find_one({"id": attendance_id})
+            if attendance_doc:
+                punch_in = update_data.get('punch_in', attendance_doc.get('punch_in'))
+                punch_out = update_data.get('punch_out', attendance_doc.get('punch_out'))
+                
+                if punch_in and punch_out:
+                    total_hours = (punch_out - punch_in).total_seconds() / 3600
+                    update_data['total_hours'] = total_hours
+            
+            update_data['updated_at'] = datetime.utcnow()
+            
+            result = await db.attendance.update_one(
+                {"id": attendance_id},
+                {"$set": update_data}
+            )
+            
+            if result.matched_count == 0:
+                raise HTTPException(status_code=404, detail="Attendance record not found")
+        
+        # Get updated attendance
+        attendance_doc = await db.attendance.find_one({"id": attendance_id})
+        if not attendance_doc:
+            raise HTTPException(status_code=404, detail="Attendance record not found")
+        
+        attendance_doc.pop('_id', None)
+        return AttendanceRecord(**attendance_doc)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error updating attendance: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to update attendance")
+
+@api_router.delete("/attendance/{attendance_id}")
+async def delete_attendance(attendance_id: str):
+    """Delete attendance record"""
+    try:
+        result = await db.attendance.delete_one({"id": attendance_id})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Attendance record not found")
+        
+        return {"message": "Attendance record deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting attendance: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to delete attendance")
+
 # Utility Endpoints
 
 @api_router.get("/departments")
