@@ -73,7 +73,7 @@ const Attendance = () => {
       );
     }
 
-    if (selectedEmployee) {
+    if (selectedEmployee && selectedEmployee !== "all") {
       filtered = filtered.filter(record => record.employee_id === selectedEmployee);
     }
 
@@ -81,7 +81,7 @@ const Attendance = () => {
       filtered = filtered.filter(record => record.date === selectedDate);
     }
 
-    if (selectedStatus) {
+    if (selectedStatus && selectedStatus !== "all") {
       filtered = filtered.filter(record => record.status === selectedStatus);
     }
 
