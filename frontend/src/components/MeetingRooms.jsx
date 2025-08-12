@@ -206,9 +206,31 @@ const MeetingRooms = () => {
   };
 
   const getMaxDateTime = () => {
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    return `${today}T20:00`;
+    // Allow booking up to 30 days in the future
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 30);
+    const maxDate = futureDate.toISOString().split('T')[0];
+    return `${maxDate}T20:00`;
+  };
+
+  const formatTime12Hour = (time24) => {
+    if (!time24) return '';
+    const [hours, minutes] = time24.split(':');
+    const hour12 = hours % 12 || 12;
+    const ampm = hours < 12 ? 'AM' : 'PM';
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  const getTimeOptions = () => {
+    const times = [];
+    for (let hour = 9; hour <= 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        const time12 = formatTime12Hour(time24);
+        times.push({ value: time24, label: time12 });
+      }
+    }
+    return times;
   };
 
   return (
