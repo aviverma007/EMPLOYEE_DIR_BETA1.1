@@ -274,7 +274,7 @@ const Home = () => {
                           {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
                             <div 
                               key={`${employee.id}-${idx}`}
-                              className="h-5 bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between"
+                              className="h-8 bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between"
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between text-xs">
