@@ -22,17 +22,7 @@ const Policies = () => {
     other: false
   });
   
-  // Form state
-  const [policyForm, setPolicyForm] = useState({
-    title: "",
-    content: "",
-    category: "hr",
-    effective_date: "",
-    version: "1.0"
-  });
   const [selectedPolicy, setSelectedPolicy] = useState(null);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showViewDialog, setShowViewDialog] = useState(false);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
