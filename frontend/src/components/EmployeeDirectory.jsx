@@ -12,14 +12,20 @@ import EmployeeCard from "./EmployeeCard";
 import EmployeeList from "./EmployeeList";
 
 const EmployeeDirectory = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [departmentFilter, setDepartmentFilter] = useState("All Departments");
-  const [locationFilter, setLocationFilter] = useState("All Locations");
+  const [nameSearch, setNameSearch] = useState("");
+  const [employeeIdSearch, setEmployeeIdSearch] = useState("");
+  const [departmentSearch, setDepartmentSearch] = useState("");
+  const [locationSearch, setLocationSearch] = useState("");
+  const [debouncedSearchTerms, setDebouncedSearchTerms] = useState({
+    name: "",
+    employeeId: "",
+    department: "",
+    location: ""
+  });
   const [viewMode, setViewMode] = useState("grid");
   const [employees, setEmployees] = useState([]);
-  const [departments, setDepartments] = useState(["All Departments"]);
-  const [locations, setLocations] = useState(["All Locations"]);
+  const [departments, setDepartments] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
