@@ -439,27 +439,76 @@ const MeetingRooms = () => {
                             </div>
                           </div>
 
-                          {/* Date & Time - 12-hour format, 9 AM to 8 PM */}
-                          <div className="grid grid-cols-2 gap-2">
+                          {/* Date & Time Selection with 12-hour format */}
+                          <div className="space-y-4">
                             <div>
-                              <Label>Start Time</Label>
+                              <Label>Date</Label>
                               <Input
-                                type="datetime-local"
-                                value={bookingForm.start_time}
-                                onChange={(e) => setBookingForm(prev => ({ ...prev, start_time: e.target.value }))}
-                                min={getMinDateTime()}
-                                max={getMaxDateTime()}
+                                type="date"
+                                value={bookingForm.start_time ? bookingForm.start_time.split('T')[0] : ''}
+                                onChange={(e) => {
+                                  const date = e.target.value;
+                                  const startTime = bookingForm.start_time ? bookingForm.start_time.split('T')[1] : '09:00';
+                                  const endTime = bookingForm.end_time ? bookingForm.end_time.split('T')[1] : '10:00';
+                                  setBookingForm(prev => ({
+                                    ...prev,
+                                    start_time: `${date}T${startTime}`,
+                                    end_time: `${date}T${endTime}`
+                                  }));
+                                }}
+                                min={new Date().toISOString().split('T')[0]}
+                                max={(() => {
+                                  const futureDate = new Date();
+                                  futureDate.setDate(futureDate.getDate() + 30);
+                                  return futureDate.toISOString().split('T')[0];
+                                })()}
                               />
                             </div>
-                            <div>
-                              <Label>End Time</Label>
-                              <Input
-                                type="datetime-local"
-                                value={bookingForm.end_time}
-                                onChange={(e) => setBookingForm(prev => ({ ...prev, end_time: e.target.value }))}
-                                min={getMinDateTime()}
-                                max={getMaxDateTime()}
-                              />
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <Label>Start Time</Label>
+                                <Select 
+                                  value={bookingForm.start_time ? bookingForm.start_time.split('T')[1] || '' : ''}
+                                  onValueChange={(time) => {
+                                    const date = bookingForm.start_time ? bookingForm.start_time.split('T')[0] : new Date().toISOString().split('T')[0];
+                                    setBookingForm(prev => ({ ...prev, start_time: `${date}T${time}` }));
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select start time" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {getTimeOptions().map((time) => (
+                                      <SelectItem key={time.value} value={time.value}>
+                                        {time.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
+                              <div>
+                                <Label>End Time</Label>
+                                <Select 
+                                  value={bookingForm.end_time ? bookingForm.end_time.split('T')[1] || '' : ''}
+                                  onValueChange={(time) => {
+                                    const date = bookingForm.end_time ? bookingForm.end_time.split('T')[0] : new Date().toISOString().split('T')[0];
+                                    setBookingForm(prev => ({ ...prev, end_time: `${date}T${time}` }));
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select end time" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {getTimeOptions().map((time) => (
+                                      <SelectItem key={time.value} value={time.value}>
+                                        {time.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </div>
                           </div>
 
