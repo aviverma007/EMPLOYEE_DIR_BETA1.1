@@ -151,3 +151,28 @@ class HelpUpdate(BaseModel):
 
 class HelpReplyCreate(BaseModel):
     message: str
+
+# Meeting Room models
+class MeetingRoom(BaseModel):
+    id: str = Field(..., description="Unique room ID")
+    name: str = Field(..., description="Room name")
+    capacity: int = Field(..., description="Room capacity")
+    location: str = Field(..., description="Room location")
+    status: str = Field(default="vacant", description="Room status: vacant, occupied")
+    occupied_by: str = Field(default="", description="Occupancy reason/description")
+    occupied_until: str = Field(default="", description="Occupied until time")
+    equipment: List[str] = Field(default_factory=list, description="Available equipment")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MeetingRoomCreate(BaseModel):
+    id: str
+    name: str
+    capacity: int
+    location: str
+    equipment: List[str] = []
+
+class MeetingRoomUpdate(BaseModel):
+    status: Optional[str] = None
+    occupied_by: Optional[str] = None
+    occupied_until: Optional[str] = None
