@@ -1611,26 +1611,46 @@ logger = logging.getLogger(__name__)
 async def startup_db():
     """Initialize database with Excel data if empty"""
     try:
+        # Force reload Excel data for testing
+        logger.info("Starting database initialization...")
+        
         # Check if employees collection is empty
         count = await db.employees.count_documents({})
+        logger.info(f"Current employee count in database: {count}")
+        
         if count == 0:
             logger.info("Database empty, loading Excel data...")
-            employees_data = excel_parser.parse_excel_to_employees()
             
-            if employees_data:
-                # Add timestamps
-                for emp in employees_data:
-                    emp['lastUpdated'] = datetime.utcnow()
+            # Try to load Excel data with better error handling
+            try:
+                employees_data = excel_parser.parse_excel_to_employees()
                 
-                await db.employees.insert_many(employees_data)
-                logger.info(f"Loaded {len(employees_data)} employees from Excel")
-            else:
-                logger.warning("No employee data found in Excel file")
+                if employees_data and len(employees_data) > 0:
+                    # Add timestamps
+                    for emp in employees_data:
+                        emp['lastUpdated'] = datetime.utcnow()
+                    
+                    await db.employees.insert_many(employees_data)
+                    logger.info(f"Successfully loaded {len(employees_data)} employees from Excel")
+                else:
+                    logger.warning("No employee data found in Excel file")
+                    
+            except Exception as excel_error:
+                logger.error(f"Excel parsing error: {str(excel_error)}")
+                # Try to check if file exists
+                excel_file_path = os.path.join(os.path.dirname(__file__), "employee_directory.xlsx")
+                if os.path.exists(excel_file_path):
+                    logger.info(f"Excel file exists at: {excel_file_path}")
+                else:
+                    logger.error(f"Excel file not found at: {excel_file_path}")
+                    
         else:
-            logger.info(f"Database already has {count} employees")
+            logger.info(f"Database already has {count} employees, skipping Excel load")
             
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
+        import traceback
+        logger.error(f"Full traceback: {traceback.format_exc()}")
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
