@@ -153,14 +153,23 @@ class HelpReplyCreate(BaseModel):
     message: str
 
 # Meeting Room models
+class MeetingRoomBooking(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    employee_id: str = Field(..., description="Employee ID who booked the room")
+    employee_name: str = Field(..., description="Employee name who booked the room")
+    start_time: datetime = Field(..., description="Booking start time")
+    end_time: datetime = Field(..., description="Booking end time")
+    remarks: str = Field(default="", description="Booking remarks")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 class MeetingRoom(BaseModel):
     id: str = Field(..., description="Unique room ID")
     name: str = Field(..., description="Room name")
     capacity: int = Field(..., description="Room capacity")
     location: str = Field(..., description="Room location")
+    floor: str = Field(..., description="Room floor")
     status: str = Field(default="vacant", description="Room status: vacant, occupied")
-    occupied_by: str = Field(default="", description="Occupancy reason/description")
-    occupied_until: str = Field(default="", description="Occupied until time")
+    current_booking: Optional[MeetingRoomBooking] = Field(None, description="Current booking information")
     equipment: List[str] = Field(default_factory=list, description="Available equipment")
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
@@ -170,9 +179,15 @@ class MeetingRoomCreate(BaseModel):
     name: str
     capacity: int
     location: str
+    floor: str
     equipment: List[str] = []
 
 class MeetingRoomUpdate(BaseModel):
     status: Optional[str] = None
-    occupied_by: Optional[str] = None
-    occupied_until: Optional[str] = None
+    current_booking: Optional[MeetingRoomBooking] = None
+
+class MeetingRoomBookingCreate(BaseModel):
+    employee_id: str
+    start_time: str
+    end_time: str
+    remarks: str = ""
