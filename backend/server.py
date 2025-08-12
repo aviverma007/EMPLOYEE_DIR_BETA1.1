@@ -915,7 +915,9 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         if start_time >= end_time:
             raise HTTPException(status_code=400, detail="End time must be after start time")
         
-        if start_time < datetime.utcnow():
+        # Make datetime.utcnow() timezone-aware for comparison
+        current_time = datetime.utcnow().replace(tzinfo=start_time.tzinfo) if start_time.tzinfo else datetime.utcnow()
+        if start_time < current_time:
             raise HTTPException(status_code=400, detail="Cannot book room for past time")
         
         # Create booking object
