@@ -8,36 +8,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { 
-  Calendar,
-  Clock,
   MapPin,
-  Users,
-  Monitor,
-  Wifi,
-  Search,
-  Filter,
-  Building,
   BookOpen,
-  X,
+  Users,
+  Clock,
+  User,
   Check,
-  User
+  X,
+  Building
 } from "lucide-react";
 
 const MeetingRooms = () => {
   const [rooms, setRooms] = useState([]);
-  const [filteredRooms, setFilteredRooms] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [floors, setFloors] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   
   // Filters
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedFloor, setSelectedFloor] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   
-  // Booking form
+  // Form state
   const [bookingForm, setBookingForm] = useState({
     employee_id: "",
     start_time: "",
@@ -50,52 +41,36 @@ const MeetingRooms = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
 
-  // Fetch initial data
+  // Define locations with floors and rooms
+  const locationConfig = {
+    "IFC": {
+      floors: ["11", "12", "14"],
+      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+    },
+    "Central Office 75": {
+      floors: ["1"],
+      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+    },
+    "Office 75": {
+      floors: ["1"],
+      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+    },
+    "Noida": {
+      floors: ["1"],
+      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+    },
+    "Project Office": {
+      floors: ["1"],
+      rooms: ["Conference Room A", "Conference Room B", "Meeting Room 1", "Meeting Room 2"]
+    }
+  };
+
+  // Fetch data
   useEffect(() => {
     fetchRooms();
-    fetchLocations();
     fetchEmployees();
+    fetchLocations();
   }, []);
-
-  // Update floors when location changes
-  useEffect(() => {
-    if (selectedLocation) {
-      fetchFloors(selectedLocation);
-    } else {
-      setFloors([]);
-      setSelectedFloor("");
-    }
-  }, [selectedLocation]);
-
-  // Apply filters
-  useEffect(() => {
-    let filtered = rooms;
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(room =>
-        room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        room.id.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Location filter
-    if (selectedLocation && selectedLocation !== "all") {
-      filtered = filtered.filter(room => room.location === selectedLocation);
-    }
-
-    // Floor filter
-    if (selectedFloor && selectedFloor !== "all") {
-      filtered = filtered.filter(room => room.floor === selectedFloor);
-    }
-
-    // Status filter
-    if (statusFilter !== "all") {
-      filtered = filtered.filter(room => room.status === statusFilter);
-    }
-
-    setFilteredRooms(filtered);
-  }, [rooms, searchTerm, selectedLocation, selectedFloor, statusFilter]);
 
   const fetchRooms = async () => {
     try {
@@ -112,30 +87,6 @@ const MeetingRooms = () => {
     }
   };
 
-  const fetchLocations = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/meeting-rooms/locations`);
-      if (response.ok) {
-        const data = await response.json();
-        setLocations(data.locations || []);
-      }
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    }
-  };
-
-  const fetchFloors = async (location) => {
-    try {
-      const response = await fetch(`${backendUrl}/api/meeting-rooms/floors?location=${encodeURIComponent(location)}`);
-      if (response.ok) {
-        const data = await response.json();
-        setFloors(data.floors || []);
-      }
-    } catch (error) {
-      console.error('Error fetching floors:', error);
-    }
-  };
-
   const fetchEmployees = async () => {
     try {
       const response = await fetch(`${backendUrl}/api/employees`);
@@ -145,6 +96,23 @@ const MeetingRooms = () => {
       }
     } catch (error) {
       console.error('Error fetching employees:', error);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/locations`);
+      if (response.ok) {
+        const data = await response.json();
+        // Filter relevant locations
+        const relevantLocations = data.locations.filter(loc => 
+          locationConfig.hasOwnProperty(loc) || 
+          ['IFC', 'Central Office 75', 'Office 75', 'Noida', 'Project Office'].includes(loc)
+        );
+        setLocations(relevantLocations);
+      }
+    } catch (error) {
+      console.error('Error fetching locations:', error);
     }
   };
 
@@ -166,7 +134,8 @@ const MeetingRooms = () => {
           end_time: "",
           remarks: ""
         });
-        fetchRooms(); // Refresh rooms
+        setEmployeeSearch("");
+        fetchRooms();
         alert('Room booked successfully!');
       } else {
         const error = await response.json();
@@ -179,40 +148,38 @@ const MeetingRooms = () => {
   };
 
   const handleCancelBooking = async (roomId) => {
-    try {
-      const response = await fetch(`${backendUrl}/api/meeting-rooms/${roomId}/booking`, {
-        method: 'DELETE',
-      });
+    if (window.confirm('Are you sure you want to cancel this booking?')) {
+      try {
+        const response = await fetch(`${backendUrl}/api/meeting-rooms/${roomId}/booking`, {
+          method: 'DELETE',
+        });
 
-      if (response.ok) {
-        fetchRooms(); // Refresh rooms
-        alert('Booking cancelled successfully!');
-      } else {
+        if (response.ok) {
+          fetchRooms();
+          alert('Booking cancelled successfully!');
+        } else {
+          alert('Failed to cancel booking');
+        }
+      } catch (error) {
+        console.error('Error cancelling booking:', error);
         alert('Failed to cancel booking');
       }
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      alert('Failed to cancel booking');
     }
   };
 
   const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return '';
     const date = new Date(dateTimeString);
     return date.toLocaleString('en-US', {
-      year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
+      hour12: true
     });
   };
 
-  const getStatusColor = (status) => {
-    return status === 'vacant' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-  };
-
-  const filteredEmployees = employees.filter(emp => 
-    employeeSearch === "" || 
+  const filteredEmployees = employees.filter(emp =>
     emp.name.toLowerCase().includes(employeeSearch.toLowerCase()) ||
     emp.id.toLowerCase().includes(employeeSearch.toLowerCase())
   );
@@ -221,46 +188,56 @@ const MeetingRooms = () => {
     return employees.find(emp => emp.id === bookingForm.employee_id);
   };
 
+  const filteredRooms = rooms.filter(room => {
+    if (selectedLocation && room.location !== selectedLocation) return false;
+    if (selectedFloor && room.floor !== selectedFloor) return false;
+    return true;
+  });
+
+  const getAvailableFloors = () => {
+    if (!selectedLocation || !locationConfig[selectedLocation]) return [];
+    return locationConfig[selectedLocation].floors;
+  };
+
+  const getMinDateTime = () => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    return `${today}T09:00`;
+  };
+
+  const getMaxDateTime = () => {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    return `${today}T20:00`;
+  };
+
   return (
     <div className="h-full flex flex-col space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Meeting Rooms</h1>
-        <div className="text-sm text-gray-500">
-          {filteredRooms.length} rooms found
-        </div>
       </div>
 
-      {/* Filters */}
+      {/* Location and Floor Filters */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters & Search
+            <Building className="h-5 w-5" />
+            Location & Floor Selection
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search rooms..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-
-            {/* Location Dropdown */}
-            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Select value={selectedLocation} onValueChange={(value) => {
+              setSelectedLocation(value);
+              setSelectedFloor(""); // Reset floor when location changes
+            }}>
               <SelectTrigger>
-                <Building className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Select Location" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                {locations.map((location) => (
+                <SelectItem value="">All Locations</SelectItem>
+                {Object.keys(locationConfig).map((location) => (
                   <SelectItem key={location} value={location}>
                     {location}
                   </SelectItem>
@@ -268,57 +245,29 @@ const MeetingRooms = () => {
               </SelectContent>
             </Select>
 
-            {/* Floor Dropdown */}
-            <Select value={selectedFloor} onValueChange={setSelectedFloor} disabled={!selectedLocation}>
+            <Select 
+              value={selectedFloor} 
+              onValueChange={setSelectedFloor}
+              disabled={!selectedLocation}
+            >
               <SelectTrigger>
-                <MapPin className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Select Floor" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Floors</SelectItem>
-                {floors.map((floor) => (
+                <SelectItem value="">All Floors</SelectItem>
+                {getAvailableFloors().map((floor) => (
                   <SelectItem key={floor} value={floor}>
-                    {floor}
+                    Floor {floor}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            {/* Status Filter */}
-            <div className="flex gap-2">
-              <Button
-                variant={statusFilter === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setStatusFilter("all")}
-              >
-                All
-              </Button>
-              <Button
-                variant={statusFilter === "vacant" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setStatusFilter("vacant")}
-                className="bg-green-600 hover:bg-green-700 border-green-600 text-white"
-              >
-                Vacant
-              </Button>
-              <Button
-                variant={statusFilter === "occupied" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setStatusFilter("occupied")}
-                className="bg-red-600 hover:bg-red-700 border-red-600 text-white"
-              >
-                Occupied
-              </Button>
-            </div>
-
-            {/* Clear Filters */}
             <Button
               variant="outline"
               onClick={() => {
-                setSearchTerm("");
-                setSelectedLocation("all");
-                setSelectedFloor("all");
-                setStatusFilter("all");
+                setSelectedLocation("");
+                setSelectedFloor("");
               }}
             >
               Clear Filters
@@ -334,53 +283,51 @@ const MeetingRooms = () => {
             <div className="text-gray-500">Loading meeting rooms...</div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRooms.map((room) => (
               <Card key={room.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+                <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-lg">{room.name}</CardTitle>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                        <Building className="h-4 w-4" />
-                        {room.location} - {room.floor}
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                        <div className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {room.location}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Building className="h-4 w-4" />
+                          Floor {room.floor}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          {room.capacity}
+                        </div>
                       </div>
                     </div>
-                    <Badge className={`${getStatusColor(room.status)} border-0`}>
-                      {room.status === 'vacant' ? 'Vacant' : 'Occupied'}
+                    <Badge className={`
+                      ${room.status === 'vacant' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
+                      border-0
+                    `}>
+                      {room.status.toUpperCase()}
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Room Details */}
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <div className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {room.capacity} people
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Monitor className="h-4 w-4" />
-                      {room.equipment?.length || 0} equipment
+
+                <CardContent className="space-y-3">
+                  {/* Room Features */}
+                  <div className="text-sm text-gray-600">
+                    <div className="font-medium mb-1">Amenities:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {room.amenities && room.amenities.map((amenity, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {amenity}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Equipment List */}
-                  {room.equipment && room.equipment.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {room.equipment.slice(0, 3).map((item, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
-                          {item}
-                        </Badge>
-                      ))}
-                      {room.equipment.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{room.equipment.length - 3} more
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Current Booking */}
+                  {/* Current Booking Info */}
                   {room.status === 'occupied' && room.current_booking && (
                     <div className="bg-red-50 rounded-lg p-3 space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium text-red-800">
@@ -470,7 +417,7 @@ const MeetingRooms = () => {
                             </div>
                           </div>
 
-                          {/* Date & Time */}
+                          {/* Date & Time - 12-hour format, 9 AM to 8 PM */}
                           <div className="grid grid-cols-2 gap-2">
                             <div>
                               <Label>Start Time</Label>
@@ -478,6 +425,8 @@ const MeetingRooms = () => {
                                 type="datetime-local"
                                 value={bookingForm.start_time}
                                 onChange={(e) => setBookingForm(prev => ({ ...prev, start_time: e.target.value }))}
+                                min={getMinDateTime()}
+                                max={getMaxDateTime()}
                               />
                             </div>
                             <div>
@@ -486,7 +435,16 @@ const MeetingRooms = () => {
                                 type="datetime-local"
                                 value={bookingForm.end_time}
                                 onChange={(e) => setBookingForm(prev => ({ ...prev, end_time: e.target.value }))}
+                                min={getMinDateTime()}
+                                max={getMaxDateTime()}
                               />
+                            </div>
+                          </div>
+
+                          {/* Business Hours Notice */}
+                          <div className="bg-blue-50 p-3 rounded-md">
+                            <div className="text-sm text-blue-800">
+                              <strong>Business Hours:</strong> 9:00 AM - 8:00 PM
                             </div>
                           </div>
 
@@ -539,7 +497,7 @@ const MeetingRooms = () => {
         {!loading && filteredRooms.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-500 text-lg">No meeting rooms found</div>
-            <div className="text-gray-400 text-sm mt-2">Try adjusting your filters</div>
+            <div className="text-gray-400 text-sm mt-2">Try adjusting your location and floor filters</div>
           </div>
         )}
       </div>
