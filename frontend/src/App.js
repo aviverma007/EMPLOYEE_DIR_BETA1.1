@@ -47,7 +47,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Navigation - 5 Tab Structure as per requirements */}
+                  {/* Restored Original 7-Tab Navigation Structure */}
                   <div className="flex justify-start mb-4">
                     <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
                       <TabsTrigger 
@@ -98,16 +98,28 @@ const AppContent = () => {
                       </div>
                       
                       <TabsTrigger 
-                        value="work" 
+                        value="policies" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
-                        Work
+                        Policies
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="knowledge" 
+                        value="workflows" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
-                        Knowledge
+                        Workflows
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="meeting-rooms" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Meeting Rooms
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="attendance" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Attendance
                       </TabsTrigger>
                       <TabsTrigger 
                         value="help" 
