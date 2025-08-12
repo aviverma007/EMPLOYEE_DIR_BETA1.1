@@ -59,7 +59,7 @@ const Help = () => {
       // Show saving indicator
       toast.info('Saving your help request...', { duration: 1000 });
       
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
