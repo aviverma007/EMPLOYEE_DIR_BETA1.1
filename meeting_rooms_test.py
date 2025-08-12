@@ -338,11 +338,15 @@ class MeetingRoomsTester:
                         if len(employees) > 0:
                             test_employee = employees[0]
                             
-                            # Create a booking
+                            # Create a booking with future date
+                            from datetime import datetime, timedelta
+                            future_time = datetime.utcnow() + timedelta(hours=2)
+                            end_time = future_time + timedelta(hours=1)
+                            
                             booking_data = {
                                 "employee_id": test_employee['id'],
-                                "start_time": "2025-01-20T10:00:00Z",
-                                "end_time": "2025-01-20T11:00:00Z",
+                                "start_time": future_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "end_time": end_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
                                 "remarks": "Test booking for API verification"
                             }
                             
