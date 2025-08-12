@@ -197,15 +197,23 @@ const EmployeeDirectory = () => {
               )}
             </div>
 
-            {/* Department Search */}
+            {/* Department Search - Dropdown */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-400 h-4 w-4" />
-              <Input
-                placeholder="Search by department..."
+              <select
                 value={departmentSearch}
                 onChange={(e) => setDepartmentSearch(e.target.value)}
-                className="pl-10 h-11 border-blue-200 focus:border-blue-400"
-              />
+                className="w-full h-11 px-3 border border-blue-200 rounded-md focus:border-blue-400 focus:ring-1 focus:ring-blue-400 bg-white text-gray-900"
+              >
+                <option value="">Select Department...</option>
+                {departments
+                  .filter(dept => dept !== 'All Departments') // Exclude the default "All Departments" option
+                  .map((department, index) => (
+                    <option key={index} value={department}>
+                      {department}
+                    </option>
+                  ))
+                }
+              </select>
               {departmentSearch && (
                 <Button
                   variant="ghost"
