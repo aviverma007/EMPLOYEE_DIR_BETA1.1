@@ -29,7 +29,7 @@ const Help = () => {
 
   const fetchMessages = async () => {
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/help`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/help`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
