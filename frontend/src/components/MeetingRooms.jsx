@@ -248,7 +248,7 @@ const MeetingRooms = () => {
             <Select 
               value={selectedFloor} 
               onValueChange={setSelectedFloor}
-              disabled={!selectedLocation}
+              disabled={!selectedLocation || selectedLocation === "all"}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Floor" />
