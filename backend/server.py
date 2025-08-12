@@ -1406,6 +1406,11 @@ async def update_attendance(attendance_id: str, attendance: AttendanceUpdate):
                 punch_out = update_data.get('punch_out', attendance_doc.get('punch_out'))
                 
                 if punch_in and punch_out:
+                    # Ensure both datetimes have the same timezone info for calculation
+                    if punch_in.tzinfo and not punch_out.tzinfo:
+                        punch_out = punch_out.replace(tzinfo=punch_in.tzinfo)
+                    elif punch_out.tzinfo and not punch_in.tzinfo:
+                        punch_in = punch_in.replace(tzinfo=punch_out.tzinfo)
                     total_hours = (punch_out - punch_in).total_seconds() / 3600
                     update_data['total_hours'] = total_hours
             
