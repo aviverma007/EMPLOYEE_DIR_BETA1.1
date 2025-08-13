@@ -155,6 +155,23 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         logging.error(f"Error saving uploaded file: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to save image file")
 
+def get_employee_image_url(employee_id: str) -> Optional[str]:
+    """Get employee profile image URL if file exists on filesystem"""
+    try:
+        # Check for any image file with the employee ID as filename
+        for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+            file_path = UPLOAD_DIR / f"{employee_id}.{ext}"
+            if file_path.exists():
+                # Return the URL path that can be served by FastAPI static files
+                return f"/uploads/images/{employee_id}.{ext}"
+        
+        # No image file found
+        return None
+        
+    except Exception as e:
+        logging.error(f"Error getting employee image URL: {str(e)}")
+        return None
+
 # Employee Management Endpoints
 
 @api_router.get("/employees", response_model=List[Employee])
