@@ -43,6 +43,45 @@ const Home = () => {
     "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/twxag3rn_smart-world-sky-arc.webp"
   ];
 
+  // External link buttons
+  const externalButtons = [
+    {
+      title: "Adrenaline",
+      icon: <UserCheck className="h-5 w-5" />,
+      description: "Employee HR Portal",
+      url: "https://maxhr.myadrenalin.com/AdrenalinMax/User",
+      color: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+    },
+    {
+      title: "Company Portal",
+      icon: <Building className="h-5 w-5" />,
+      description: "Main corporate website",
+      url: "#",
+      color: "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+    },
+    {
+      title: "Projects",
+      icon: <Globe className="h-5 w-5" />,
+      description: "Our development projects",
+      url: "#",
+      color: "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+    },
+    {
+      title: "Events",
+      icon: <Calendar className="h-5 w-5" />,
+      description: "Company events & updates",
+      url: "#",
+      color: "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+    },
+    {
+      title: "Contact",
+      icon: <Mail className="h-5 w-5" />,
+      description: "Get in touch with us",
+      url: "#",
+      color: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+    }
+  ];
+
   // Fetch employees data for new joinees
   useEffect(() => {
     const fetchEmployees = async () => {
