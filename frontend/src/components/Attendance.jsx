@@ -37,8 +37,8 @@ const Attendance = () => {
 
     if (searchTerm) {
       filtered = filtered.filter(record =>
-        record.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        record.employee_id.toLowerCase().includes(searchTerm.toLowerCase())
+        record.employee_name.toLowerCase().startsWith(searchTerm.toLowerCase()) ||
+        record.employee_id.toLowerCase().startsWith(searchTerm.toLowerCase())
       );
     }
 
