@@ -814,6 +814,45 @@ async def delete_help_request(help_id: str):
         logging.error(f"Error deleting help request: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to delete help request")
 
+# Helper function for meeting room cleanup
+async def cleanup_expired_bookings():
+    """Clean up expired meeting room bookings"""
+    try:
+        current_time = datetime.utcnow()
+        
+        # Find all rooms with current bookings
+        rooms_with_bookings = await db.meeting_rooms.find({
+            "current_booking": {"$ne": None}
+        }).to_list(None)
+        
+        for room in rooms_with_bookings:
+            booking = room.get('current_booking')
+            if booking and booking.get('end_time'):
+                end_time = booking['end_time']
+                
+                # Handle timezone-aware comparison
+                if end_time.tzinfo and not current_time.tzinfo:
+                    current_time = current_time.replace(tzinfo=end_time.tzinfo)
+                elif current_time.tzinfo and not end_time.tzinfo:
+                    end_time = end_time.replace(tzinfo=current_time.tzinfo)
+                
+                # If booking has expired, clear it
+                if end_time < current_time:
+                    await db.meeting_rooms.update_one(
+                        {"id": room['id']},
+                        {
+                            "$set": {
+                                "status": "vacant",
+                                "current_booking": None,
+                                "updated_at": datetime.utcnow()
+                            }
+                        }
+                    )
+                    logging.info(f"Cleaned up expired booking for room {room['id']}")
+                    
+    except Exception as e:
+        logging.error(f"Error cleaning up expired bookings: {str(e)}")
+
 # Meeting Room Management Endpoints
 
 @api_router.get("/meeting-rooms", response_model=List[MeetingRoom])
