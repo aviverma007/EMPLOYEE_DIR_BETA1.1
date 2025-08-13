@@ -120,14 +120,21 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         if ext.startswith('.'):
             ext = ext[1:]
         
-        # Generate unique filename
-        filename = f"{employee_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        # Generate unique filename with timestamp
+        timestamp = int(datetime.utcnow().timestamp())
+        filename = f"{employee_id}_{timestamp}_{uuid.uuid4().hex[:8]}.{ext}"
         file_path = UPLOAD_DIR / filename
         
         # Save the file
         with open(file_path, 'wb') as buffer:
             content = file.file.read()
             buffer.write(content)
+        
+        # Set proper file permissions
+        try:
+            file_path.chmod(0o644)
+        except:
+            pass
         
         # Return the URL path
         return f"/uploads/images/{filename}"
