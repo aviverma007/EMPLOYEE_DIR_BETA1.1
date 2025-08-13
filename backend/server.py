@@ -271,15 +271,15 @@ async def upload_employee_image(employee_id: str, file: UploadFile = File(...)):
     """Upload employee profile image file"""
     try:
         # Save uploaded file
-        image_url = save_uploaded_file(file, employee_id)
+        save_uploaded_file(file, employee_id)
         
-        # Update employee in database
+        # Update employee in database with timestamp (no URL stored)
         result = await db.employees.update_one(
             {"id": employee_id},
             {
                 "$set": {
-                    "profileImage": image_url,
-                    "lastUpdated": datetime.utcnow()
+                    "lastUpdated": datetime.utcnow(),
+                    "hasProfileImage": True
                 }
             }
         )
@@ -293,6 +293,10 @@ async def upload_employee_image(employee_id: str, file: UploadFile = File(...)):
             raise HTTPException(status_code=404, detail="Employee not found")
         
         employee_doc.pop('_id', None)
+        
+        # Set dynamic profile image URL based on filesystem
+        employee_doc['profileImage'] = get_employee_image_url(employee_id) or "/api/placeholder/150/150"
+        
         return Employee(**employee_doc)
         
     except HTTPException:
