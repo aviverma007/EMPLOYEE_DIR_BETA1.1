@@ -80,12 +80,8 @@ const Attendance = () => {
       filtered = filtered.filter(record => record.date === selectedDate);
     }
 
-    if (selectedStatus && selectedStatus !== "all") {
-      filtered = filtered.filter(record => record.status === selectedStatus);
-    }
-
     setFilteredRecords(filtered);
-  }, [attendanceRecords, searchTerm, selectedEmployee, selectedDate, selectedStatus]);
+  }, [attendanceRecords, searchTerm, selectedEmployee, selectedDate]);
 
   const fetchAttendanceRecords = async () => {
     try {
