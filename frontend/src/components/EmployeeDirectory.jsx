@@ -82,10 +82,10 @@ const EmployeeDirectory = () => {
 
     return employees.filter(employee => {
       const nameMatch = !debouncedSearchTerms.name || 
-        employee.name.toLowerCase().includes(debouncedSearchTerms.name.toLowerCase());
+        employee.name.toLowerCase().startsWith(debouncedSearchTerms.name.toLowerCase());
       
       const idMatch = !debouncedSearchTerms.employeeId || 
-        employee.id.toLowerCase().includes(debouncedSearchTerms.employeeId.toLowerCase());
+        employee.id.toLowerCase().startsWith(debouncedSearchTerms.employeeId.toLowerCase());
       
       const deptMatch = !debouncedSearchTerms.department || 
         employee.department === debouncedSearchTerms.department;
