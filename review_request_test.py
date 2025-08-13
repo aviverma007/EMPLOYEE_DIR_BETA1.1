@@ -701,7 +701,7 @@ class ReviewRequestTester:
         # Setup test data
         if not self.setup_test_data():
             print("❌ Test setup failed. Cannot proceed with tests.")
-            return
+            return 0, 1
         
         print("\n" + "=" * 50)
         print("IMAGE UPLOAD PERSISTENCE TESTS")
