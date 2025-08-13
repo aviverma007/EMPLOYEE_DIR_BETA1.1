@@ -13,7 +13,7 @@ import time
 from datetime import datetime, timedelta
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://booking-persist.preview.emergentagent.com/api"
+BACKEND_URL = "https://syntax-error-fix.preview.emergentagent.com/api"
 
 class NewAPIsTester:
     def __init__(self):
