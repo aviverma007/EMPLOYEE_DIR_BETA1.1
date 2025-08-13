@@ -36,7 +36,7 @@ const Knowledge = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/knowledge`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/knowledge`);
       if (response.ok) {
         const data = await response.json();
         setArticles(data);
