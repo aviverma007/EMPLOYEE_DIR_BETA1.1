@@ -40,7 +40,7 @@ const MeetingRooms = () => {
   const [showBookingDialog, setShowBookingDialog] = useState(false);
   const [employeeSearch, setEmployeeSearch] = useState("");
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
   // Define locations with floors and rooms - updated to match backend
   const locationConfig = {
