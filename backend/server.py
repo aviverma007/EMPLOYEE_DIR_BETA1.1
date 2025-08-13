@@ -256,7 +256,7 @@ async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
         employee_doc.pop('_id', None)
         
         # Set dynamic profile image URL based on filesystem
-        employee_doc['profileImage'] = get_employee_image_url(employee_id)
+        employee_doc['profileImage'] = get_employee_image_url(employee_id) or "/api/placeholder/150/150"
         
         return Employee(**employee_doc)
         
