@@ -39,9 +39,16 @@ db = client[os.environ['DB_NAME']]
 # Create the main app without a prefix
 app = FastAPI(title="Employee Directory API", version="1.0.0")
 
-# Create uploads directory if it doesn't exist
+# Create uploads directory if it doesn't exist - make it persistent
 UPLOAD_DIR = ROOT_DIR / "uploads" / "images"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Ensure proper permissions for upload directory
+import stat
+try:
+    UPLOAD_DIR.chmod(stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+except:
+    pass  # Ignore permission errors on some systems
 
 # Serve static files for images
 app.mount("/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="uploads")
