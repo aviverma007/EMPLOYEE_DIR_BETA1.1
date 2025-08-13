@@ -211,7 +211,7 @@ async def get_employees(
         for emp in employees:
             emp.pop('_id', None)  # Remove MongoDB _id field
             # Set dynamic profile image URL based on filesystem
-            emp['profileImage'] = get_employee_image_url(emp['id'])
+            emp['profileImage'] = get_employee_image_url(emp['id']) or "/api/placeholder/150/150"
             result.append(Employee(**emp))
         
         return result
