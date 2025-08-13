@@ -85,13 +85,20 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         # Decode base64 data
         image_data = base64.b64decode(data)
         
-        # Generate unique filename
-        filename = f"{employee_id}_{uuid.uuid4().hex[:8]}.{ext}"
+        # Generate unique filename with timestamp
+        timestamp = int(datetime.utcnow().timestamp())
+        filename = f"{employee_id}_{timestamp}_{uuid.uuid4().hex[:8]}.{ext}"
         file_path = UPLOAD_DIR / filename
         
         # Save the image file
         with open(file_path, 'wb') as f:
             f.write(image_data)
+        
+        # Set proper file permissions
+        try:
+            file_path.chmod(0o644)
+        except:
+            pass
         
         # Return the URL path
         return f"/uploads/images/{filename}"
