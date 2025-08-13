@@ -767,10 +767,22 @@ async def get_meeting_rooms(
         # Check if we need to initialize with default rooms
         count = await db.meeting_rooms.count_documents({})
         if count == 0:
-            # Initialize with meeting rooms as per user requirements
-            default_rooms = [
+            # Get available locations from Excel file
+            try:
+                excel_locations = excel_parser.get_unique_locations()
+                # Remove 'All Locations' and get actual locations
+                actual_locations = [loc for loc in excel_locations if loc != 'All Locations']
+            except:
+                # Fallback locations if Excel parsing fails
+                actual_locations = ['IFC', 'Central Office 75', 'Office 75', 'Noida', 'Project Office']
+            
+            # Initialize with meeting rooms using Excel locations
+            default_rooms = []
+            
+            # IFC Location - Multi-floor with special 14th floor rooms
+            if 'IFC' in actual_locations:
                 # IFC - 11th Floor (1 room)
-                {
+                default_rooms.append({
                     'id': 'ifc-11-001',
                     'name': 'IFC Conference Room 11A',
                     'capacity': 8,
@@ -781,9 +793,10 @@ async def get_meeting_rooms(
                     'amenities': ['TV Screen', 'Whiteboard', 'Video Conference'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
-                },
+                })
+                
                 # IFC - 12th Floor (1 room)
-                {
+                default_rooms.append({
                     'id': 'ifc-12-001',
                     'name': 'IFC Meeting Room 12A',
                     'capacity': 6,
@@ -802,166 +815,62 @@ async def get_meeting_rooms(
                     'amenities': ['TV Screen', 'Whiteboard'],
                     'created_at': datetime.utcnow(),
                     'updated_at': datetime.utcnow()
-                },
-                # IFC - 14th Floor (9 rooms as requested by user with specific names)
-                {
-                    'id': 'ifc-14-001',
-                    'name': 'OVAL MEETING ROOM',
-                    'capacity': 10,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-002',
-                    'name': 'PETRONAS MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-003',
-                    'name': 'GLOBAL CENTER MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-004',
-                    'name': 'LOUVRE MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-005',
-                    'name': 'GOLDEN GATE MEETING ROOM',
-                    'capacity': 10,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-006',
-                    'name': 'EMPIRE STATE MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-007',
-                    'name': 'MARINA BAY MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-008',
-                    'name': 'BURJ MEETING ROOM',
-                    'capacity': 5,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'ifc-14-009',
-                    'name': 'BOARD ROOM',
-                    'capacity': 20,
-                    'location': 'IFC',
-                    'floor': '14',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Marker with Glass Board'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                # Other locations - 1 room each, 1 floor each
-                {
-                    'id': 'central-75-001',
-                    'name': 'Central Office Meeting Room',
-                    'capacity': 8,
-                    'location': 'Central Office 75',
-                    'floor': '1',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Whiteboard'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'office-75-001',
-                    'name': 'Office 75 Conference Room',
-                    'capacity': 6,
-                    'location': 'Office 75',
-                    'floor': '1',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Whiteboard'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'noida-001',
-                    'name': 'Noida Meeting Room',
-                    'capacity': 10,
-                    'location': 'Noida',
-                    'floor': '1',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Whiteboard', 'Video Conference'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                },
-                {
-                    'id': 'project-office-001',
-                    'name': 'Project Office Meeting Room',
-                    'capacity': 4,
-                    'location': 'Project Office',
-                    'floor': '1',
-                    'status': 'vacant',
-                    'current_booking': None,
-                    'amenities': ['TV Screen', 'Whiteboard'],
-                    'created_at': datetime.utcnow(),
-                    'updated_at': datetime.utcnow()
-                }
-            ]
+                })
+                
+                # IFC - 14th Floor (9 special rooms as requested)
+                ifc_14_rooms = [
+                    {'id': 'ifc-14-001', 'name': 'OVAL MEETING ROOM', 'capacity': 10, 'amenities': ['TV Screen', 'Marker with Glass Board']},
+                    {'id': 'ifc-14-002', 'name': 'PETRONAS MEETING ROOM', 'capacity': 5, 'amenities': ['Marker with Glass Board']},
+                    {'id': 'ifc-14-003', 'name': 'GLOBAL CENTER MEETING ROOM', 'capacity': 5, 'amenities': ['Marker with Glass Board']},
+                    {'id': 'ifc-14-004', 'name': 'LOUVRE MEETING ROOM', 'capacity': 5, 'amenities': ['TV Screen', 'Marker with Glass Board']},
+                    {'id': 'ifc-14-005', 'name': 'GOLDEN GATE MEETING ROOM', 'capacity': 10, 'amenities': ['TV Screen', 'Marker with Glass Board']},
+                    {'id': 'ifc-14-006', 'name': 'EMPIRE STATE MEETING ROOM', 'capacity': 5, 'amenities': ['TV Screen', 'Marker with Glass Board']},
+                    {'id': 'ifc-14-007', 'name': 'MARINA BAY MEETING ROOM', 'capacity': 5, 'amenities': ['Marker with Glass Board']},
+                    {'id': 'ifc-14-008', 'name': 'BURJ MEETING ROOM', 'capacity': 5, 'amenities': ['Marker with Glass Board']},
+                    {'id': 'ifc-14-009', 'name': 'BOARD ROOM', 'capacity': 20, 'amenities': ['TV Screen', 'Marker with Glass Board']}
+                ]
+                
+                for room_data in ifc_14_rooms:
+                    default_rooms.append({
+                        'id': room_data['id'],
+                        'name': room_data['name'],
+                        'capacity': room_data['capacity'],
+                        'location': 'IFC',
+                        'floor': '14',
+                        'status': 'vacant',
+                        'current_booking': None,
+                        'amenities': room_data['amenities'],
+                        'created_at': datetime.utcnow(),
+                        'updated_at': datetime.utcnow()
+                    })
+            
+            # Add meeting rooms for other Excel locations (1 room each)
+            location_counter = 1
+            for location in actual_locations:
+                if location != 'IFC':  # Skip IFC as it's already handled
+                    # Clean location name for ID
+                    clean_location = location.lower().replace(' ', '-').replace('/', '-')
+                    default_rooms.append({
+                        'id': f'{clean_location}-001',
+                        'name': f'{location} Meeting Room',
+                        'capacity': 6,
+                        'location': location,
+                        'floor': '1',
+                        'status': 'vacant' if location_counter % 3 != 0 else 'occupied',  # Mix of vacant/occupied
+                        'current_booking': {
+                            'id': str(uuid.uuid4()),
+                            'employee_id': 'EMP002',
+                            'employee_name': 'Jane Smith',
+                            'start_time': datetime.utcnow().replace(hour=10, minute=0, second=0, microsecond=0),
+                            'end_time': datetime.utcnow().replace(hour=11, minute=0, second=0, microsecond=0),
+                            'remarks': 'Project discussion',
+                            'created_at': datetime.utcnow()
+                        } if location_counter % 3 == 0 else None,
+                        'amenities': ['TV Screen', 'Whiteboard'],
+                        'created_at': datetime.utcnow(),
+                        'updated_at': datetime.utcnow()
+                    })
+                    location_counter += 1
             
             await db.meeting_rooms.insert_many(default_rooms)
             logging.info(f"Initialized {len(default_rooms)} meeting rooms")
