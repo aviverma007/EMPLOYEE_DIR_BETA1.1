@@ -117,6 +117,32 @@ const AppContent = () => {
                       >
                         Help
                       </TabsTrigger>
+                      
+                      {/* Additional Features as Individual Tabs */}
+                      <TabsTrigger 
+                        value="policies" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Policies
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="workflows" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Workflows
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="meeting-rooms" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Meeting Rooms
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="attendance" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Attendance
+                      </TabsTrigger>
                     </TabsList>
                   </div>
                   
