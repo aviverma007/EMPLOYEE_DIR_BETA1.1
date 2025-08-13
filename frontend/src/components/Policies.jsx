@@ -132,9 +132,9 @@ const Policies = () => {
 
       <div className="flex gap-6 flex-1">
         {/* Policy Tree Structure - Left Side */}
-        <div className="w-1/2 space-y-4">
+        <div className="w-1/3 space-y-4">
           {Object.entries(policyStructure).map(([key, section]) => (
-            <Card key={key} className="overflow-hidden">
+            <Card key={key} className="overflow-visible">
               <CardHeader 
                 className="cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => toggleSection(key)}
@@ -152,12 +152,16 @@ const Policies = () => {
               </CardHeader>
               
               {expandedSections[key] && (
-                <CardContent className="pt-0">
+                <CardContent className="pt-0 relative">
                   <div className="space-y-2">
                     {section.policies.map((policy, index) => (
                       <div 
                         key={index}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors transform-gpu origin-left animate-in slide-in-from-left-2 duration-300"
+                        style={{ 
+                          animationDelay: `${index * 100}ms`,
+                          animationFillMode: 'both'
+                        }}
                       >
                         <div className="flex-1">
                           <div className="font-medium text-gray-800 mb-1">
@@ -170,7 +174,7 @@ const Policies = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-blue-600 hover:text-blue-800"
+                          className="text-blue-600 hover:text-blue-800 ml-2"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -184,7 +188,7 @@ const Policies = () => {
         </div>
 
         {/* Policy Management - Right Side */}
-        <div className="w-1/2 space-y-4">
+        <div className="w-2/3 space-y-4">
           {/* Header */}
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-900">Policy Management</h2>
@@ -238,9 +242,8 @@ const Policies = () => {
                 ))}
                 
                 {policies.length === 0 && (
-                  <div className="text-center py-12">
-                    <div className="text-gray-500 text-lg">No policies available</div>
-                    <div className="text-gray-400 text-sm mt-2">Check back later for policy updates</div>
+                  <div className="text-center py-8">
+                    <div className="text-gray-400 text-base">Policy documents will be displayed here when available</div>
                   </div>
                 )}
               </div>
