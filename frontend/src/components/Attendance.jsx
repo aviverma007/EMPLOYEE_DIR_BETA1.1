@@ -366,27 +366,12 @@ const Attendance = () => {
                           <Calendar className="h-4 w-4" />
                           {formatDate(record.date)}
                         </div>
-                        <Badge className={`${getStatusColor(record.status)} border-0 flex items-center gap-1`}>
-                          {getStatusIcon(record.status)}
-                          {record.status.replace('_', ' ').toUpperCase()}
-                        </Badge>
                       </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => viewRecord(record)}>
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => startEdit(record)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDeleteAttendance(record.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                     <div>
                       <span className="text-gray-500">Punch In:</span>
                       <div className="font-medium">{formatDateTime(record.punch_in)}</div>
@@ -410,10 +395,6 @@ const Attendance = () => {
                     <div>
                       <span className="text-gray-500">Working Hours:</span>
                       <div className="font-medium">{calculateWorkingHours(record.punch_in, record.punch_out)}</div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Remarks:</span>
-                      <div className="font-medium">{record.remarks || 'None'}</div>
                     </div>
                   </div>
                 </CardContent>
