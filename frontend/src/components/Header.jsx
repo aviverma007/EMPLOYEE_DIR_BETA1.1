@@ -46,19 +46,16 @@ const Header = () => {
     <header className="bg-white shadow-lg border-b-2 border-blue-200">
       <div className="w-full px-6 py-4">
         <div className="flex justify-between items-center">
-          {/* Left side - Logo and Company Name */}
+          {/* Left side - Logo and System Name */}
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-4">
               <img 
                 src="https://customer-assets.emergentagent.com/job_site-modifier-3/artifacts/j921etso_2%5B2%5D.png"
-                alt="SmartWorld Logo"
-                className="h-20 w-20 object-contain rounded-lg"
+                alt="Company Logo"
+                className="h-24 w-24 object-contain rounded-lg shadow-md"
               />
               <div>
-                <h1 className="text-3xl font-bold text-blue-900">
-                  SMARTWORLD DEVELOPERS PVT. LTD.
-                </h1>
-                <p className="text-lg text-blue-600">
+                <p className="text-2xl font-semibold text-blue-600">
                   Employee Management System
                 </p>
               </div>
