@@ -329,26 +329,31 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-2">{tile.description}</p>
                   
-                  {/* Todo Items - Compact version */}
-                  <div className="flex-1 space-y-1.5 max-h-24 overflow-y-auto">
-                    {todoItems.slice(0, 3).map((item) => (
-                      <div key={item.id} className="flex items-center space-x-2 bg-blue-50 rounded p-1.5">
+                  {/* Todo Items - Enhanced Scrollable Version */}
+                  <div className="flex-1 space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 hover:scrollbar-thumb-blue-500">
+                    {todoItems.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2 bg-blue-50 rounded p-1.5 hover:bg-blue-100 transition-colors">
                         <Checkbox
                           checked={item.completed}
                           onCheckedChange={() => toggleTodoItem(item.id)}
-                          className="border-blue-400 h-3 w-3"
+                          className="border-blue-400 h-3 w-3 flex-shrink-0"
                         />
-                        <span className={`flex-1 text-xs text-blue-900 ${item.completed ? 'line-through opacity-70' : ''}`}>
+                        <span className={`flex-1 text-xs text-blue-900 ${item.completed ? 'line-through opacity-70' : ''} break-words`}>
                           {item.text}
                         </span>
                         <button
                           onClick={() => removeTodoItem(item.id)}
-                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          className="text-blue-600 hover:text-blue-800 transition-colors flex-shrink-0"
                         >
                           <X className="h-3 w-3" />
                         </button>
                       </div>
                     ))}
+                    {todoItems.length === 0 && (
+                      <div className="flex items-center justify-center h-16 text-blue-500">
+                        <p className="text-xs opacity-75">No tasks yet. Add one below!</p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Add Todo - Compact */}
