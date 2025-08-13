@@ -258,15 +258,15 @@ class AttendanceRecord(BaseModel):
     employee_id: str = Field(..., description="Employee ID")
     employee_name: str = Field(..., description="Employee name")
     date: str = Field(..., description="Attendance date (YYYY-MM-DD)")
-    punch_in: Optional[datetime] = Field(None, description="Punch in time")
-    punch_out: Optional[datetime] = Field(None, description="Punch out time")
+    punch_in: Optional[str] = Field(None, description="Punch in time")
+    punch_out: Optional[str] = Field(None, description="Punch out time")
     punch_in_location: Optional[str] = Field(None, description="Punch in location")
     punch_out_location: Optional[str] = Field(None, description="Punch out location")
     total_hours: Optional[float] = Field(None, description="Total working hours")
     status: str = Field(default="present", description="Attendance status: present, absent, half_day, late")
-    remarks: str = Field(default="", description="Attendance remarks")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    remarks: Optional[str] = Field(None, description="Attendance remarks")
+    created_at: Optional[str] = Field(None, description="Created timestamp")
+    updated_at: Optional[str] = Field(None, description="Updated timestamp")
 
 class AttendanceCreate(BaseModel):
     employee_id: str
