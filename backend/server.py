@@ -220,22 +220,25 @@ async def get_employees(
 
 @api_router.put("/employees/{employee_id}/image", response_model=Employee)
 async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
-    """Update employee profile image (supports URL or base64 data)"""
+    """Update employee profile image (saves to filesystem, not database)"""
     try:
-        image_url = update_data.profileImage
+        image_data = update_data.profileImage
         
-        # Check if it's base64 data
-        if image_url.startswith('data:image/'):
-            # Convert base64 to file and get URL
-            image_url = save_base64_image(image_url, employee_id)
+        # Check if it's base64 data and save to filesystem
+        if image_data.startswith('data:image/'):
+            # Save base64 image to filesystem with employee ID as filename
+            save_base64_image(image_data, employee_id)
+        else:
+            # If it's a URL, we don't save it - just indicate success
+            pass
         
-        # Update employee in database
+        # Update employee record with timestamp (no URL stored)
         result = await db.employees.update_one(
             {"id": employee_id},
             {
                 "$set": {
-                    "profileImage": image_url,
-                    "lastUpdated": datetime.utcnow()
+                    "lastUpdated": datetime.utcnow(),
+                    "hasProfileImage": True
                 }
             }
         )
@@ -249,6 +252,10 @@ async def update_employee_image(employee_id: str, update_data: EmployeeUpdate):
             raise HTTPException(status_code=404, detail="Employee not found")
         
         employee_doc.pop('_id', None)
+        
+        # Set dynamic profile image URL based on filesystem
+        employee_doc['profileImage'] = get_employee_image_url(employee_id)
+        
         return Employee(**employee_doc)
         
     except HTTPException:
