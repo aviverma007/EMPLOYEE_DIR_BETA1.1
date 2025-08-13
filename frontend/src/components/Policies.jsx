@@ -25,7 +25,7 @@ const Policies = () => {
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [showViewDialog, setShowViewDialog] = useState(false);
 
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
   // Policy structure data
   const policyStructure = {
