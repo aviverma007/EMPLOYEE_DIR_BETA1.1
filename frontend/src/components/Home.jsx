@@ -170,20 +170,6 @@ const Home = () => {
       color: "bg-white border-2 border-blue-200",
       textColor: "text-blue-900",
       interactive: true
-    },
-    {
-      title: "WORKFLOW",
-      icon: <Workflow className="h-6 w-6" />,
-      description: "Process management & tracking",
-      color: "bg-blue-600",
-      textColor: "text-white"
-    },
-    {
-      title: "DAILY COMPANY NEWS",
-      icon: <Newspaper className="h-6 w-6" />,
-      description: "Latest updates and announcements",
-      color: "bg-white border-2 border-blue-200",
-      textColor: "text-blue-900"
     }
   ];
 
