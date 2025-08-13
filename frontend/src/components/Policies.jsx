@@ -152,14 +152,14 @@ const Policies = () => {
               </CardHeader>
               
               {expandedSections[key] && (
-                <CardContent className="pt-0 relative">
+                <CardContent className="pt-0 relative overflow-visible">
                   <div className="space-y-2">
                     {section.policies.map((policy, index) => (
                       <div 
                         key={index}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors transform-gpu origin-left animate-in slide-in-from-left-2 duration-300"
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-all duration-300 transform animate-in slide-in-from-left-4 fade-in"
                         style={{ 
-                          animationDelay: `${index * 100}ms`,
+                          animationDelay: `${index * 50}ms`,
                           animationFillMode: 'both'
                         }}
                       >
@@ -174,7 +174,7 @@ const Policies = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="text-blue-600 hover:text-blue-800 ml-2"
+                          className="text-blue-600 hover:text-blue-800 ml-2 transform hover:scale-105 transition-transform"
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
