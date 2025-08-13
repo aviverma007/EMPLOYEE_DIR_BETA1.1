@@ -329,6 +329,14 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-2">{tile.description}</p>
                   
+                  {/* Todo Items Count and Scroll Indicator */}
+                  {todoItems.length > 4 && (
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-blue-600">{todoItems.length} tasks</span>
+                      <span className="text-[10px] text-blue-500">↕ scroll to see more</span>
+                    </div>
+                  )}
+                  
                   {/* Todo Items - Enhanced Scrollable Version */}
                   <div className="flex-1 space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 hover:scrollbar-thumb-blue-500">
                     {todoItems.map((item) => (
