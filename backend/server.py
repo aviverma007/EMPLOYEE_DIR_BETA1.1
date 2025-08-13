@@ -206,10 +206,12 @@ async def get_employees(
         employees_cursor = db.employees.find(query)
         employees = await employees_cursor.to_list(1000)  # Limit to 1000 for performance
         
-        # Convert MongoDB documents to Employee models
+        # Convert MongoDB documents to Employee models and set dynamic profile images
         result = []
         for emp in employees:
             emp.pop('_id', None)  # Remove MongoDB _id field
+            # Set dynamic profile image URL based on filesystem
+            emp['profileImage'] = get_employee_image_url(emp['id'])
             result.append(Employee(**emp))
         
         return result
