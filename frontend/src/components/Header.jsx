@@ -11,14 +11,19 @@ const Header = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
+    console.log("Refresh button clicked. Admin status:", isAdmin());
+    
     if (!isAdmin()) {
+      console.log("Not an admin, showing error");
       toast.error("Only administrators can refresh data");
       return;
     }
     
     try {
+      console.log("Starting Excel refresh...");
       setIsRefreshing(true);
       const result = await utilityAPI.refreshExcel();
+      console.log("Refresh result:", result);
       
       toast.success(`Excel data refreshed successfully! Updated ${result.count} employees.`, {
         description: `Last updated: ${new Date().toLocaleString()}`
@@ -31,7 +36,8 @@ const Header = () => {
       
     } catch (error) {
       console.error("Error refreshing data:", error);
-      toast.error("Failed to refresh Excel data. Please try again.");
+      console.error("Error details:", error.response?.data, error.message);
+      toast.error(`Failed to refresh Excel data: ${error.response?.data?.detail || error.message}`);
     } finally {
       setIsRefreshing(false);
     }
