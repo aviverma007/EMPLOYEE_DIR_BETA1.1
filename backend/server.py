@@ -61,7 +61,7 @@ excel_parser = ExcelParser()
 
 # Helper functions for image processing
 def save_base64_image(base64_data: str, employee_id: str) -> str:
-    """Convert base64 image data to file and return URL"""
+    """Convert base64 image data to file and save with employee ID as filename"""
     try:
         # Remove data:image/jpeg;base64, or similar prefix
         if ',' in base64_data:
@@ -85,12 +85,18 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         # Decode base64 data
         image_data = base64.b64decode(data)
         
-        # Generate unique filename with timestamp
-        timestamp = int(datetime.utcnow().timestamp())
-        filename = f"{employee_id}_{timestamp}_{uuid.uuid4().hex[:8]}.{ext}"
+        # Use employee ID as filename (replace any existing image)
+        filename = f"{employee_id}.{ext}"
         file_path = UPLOAD_DIR / filename
         
-        # Save the image file
+        # Remove any existing image files for this employee first
+        for existing_file in UPLOAD_DIR.glob(f"{employee_id}.*"):
+            try:
+                existing_file.unlink()
+            except:
+                pass
+        
+        # Save the new image file
         with open(file_path, 'wb') as f:
             f.write(image_data)
         
@@ -100,8 +106,8 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         except:
             pass
         
-        # Return the URL path
-        return f"/uploads/images/{filename}"
+        # Return success indicator (not storing URL in DB)
+        return f"image_saved_{employee_id}"
         
     except Exception as e:
         logging.error(f"Error saving base64 image: {str(e)}")
