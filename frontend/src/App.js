@@ -49,7 +49,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Required 5-Tab Navigation Structure */}
+                  {/* Main 5-Tab Navigation + Additional Features */}
                   <div className="flex justify-start mb-4">
                     <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
                       <TabsTrigger 
@@ -117,6 +117,51 @@ const AppContent = () => {
                       >
                         Help
                       </TabsTrigger>
+                      
+                      {/* Additional Features Dropdown */}
+                      <div className="relative">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className={`h-8 text-sm font-medium rounded-md px-4 py-2 ${
+                                ["policies", "workflows", "meeting-rooms", "attendance"].includes(activeTab)
+                                  ? "bg-blue-600 text-white" 
+                                  : "text-blue-700 hover:bg-blue-50"
+                              } flex items-center justify-center gap-1`}
+                            >
+                              More Features
+                              <ChevronDown className="h-3 w-3" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="center" className="w-48">
+                            <DropdownMenuItem 
+                              onClick={() => setActiveTab("policies")}
+                              className="cursor-pointer"
+                            >
+                              Policies
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setActiveTab("workflows")}
+                              className="cursor-pointer"
+                            >
+                              Workflows
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setActiveTab("meeting-rooms")}
+                              className="cursor-pointer"
+                            >
+                              Meeting Rooms
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setActiveTab("attendance")}
+                              className="cursor-pointer"
+                            >
+                              Attendance
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </TabsList>
                   </div>
                   
