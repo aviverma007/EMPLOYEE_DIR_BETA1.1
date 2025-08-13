@@ -33,7 +33,6 @@ const Attendance = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
   
   // Form state
   const [attendanceForm, setAttendanceForm] = useState({
