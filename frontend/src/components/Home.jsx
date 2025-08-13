@@ -13,7 +13,13 @@ import {
   Workflow, 
   Newspaper,
   Plus,
-  X
+  X,
+  ExternalLink,
+  Globe,
+  Building,
+  UserCheck,
+  Calendar,
+  Mail
 } from "lucide-react";
 
 const Home = () => {
