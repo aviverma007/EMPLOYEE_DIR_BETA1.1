@@ -2,23 +2,26 @@ import pandas as pd
 import logging
 from datetime import datetime
 import os
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 def parse_attendance_excel():
     """Parse attendance data from Excel file"""
     try:
-        # Try to find the Excel file in multiple locations
+        # Use consistent path detection like excel_parser.py
+        current_dir = Path(__file__).parent
+        
+        # Try multiple locations with proper path resolution
         possible_paths = [
-    '/app/backend/attendance_data.xlsx',
-    '/app/attendance_data.xlsx',
-    r'C:\EmployeeDirectoryServer\EMPLOYEE_DIR\backend\attendance_data.xlsx'
-]
+            current_dir / "attendance_data.xlsx",  # /app/backend/attendance_data.xlsx
+            current_dir.parent / "attendance_data.xlsx",  # /app/attendance_data.xlsx
+        ]
         
         excel_path = None
         for path in possible_paths:
-            if os.path.exists(path):
-                excel_path = path
+            if path.exists():
+                excel_path = str(path)
                 break
         
         if not excel_path:
