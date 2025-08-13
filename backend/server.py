@@ -1639,6 +1639,34 @@ async def get_stats():
 async def root():
     return {"message": "Employee Directory API is running"}
 
+# Temporary endpoint to force Excel reload
+@api_router.post("/force-reload-excel")
+async def force_reload_excel():
+    """Force reload Excel data by clearing database first"""
+    try:
+        # Clear existing employees
+        await db.employees.delete_many({})
+        
+        # Parse Excel file
+        employees_data = excel_parser.parse_excel_to_employees()
+        
+        # Insert new employees
+        if employees_data:
+            # Convert to proper format for MongoDB
+            for emp in employees_data:
+                emp['lastUpdated'] = datetime.utcnow()
+            
+            await db.employees.insert_many(employees_data)
+        
+        return RefreshResponse(
+            message="Excel data force reloaded successfully",
+            count=len(employees_data)
+        )
+        
+    except Exception as e:
+        logging.error(f"Error force reloading Excel data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to force reload data: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
