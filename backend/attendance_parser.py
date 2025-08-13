@@ -10,9 +10,10 @@ def parse_attendance_excel():
     try:
         # Try to find the Excel file in multiple locations
         possible_paths = [
-            '/app/backend/attendance_data.xlsx',
-            '/app/attendance_data.xlsx'
-        ]
+    '/app/backend/attendance_data.xlsx',
+    '/app/attendance_data.xlsx',
+    r'C:\EmployeeDirectoryServer\EMPLOYEE_DIR\backend\attendance_data.xlsx'
+]
         
         excel_path = None
         for path in possible_paths:
