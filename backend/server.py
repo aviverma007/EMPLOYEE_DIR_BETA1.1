@@ -136,14 +136,14 @@ async def get_employees(
         query = {}
         
         if search:
-            # Create search query for multiple fields
+            # Create search query for multiple fields using "starts with" pattern
             query["$or"] = [
-                {"name": {"$regex": search, "$options": "i"}},
-                {"id": {"$regex": search, "$options": "i"}},
-                {"department": {"$regex": search, "$options": "i"}},
-                {"location": {"$regex": search, "$options": "i"}},
-                {"grade": {"$regex": search, "$options": "i"}},
-                {"mobile": {"$regex": search, "$options": "i"}}
+                {"name": {"$regex": f"^{search}", "$options": "i"}},
+                {"id": {"$regex": f"^{search}", "$options": "i"}},
+                {"department": {"$regex": f"^{search}", "$options": "i"}},
+                {"location": {"$regex": f"^{search}", "$options": "i"}},
+                {"grade": {"$regex": f"^{search}", "$options": "i"}},
+                {"mobile": {"$regex": f"^{search}", "$options": "i"}}
             ]
         
         if department and department != "All Departments":
