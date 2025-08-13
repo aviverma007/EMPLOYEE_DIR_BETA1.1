@@ -1153,6 +1153,21 @@ async def update_meeting_room(room_id: str, room: MeetingRoomUpdate):
         logging.error(f"Error updating meeting room: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to update meeting room")
 
+@api_router.delete("/meeting-rooms/clear-all")
+async def clear_all_meeting_rooms():
+    """Clear all meeting rooms - for reinitialization"""
+    try:
+        result = await db.meeting_rooms.delete_many({})
+        
+        return {
+            "message": "All meeting rooms cleared successfully",
+            "count": result.deleted_count
+        }
+        
+    except Exception as e:
+        logging.error(f"Error clearing meeting rooms: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to clear meeting rooms")
+
 @api_router.delete("/meeting-rooms/{room_id}")
 async def delete_meeting_room(room_id: str):
     """Delete meeting room"""
