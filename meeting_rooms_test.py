@@ -10,7 +10,7 @@ import sys
 from typing import Dict, List, Any
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://modify-app-2.preview.emergentagent.com/api"
+BACKEND_URL = "https://change-maker.preview.emergentagent.com/api"
 
 class MeetingRoomsTester:
     def __init__(self):
