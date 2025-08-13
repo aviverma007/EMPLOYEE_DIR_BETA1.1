@@ -15,7 +15,7 @@ from typing import Dict, List, Any
 from datetime import datetime, timedelta
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://error-free-excel.preview.emergentagent.com/api"
+BACKEND_URL = "https://booking-persist.preview.emergentagent.com/api"
 
 class MeetingRoomsSystemTester:
     def __init__(self):
