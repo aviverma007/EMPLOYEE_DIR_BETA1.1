@@ -26,6 +26,7 @@ from models import (
     AttendanceRecord, AttendanceCreate, AttendanceUpdate
 )
 from excel_parser import ExcelParser
+from attendance_parser import parse_attendance_excel
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
