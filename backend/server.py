@@ -1321,6 +1321,7 @@ async def delete_workflow(workflow_id: str):
 
 @api_router.get("/attendance", response_model=List[AttendanceRecord])
 async def get_attendance(
+    search: Optional[str] = Query(None, description="Search term for employee name, id (starts with pattern)"),
     employee_id: Optional[str] = Query(None, description="Filter by employee ID"),
     date: Optional[str] = Query(None, description="Filter by date (YYYY-MM-DD)"),
     status: Optional[str] = Query(None, description="Filter by status")
@@ -1328,6 +1329,14 @@ async def get_attendance(
     """Fetch attendance records"""
     try:
         query_filter = {}
+        
+        if search:
+            # Create search query for employee name and id using "starts with" pattern
+            query_filter["$or"] = [
+                {"employee_name": {"$regex": f"^{search}", "$options": "i"}},
+                {"employee_id": {"$regex": f"^{search}", "$options": "i"}}
+            ]
+        
         if employee_id:
             query_filter['employee_id'] = employee_id
         if date:
