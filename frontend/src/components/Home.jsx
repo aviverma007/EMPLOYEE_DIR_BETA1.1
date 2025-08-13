@@ -28,12 +28,13 @@ const Home = () => {
   const [currentJoineeIndex, setCurrentJoineeIndex] = useState(0);
   const [employees, setEmployees] = useState([]);
 
-  // Sample banner images (you can replace with actual company images)
+  // SmartWorld project banner images
   const bannerImages = [
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=300&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=300&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=300&fit=crop&crop=center",
-    "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&h=300&fit=crop&crop=center"
+    "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/5nmzbaqz_smart-world-orchard.webp",
+    "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/fdyg3j9u_smart-world-one-dxp.webp", 
+    "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/55c7jl50_smart-world-gems.webp",
+    "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/0m7sp116_smart-world-the-edition.webp",
+    "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/twxag3rn_smart-world-sky-arc.webp"
   ];
 
   // Fetch employees data for new joinees
