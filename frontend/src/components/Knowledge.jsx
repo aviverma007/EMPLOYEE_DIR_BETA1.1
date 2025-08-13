@@ -87,7 +87,7 @@ const Knowledge = () => {
     if (!confirm('Are you sure you want to delete this article?')) return;
     
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/knowledge/${articleId}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/knowledge/${articleId}`, {
         method: 'DELETE',
       });
 
