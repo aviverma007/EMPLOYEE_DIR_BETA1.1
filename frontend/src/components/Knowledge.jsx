@@ -54,8 +54,8 @@ const Knowledge = () => {
     try {
       const method = editingArticle ? 'PUT' : 'POST';
       const url = editingArticle 
-        ? `${import.meta.env.REACT_APP_BACKEND_URL}/api/knowledge/${editingArticle.id}`
-        : `${import.meta.env.REACT_APP_BACKEND_URL}/api/knowledge`;
+        ? `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/knowledge/${editingArticle.id}`
+        : `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/knowledge`;
       
       const response = await fetch(url, {
         method,
