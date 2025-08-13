@@ -118,50 +118,31 @@ const AppContent = () => {
                         Help
                       </TabsTrigger>
                       
-                      {/* Additional Features Dropdown */}
-                      <div className="relative">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className={`h-8 text-sm font-medium rounded-md px-4 py-2 ${
-                                ["policies", "workflows", "meeting-rooms", "attendance"].includes(activeTab)
-                                  ? "bg-blue-600 text-white" 
-                                  : "text-blue-700 hover:bg-blue-50"
-                              } flex items-center justify-center gap-1`}
-                            >
-                              More Features
-                              <ChevronDown className="h-3 w-3" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="center" className="w-48">
-                            <DropdownMenuItem 
-                              onClick={() => setActiveTab("policies")}
-                              className="cursor-pointer"
-                            >
-                              Policies
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setActiveTab("workflows")}
-                              className="cursor-pointer"
-                            >
-                              Workflows
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setActiveTab("meeting-rooms")}
-                              className="cursor-pointer"
-                            >
-                              Meeting Rooms
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setActiveTab("attendance")}
-                              className="cursor-pointer"
-                            >
-                              Attendance
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      {/* Additional Features as Individual Tabs */}
+                      <TabsTrigger 
+                        value="policies" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Policies
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="workflows" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Workflows
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="meeting-rooms" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Meeting Rooms
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="attendance" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Attendance
+                      </TabsTrigger>
                     </TabsList>
                   </div>
                   
