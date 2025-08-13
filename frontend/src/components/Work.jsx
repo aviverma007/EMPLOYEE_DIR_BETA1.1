@@ -60,8 +60,8 @@ const Work = () => {
     try {
       const method = editingTask ? 'PUT' : 'POST';
       const url = editingTask 
-        ? `${import.meta.env.REACT_APP_BACKEND_URL}/api/tasks/${editingTask.id}`
-        : `${import.meta.env.REACT_APP_BACKEND_URL}/api/tasks`;
+        ? `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/tasks/${editingTask.id}`
+        : `${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/tasks`;
       
       const response = await fetch(url, {
         method,
