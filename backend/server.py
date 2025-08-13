@@ -1583,6 +1583,25 @@ async def startup_db():
                     
         else:
             logger.info(f"Database already has {count} employees, skipping Excel load")
+        
+        # Load attendance data from Excel
+        try:
+            logger.info("Loading attendance data from Excel...")
+            attendance_count = await db.attendance.count_documents({})
+            logger.info(f"Current attendance records in database: {attendance_count}")
+            
+            if attendance_count == 0:
+                attendance_data = parse_attendance_excel()
+                if attendance_data and len(attendance_data) > 0:
+                    await db.attendance.insert_many(attendance_data)
+                    logger.info(f"Successfully loaded {len(attendance_data)} attendance records from Excel")
+                else:
+                    logger.warning("No attendance data found in Excel file")
+            else:
+                logger.info(f"Database already has {attendance_count} attendance records, skipping load")
+                
+        except Exception as attendance_error:
+            logger.error(f"Error loading attendance data: {str(attendance_error)}")
             
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
