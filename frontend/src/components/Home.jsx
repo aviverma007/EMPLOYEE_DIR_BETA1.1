@@ -447,6 +447,33 @@ const Home = () => {
           </Card>
         ))}
       </div>
+
+      {/* External Links Section */}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold text-blue-900 mb-4 text-center">Quick Links</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {externalButtons.map((button, index) => (
+            <a
+              key={index}
+              href={button.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${button.color} text-white rounded-lg p-4 shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl group`}
+            >
+              <div className="flex flex-col items-center text-center space-y-2">
+                <div className="p-2 bg-white bg-opacity-20 rounded-full group-hover:bg-opacity-30 transition-all">
+                  {button.icon}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">{button.title}</h4>
+                  <p className="text-xs opacity-90 mt-1">{button.description}</p>
+                </div>
+                <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
