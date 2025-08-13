@@ -23,19 +23,16 @@ const LoginForm = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-3">
-            <div className="p-3 bg-blue-600 rounded-lg">
-              <Building2 className="h-8 w-8 text-white" />
+        <div className="text-center space-y-6">
+          <div className="flex items-center justify-center">
+            <div className="p-6 bg-blue-600 rounded-2xl shadow-lg">
+              <Building2 className="h-16 w-16 text-white" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-blue-900">
-                SMARTWORLD DEVELOPERS PVT. LTD.
-              </h1>
-              <p className="text-sm text-blue-600">
-                Employee Management System
-              </p>
-            </div>
+          </div>
+          <div>
+            <p className="text-lg text-blue-600 font-medium">
+              Employee Management System
+            </p>
           </div>
         </div>
 
