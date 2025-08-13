@@ -130,9 +130,9 @@ const Policies = () => {
         </div>
       </div>
 
-      <div className="flex gap-6 flex-1">
-        {/* Policy Tree Structure - Left Side */}
-        <div className="w-1/3 space-y-4">
+      <div className="flex-1">
+        {/* Policy Tree Structure - Full Width */}
+        <div className="w-full space-y-4">
           {Object.entries(policyStructure).map(([key, section]) => (
             <Card key={key} className="overflow-visible">
               <CardHeader 
