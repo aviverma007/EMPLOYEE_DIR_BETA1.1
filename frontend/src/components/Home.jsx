@@ -463,26 +463,24 @@ const Home = () => {
       </div>
 
       {/* External Links Section */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-blue-900 mb-4 text-center">Quick Links</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="mt-4">
+        <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {externalButtons.map((button, index) => (
             <a
               key={index}
               href={button.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`${button.color} text-white rounded-lg p-4 shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl group`}
+              className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center`}
             >
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="p-2 bg-white bg-opacity-20 rounded-full group-hover:bg-opacity-30 transition-all">
-                  {button.icon}
-                </div>
+              <div className="flex flex-col items-center space-y-1">
+                {button.icon}
                 <div>
-                  <h4 className="font-semibold text-sm">{button.title}</h4>
-                  <p className="text-xs opacity-90 mt-1">{button.description}</p>
+                  <h4 className="font-medium text-sm">{button.title}</h4>
+                  <p className="text-xs opacity-75">{button.description}</p>
                 </div>
-                <ExternalLink className="h-3 w-3 opacity-70 group-hover:opacity-100 transition-opacity" />
+                <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
               </div>
             </a>
           ))}
