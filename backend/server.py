@@ -114,7 +114,7 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         raise HTTPException(status_code=400, detail="Invalid image data")
 
 def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
-    """Save uploaded file and return URL"""
+    """Save uploaded file with employee ID as filename"""
     try:
         # Validate file type
         allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
@@ -126,12 +126,18 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         if ext.startswith('.'):
             ext = ext[1:]
         
-        # Generate unique filename with timestamp
-        timestamp = int(datetime.utcnow().timestamp())
-        filename = f"{employee_id}_{timestamp}_{uuid.uuid4().hex[:8]}.{ext}"
+        # Use employee ID as filename (replace any existing image)
+        filename = f"{employee_id}.{ext}"
         file_path = UPLOAD_DIR / filename
         
-        # Save the file
+        # Remove any existing image files for this employee first
+        for existing_file in UPLOAD_DIR.glob(f"{employee_id}.*"):
+            try:
+                existing_file.unlink()
+            except:
+                pass
+        
+        # Save the new file
         with open(file_path, 'wb') as buffer:
             content = file.file.read()
             buffer.write(content)
@@ -142,8 +148,8 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         except:
             pass
         
-        # Return the URL path
-        return f"/uploads/images/{filename}"
+        # Return success indicator (not storing URL in DB)
+        return f"image_saved_{employee_id}"
         
     except Exception as e:
         logging.error(f"Error saving uploaded file: {str(e)}")
