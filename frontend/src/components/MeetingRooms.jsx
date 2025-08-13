@@ -251,7 +251,7 @@ const MeetingRooms = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Select value={selectedLocation} onValueChange={(value) => {
               setSelectedLocation(value);
               setSelectedFloor("all"); // Reset floor when location changes
@@ -287,11 +287,33 @@ const MeetingRooms = () => {
               </SelectContent>
             </Select>
 
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Room Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Rooms</SelectItem>
+                <SelectItem value="vacant">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    Vacant
+                  </div>
+                </SelectItem>
+                <SelectItem value="occupied">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                    Occupied
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
             <Button
               variant="outline"
               onClick={() => {
                 setSelectedLocation("all");
                 setSelectedFloor("all");
+                setSelectedStatus("all");
               }}
             >
               Clear Filters
