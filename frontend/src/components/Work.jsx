@@ -30,7 +30,7 @@ const Work = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`${import.meta.env.REACT_APP_BACKEND_URL}/api/tasks`);
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001'}/api/tasks`);
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
