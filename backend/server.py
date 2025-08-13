@@ -987,6 +987,9 @@ async def get_meeting_rooms(
         rooms_cursor = db.meeting_rooms.find(query_filter)
         rooms_docs = await rooms_cursor.to_list(100)
         
+        # Before returning rooms, clean up expired bookings
+        await cleanup_expired_bookings()
+        
         result = []
         for doc in rooms_docs:
             doc.pop('_id', None)
