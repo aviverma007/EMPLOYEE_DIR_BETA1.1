@@ -22,27 +22,8 @@ const Attendance = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
-  
-  // Form state
-  const [attendanceForm, setAttendanceForm] = useState({
-    employee_id: "",
-    date: "",
-    punch_in: "",
-    punch_out: "",
-    punch_in_location: "",
-    punch_out_location: "",
-    status: "present",
-    remarks: ""
-  });
-  const [selectedRecord, setSelectedRecord] = useState(null);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showViewDialog, setShowViewDialog] = useState(false);
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
-
-  const statuses = ["present", "absent", "half_day", "late"];
-  const locations = ["Office", "Remote", "Client Site", "Branch Office"];
 
   // Fetch attendance records and employees
   useEffect(() => {
