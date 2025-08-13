@@ -47,38 +47,38 @@ const Home = () => {
   const externalButtons = [
     {
       title: "Adrenaline",
-      icon: <UserCheck className="h-5 w-5" />,
+      icon: <UserCheck className="h-4 w-4" />,
       description: "Employee HR Portal",
-      url: "https://maxhr.myadrenalin.com/AdrenalinMax/User",
-      color: "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
+      url: "https://maxhr.myadrenalin.com/AdrenalinMax/",
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
     },
     {
       title: "Company Portal",
-      icon: <Building className="h-5 w-5" />,
+      icon: <Building className="h-4 w-4" />,
       description: "Main corporate website",
       url: "#",
-      color: "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+      color: "bg-blue-600 hover:bg-blue-700 text-white"
     },
     {
       title: "Projects",
-      icon: <Globe className="h-5 w-5" />,
+      icon: <Globe className="h-4 w-4" />,
       description: "Our development projects",
       url: "#",
-      color: "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
     },
     {
       title: "Events",
-      icon: <Calendar className="h-5 w-5" />,
+      icon: <Calendar className="h-4 w-4" />,
       description: "Company events & updates",
       url: "#",
-      color: "bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700"
+      color: "bg-blue-600 hover:bg-blue-700 text-white"
     },
     {
       title: "Contact",
-      icon: <Mail className="h-5 w-5" />,
+      icon: <Mail className="h-4 w-4" />,
       description: "Get in touch with us",
       url: "#",
-      color: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
     }
   ];
 
