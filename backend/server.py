@@ -90,11 +90,12 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         file_path = UPLOAD_DIR / filename
         
         # Remove any existing image files for this employee first
-        for existing_file in UPLOAD_DIR.glob(f"{employee_id}.*"):
+        for existing_file in UPLOAD_DIR.glob(f"{employee_id}*"):
             try:
                 existing_file.unlink()
-            except:
-                pass
+                logging.info(f"Removed existing image file: {existing_file}")
+            except Exception as e:
+                logging.warning(f"Could not remove existing file {existing_file}: {e}")
         
         # Save the new image file
         with open(file_path, 'wb') as f:
@@ -106,12 +107,12 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
         except:
             pass
         
-        # Return success indicator (not storing URL in DB)
-        return f"image_saved_{employee_id}"
+        logging.info(f"Successfully saved image for employee {employee_id} as {filename} ({len(image_data)} bytes)")
+        return f"/uploads/images/{filename}"
         
     except Exception as e:
-        logging.error(f"Error saving base64 image: {str(e)}")
-        raise HTTPException(status_code=400, detail="Invalid image data")
+        logging.error(f"Error saving base64 image for employee {employee_id}: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to save image: {str(e)}")
 
 def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
     """Save uploaded file with employee ID as filename"""
