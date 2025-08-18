@@ -47,7 +47,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Main 5-Tab Navigation + Additional Features */}
+                  {/* Main Navigation - Reordered: Home, Employee Directory, Policies, Workflows, Meeting Rooms, Attendance, Help */}
                   <div className="flex justify-start mb-4">
                   <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
                       <TabsTrigger 
@@ -98,26 +98,6 @@ const AppContent = () => {
                       </div>
                       
                       <TabsTrigger 
-                        value="work" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
-                      >
-                        Work
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="knowledge" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
-                      >
-                        Knowledge
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="help" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
-                      >
-                        Help
-                      </TabsTrigger>
-                      
-                      {/* Additional Important Features */}
-                      <TabsTrigger 
                         value="policies" 
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
@@ -140,6 +120,12 @@ const AppContent = () => {
                         className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
                       >
                         Attendance
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="help" 
+                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                      >
+                        Help
                       </TabsTrigger>
                     </TabsList>
                   </div>
