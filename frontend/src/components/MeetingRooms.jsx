@@ -493,7 +493,7 @@ const MeetingRooms = () => {
                           {/* Date & Time Selection with 12-hour format */}
                           <div className="space-y-4">
                             <div>
-                              <Label>Date</Label>
+                              <Label>Booking Date</Label>
                               <Input
                                 type="date"
                                 value={bookingForm.start_time ? bookingForm.start_time.split('T')[0] : ''}
@@ -516,7 +516,7 @@ const MeetingRooms = () => {
                               />
                             </div>
                             
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="grid grid-cols-2 gap-3">
                               <div>
                                 <Label>Start Time</Label>
                                 <Select 
@@ -527,7 +527,7 @@ const MeetingRooms = () => {
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select start time" />
+                                    <SelectValue placeholder="Start time" />
                                   </SelectTrigger>
                                   <SelectContent>
                                     {getTimeOptions().map((time) => (
@@ -549,7 +549,7 @@ const MeetingRooms = () => {
                                   }}
                                 >
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select end time" />
+                                    <SelectValue placeholder="End time" />
                                   </SelectTrigger>
                                   <SelectContent>
                                     {getTimeOptions().map((time) => (
@@ -567,7 +567,8 @@ const MeetingRooms = () => {
                           <div className="bg-blue-50 p-3 rounded-md">
                             <div className="text-sm text-blue-800">
                               <strong>Business Hours:</strong> 9:00 AM - 8:00 PM<br/>
-                              <strong>Booking Period:</strong> Up to 30 days in advance
+                              <strong>Policy:</strong> Single booking per room<br/>
+                              <strong>Advance Booking:</strong> Up to 30 days
                             </div>
                           </div>
 
