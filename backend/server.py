@@ -1215,17 +1215,8 @@ async def bulk_book_meeting_room(room_id: str, bulk_booking: MeetingRoomBulkBook
                 existing_end = existing_booking['end_time']
                 
                 # Normalize existing booking times for comparison
-                if isinstance(existing_start, str):
-                    existing_start = datetime.fromisoformat(existing_start.replace('Z', '+00:00'))
-                    existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
-                elif hasattr(existing_start, 'replace') and hasattr(existing_start, 'tzinfo'):
-                    existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
-                    
-                if isinstance(existing_end, str):
-                    existing_end = datetime.fromisoformat(existing_end.replace('Z', '+00:00'))
-                    existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
-                elif hasattr(existing_end, 'replace') and hasattr(existing_end, 'tzinfo'):
-                    existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
+                existing_start = normalize_datetime(existing_start)
+                existing_end = normalize_datetime(existing_end)
                 
                 # Check for overlap
                 if slot['start_time'] < existing_end and slot['end_time'] > existing_start:
