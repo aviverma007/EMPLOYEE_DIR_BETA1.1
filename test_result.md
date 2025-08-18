@@ -239,9 +239,9 @@ backend:
 
   - task: "Meeting Rooms Management API"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -260,6 +260,9 @@ backend:
         -working: true
         -agent: "testing"
         -comment: "🎉 CRITICAL TIMEZONE ISSUE RESOLVED - REVIEW REQUEST TESTING COMPLETED: Successfully tested all specific requirements from the review request. RESULTS: ✅ Multiple Bookings to Same Room: Successfully created booking for 10:00 AM to 11:00 AM, then created second booking for 2:00 PM to 3:00 PM on the same room WITHOUT timezone errors. The 'can't compare offset-naive and offset-aware datetimes' error has been FIXED. ✅ Timezone Normalization Function: normalize_datetime function working correctly - handled both Z suffix and +00:00 offset formats properly. ✅ Profile Image URLs: Images are being served with correct /api/uploads/images/ prefix and are accessible. ✅ Multiple Booking Support: System now supports multiple bookings per room with proper time conflict detection. ✅ Specific Booking Cancellation: DELETE /api/meeting-rooms/{room_id}/booking/{booking_id} endpoint working perfectly. ✅ Room Structure: All 32 meeting rooms have proper bookings field structure with array support. TOTAL: 7/7 tests passed (100% success rate). The timezone comparison bug that was preventing multiple bookings has been completely resolved. Meeting room booking system is now fully functional for multiple bookings per room."
+        -working: false
+        -agent: "testing"
+        -comment: "🔍 USER ISSUE ROOT CAUSE IDENTIFIED - EXTERNAL URL ROUTING PROBLEM: Comprehensive testing revealed the actual cause of user's reported issues. BACKEND FUNCTIONALITY: ✅ Meeting room booking API working perfectly on internal URL (localhost:8001) - successfully tested POST /api/meeting-rooms/{room_id}/book with single and multiple bookings, booking persistence verified, all CRUD operations functional. ✅ Photo upload system working perfectly on internal URL - both base64 (PUT /api/employees/{id}/image) and file upload (POST /api/employees/{id}/upload-image) methods working, images saved to filesystem (/app/backend/uploads/images/), images accessible via API. CRITICAL ISSUE FOUND: ❌ External URL (https://backend-booking-fix.preview.emergentagent.com/api) returns HTTP 404 - frontend cannot connect to backend. ROOT CAUSE: External URL routing/proxy configuration is broken. USER IMPACT: Frontend uses external URL from REACT_APP_BACKEND_URL but cannot reach backend, causing all booking and photo upload failures. RECOMMENDATION: Fix external URL routing to properly proxy requests to internal backend server (localhost:8001). Backend server is fully functional - issue is purely networking/configuration."
 
   - task: "Attendance Management API"
     implemented: true
