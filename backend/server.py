@@ -1127,7 +1127,7 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
 
 @api_router.delete("/meeting-rooms/{room_id}/booking")
 async def cancel_booking(room_id: str):
-    """Cancel meeting room booking"""
+    """Cancel current/active meeting room booking"""
     try:
         update_data = {
             'status': 'vacant',
@@ -1143,13 +1143,73 @@ async def cancel_booking(room_id: str):
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Meeting room not found")
         
-        return {"message": "Booking cancelled successfully"}
+        return {"message": "Active booking cancelled successfully"}
         
     except HTTPException:
         raise
     except Exception as e:
         logging.error(f"Error cancelling booking: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to cancel booking")
+
+@api_router.delete("/meeting-rooms/{room_id}/booking/{booking_id}")
+async def cancel_specific_booking(room_id: str, booking_id: str):
+    """Cancel a specific booking by booking ID"""
+    try:
+        # Get room
+        room = await db.meeting_rooms.find_one({"id": room_id})
+        if not room:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Get current bookings
+        existing_bookings = room.get('bookings', [])
+        
+        # Find and remove the specific booking
+        updated_bookings = [b for b in existing_bookings if b.get('id') != booking_id]
+        
+        if len(updated_bookings) == len(existing_bookings):
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Determine current status and current_booking based on remaining bookings and current time
+        current_time = datetime.utcnow()
+        current_booking = None
+        room_status = "vacant"
+        
+        for booking_info in updated_bookings:
+            booking_start = booking_info['start_time']
+            booking_end = booking_info['end_time']
+            
+            # Convert to datetime if they are strings
+            if isinstance(booking_start, str):
+                booking_start = datetime.fromisoformat(booking_start.replace('Z', '+00:00'))
+            if isinstance(booking_end, str):
+                booking_end = datetime.fromisoformat(booking_end.replace('Z', '+00:00'))
+            
+            # Check if this booking is currently active
+            if booking_start <= current_time <= booking_end:
+                current_booking = booking_info
+                room_status = "occupied"
+                break
+        
+        # Update room
+        update_data = {
+            'status': room_status,
+            'current_booking': current_booking,
+            'bookings': updated_bookings,
+            'updated_at': datetime.utcnow()
+        }
+        
+        result = await db.meeting_rooms.update_one(
+            {"id": room_id},
+            {"$set": update_data}
+        )
+        
+        return {"message": "Booking cancelled successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error cancelling specific booking: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to cancel specific booking")
 
 @api_router.get("/meeting-rooms/locations")
 async def get_meeting_room_locations():
