@@ -153,7 +153,7 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
             pass
         
         logging.info(f"Successfully saved uploaded file for employee {employee_id} as {filename} ({len(content)} bytes)")
-        return f"/uploads/images/{filename}"
+        return f"/api/uploads/images/{filename}"
         
     except Exception as e:
         logging.error(f"Error saving uploaded file for employee {employee_id}: {str(e)}")
