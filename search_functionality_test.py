@@ -10,7 +10,7 @@ import sys
 from typing import Dict, List, Any
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://dependency-solver.preview.emergentagent.com/api"
+BACKEND_URL = "https://dp-visibility-fix.preview.emergentagent.com/api"
 
 class SearchFunctionalityTester:
     def __init__(self):
