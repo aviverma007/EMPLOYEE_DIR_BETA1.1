@@ -108,7 +108,7 @@ def save_base64_image(base64_data: str, employee_id: str) -> str:
             pass
         
         logging.info(f"Successfully saved image for employee {employee_id} as {filename} ({len(image_data)} bytes)")
-        return f"/uploads/images/{filename}"
+        return f"/api/uploads/images/{filename}"
         
     except Exception as e:
         logging.error(f"Error saving base64 image for employee {employee_id}: {str(e)}")
