@@ -143,19 +143,6 @@ const AppContent = () => {
                       )}
                     </TabsContent>
                     
-                    <TabsContent value="work" className="mt-0 h-full">
-                      <Work />
-                    </TabsContent>
-                    
-                    <TabsContent value="knowledge" className="mt-0 h-full">
-                      <Knowledge />
-                    </TabsContent>
-                    
-                    <TabsContent value="help" className="mt-0 h-full">
-                      <Help />
-                    </TabsContent>
-
-                    {/* Important Additional Features */}
                     <TabsContent value="policies" className="mt-0 h-full">
                       <Policies />
                     </TabsContent>
@@ -170,6 +157,10 @@ const AppContent = () => {
                     
                     <TabsContent value="attendance" className="mt-0 h-full">
                       <Attendance />
+                    </TabsContent>
+
+                    <TabsContent value="help" className="mt-0 h-full">
+                      <Help />
                     </TabsContent>
                   </div>
                 </Tabs>
