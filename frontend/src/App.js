@@ -19,8 +19,6 @@ import HierarchyBuilder from "./components/HierarchyBuilder";
 
 // Import required components for complete feature set
 import Home from "./components/Home";
-import Work from "./components/Work";
-import Knowledge from "./components/Knowledge";
 import Help from "./components/Help";
 import Policies from "./components/Policies";
 import Workflows from "./components/Workflows";
