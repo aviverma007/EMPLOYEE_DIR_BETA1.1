@@ -1063,7 +1063,7 @@ async def get_meeting_rooms(
 
 @api_router.post("/meeting-rooms/{room_id}/book", response_model=MeetingRoom)
 async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
-    """Book a meeting room (multiple bookings allowed if no time conflict)"""
+    """Book a meeting room (single booking only - no multiple bookings allowed)"""
     try:
         # Validate employee exists
         employee = await db.employees.find_one({"id": booking.employee_id})
@@ -1074,6 +1074,14 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         room = await db.meeting_rooms.find_one({"id": room_id})
         if not room:
             raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Check if room already has any bookings (prevent multiple bookings)
+        existing_bookings = room.get('bookings', [])
+        if existing_bookings:
+            raise HTTPException(
+                status_code=400, 
+                detail="Room is already booked. Multiple bookings are not allowed. Please cancel existing booking first."
+            )
         
         start_time = normalize_datetime(booking.start_time)
         end_time = normalize_datetime(booking.end_time)
@@ -1087,20 +1095,6 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         if start_time < current_time:
             raise HTTPException(status_code=400, detail="Cannot book room for past time")
         
-        # Check for time conflicts with existing bookings
-        existing_bookings = room.get('bookings', [])
-        for existing_booking in existing_bookings:
-            existing_start = normalize_datetime(existing_booking['start_time'])
-            existing_end = normalize_datetime(existing_booking['end_time'])
-            
-            # Check for overlap: new booking overlaps if:
-            # new_start < existing_end AND new_end > existing_start
-            if start_time < existing_end and end_time > existing_start:
-                raise HTTPException(
-                    status_code=400, 
-                    detail=f"Time conflict with existing booking from {existing_start} to {existing_end}"
-                )
-        
         # Create booking object
         new_booking = {
             'id': str(uuid.uuid4()),
@@ -1112,28 +1106,20 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
             'created_at': datetime.utcnow()
         }
         
-        # Add the new booking to the bookings list
-        updated_bookings = existing_bookings + [new_booking]
-        
-        # Determine current status and current_booking based on current time
+        # Since we only allow one booking, the room should be occupied when booked
+        # Find the current active booking and set proper status
         current_booking = None
-        room_status = "vacant"
+        room_status = "occupied"  # Always occupied when there's a booking
         
-        for booking_info in updated_bookings:
-            booking_start = normalize_datetime(booking_info['start_time'])
-            booking_end = normalize_datetime(booking_info['end_time'])
-            
-            # Check if this booking is currently active
-            if booking_start <= current_time <= booking_end:
-                current_booking = booking_info
-                room_status = "occupied"
-                break
+        # Check if the new booking is currently active (happening now)
+        if start_time <= current_time <= end_time:
+            current_booking = new_booking
         
-        # Update room with new booking
+        # Update room with the single booking
         update_data = {
             'status': room_status,
             'current_booking': current_booking,
-            'bookings': updated_bookings,
+            'bookings': [new_booking],  # Only one booking allowed
             'updated_at': datetime.utcnow()
         }
         
