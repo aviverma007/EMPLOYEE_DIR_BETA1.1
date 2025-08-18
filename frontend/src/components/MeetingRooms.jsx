@@ -15,7 +15,11 @@ import {
   User,
   Check,
   X,
-  Building
+  Building,
+  Plus,
+  CalendarDays,
+  Trash2,
+  Calendar
 } from "lucide-react";
 
 const MeetingRooms = () => {
