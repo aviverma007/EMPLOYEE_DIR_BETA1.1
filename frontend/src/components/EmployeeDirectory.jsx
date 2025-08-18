@@ -65,12 +65,13 @@ const EmployeeDirectory = () => {
         name: nameSearch,
         employeeId: employeeIdSearch,
         department: departmentSearch,
+        designation: designationSearch,
         location: locationSearch
       });
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [nameSearch, employeeIdSearch, departmentSearch, locationSearch]);
+  }, [nameSearch, employeeIdSearch, departmentSearch, designationSearch, locationSearch]);
 
   // Client-side filtering - show all employees by default, filter when search is applied
   const filteredEmployees = useMemo(() => {
