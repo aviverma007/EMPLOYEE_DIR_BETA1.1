@@ -167,13 +167,21 @@ def get_employee_image_url(employee_id: str) -> Optional[str]:
             file_path = UPLOAD_DIR / f"{employee_id}.{ext}"
             if file_path.exists():
                 # Return the URL path that can be served by FastAPI static files
-                return f"/uploads/images/{employee_id}.{ext}"
+                image_url = f"/uploads/images/{employee_id}.{ext}"
+                logging.debug(f"Found image for employee {employee_id}: {image_url}")
+                return image_url
+        
+        # Check for legacy files with random suffixes (for cleanup)
+        legacy_files = list(UPLOAD_DIR.glob(f"{employee_id}_*"))
+        if legacy_files:
+            logging.warning(f"Found {len(legacy_files)} legacy image files for employee {employee_id}, consider cleanup")
         
         # No image file found
+        logging.debug(f"No image file found for employee {employee_id}")
         return None
         
     except Exception as e:
-        logging.error(f"Error getting employee image URL: {str(e)}")
+        logging.error(f"Error getting employee image URL for {employee_id}: {str(e)}")
         return None
 
 # Employee Management Endpoints
