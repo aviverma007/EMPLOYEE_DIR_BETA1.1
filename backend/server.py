@@ -1019,7 +1019,7 @@ async def get_meeting_rooms(
 
 @api_router.post("/meeting-rooms/{room_id}/book", response_model=MeetingRoom)
 async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
-    """Book a meeting room"""
+    """Book a meeting room (multiple bookings allowed if no time conflict)"""
     try:
         # Validate employee exists
         employee = await db.employees.find_one({"id": booking.employee_id})
@@ -1044,6 +1044,26 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         if start_time < current_time:
             raise HTTPException(status_code=400, detail="Cannot book room for past time")
         
+        # Check for time conflicts with existing bookings
+        existing_bookings = room.get('bookings', [])
+        for existing_booking in existing_bookings:
+            existing_start = existing_booking['start_time']
+            existing_end = existing_booking['end_time']
+            
+            # Convert to datetime if they are strings
+            if isinstance(existing_start, str):
+                existing_start = datetime.fromisoformat(existing_start.replace('Z', '+00:00'))
+            if isinstance(existing_end, str):
+                existing_end = datetime.fromisoformat(existing_end.replace('Z', '+00:00'))
+            
+            # Check for overlap: new booking overlaps if:
+            # new_start < existing_end AND new_end > existing_start
+            if start_time < existing_end and end_time > existing_start:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Time conflict with existing booking from {existing_start} to {existing_end}"
+                )
+        
         # Create booking object
         new_booking = {
             'id': str(uuid.uuid4()),
@@ -1055,10 +1075,34 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
             'created_at': datetime.utcnow()
         }
         
-        # Update room with booking
+        # Add the new booking to the bookings list
+        updated_bookings = existing_bookings + [new_booking]
+        
+        # Determine current status and current_booking based on current time
+        current_booking = None
+        room_status = "vacant"
+        
+        for booking_info in updated_bookings:
+            booking_start = booking_info['start_time']
+            booking_end = booking_info['end_time']
+            
+            # Convert to datetime if they are strings
+            if isinstance(booking_start, str):
+                booking_start = datetime.fromisoformat(booking_start.replace('Z', '+00:00'))
+            if isinstance(booking_end, str):
+                booking_end = datetime.fromisoformat(booking_end.replace('Z', '+00:00'))
+            
+            # Check if this booking is currently active
+            if booking_start <= current_time <= booking_end:
+                current_booking = booking_info
+                room_status = "occupied"
+                break
+        
+        # Update room with new booking
         update_data = {
-            'status': 'occupied',
-            'current_booking': new_booking,
+            'status': room_status,
+            'current_booking': current_booking,
+            'bookings': updated_bookings,
             'updated_at': datetime.utcnow()
         }
         
