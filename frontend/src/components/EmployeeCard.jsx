@@ -149,7 +149,7 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
                         <Button 
                           onClick={handleImageSubmit} 
                           className="w-full bg-blue-600 hover:bg-blue-700"
-                          disabled={!imagePreview}
+                          disabled={!imageFile}
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           Update Image
