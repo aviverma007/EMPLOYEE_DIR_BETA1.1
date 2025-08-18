@@ -14,11 +14,13 @@ const EmployeeDirectory = () => {
   const [nameSearch, setNameSearch] = useState("");
   const [employeeIdSearch, setEmployeeIdSearch] = useState("");
   const [departmentSearch, setDepartmentSearch] = useState("");
+  const [designationSearch, setDesignationSearch] = useState("");
   const [locationSearch, setLocationSearch] = useState("");
   const [debouncedSearchTerms, setDebouncedSearchTerms] = useState({
     name: "",
     employeeId: "",
     department: "",
+    designation: "",
     location: ""
   });
   const [viewMode, setViewMode] = useState("grid");
