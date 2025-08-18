@@ -1271,11 +1271,12 @@ async def bulk_book_meeting_room(room_id: str, bulk_booking: MeetingRoomBulkBook
 
 @api_router.delete("/meeting-rooms/{room_id}/booking")
 async def cancel_booking(room_id: str):
-    """Cancel current/active meeting room booking"""
+    """Cancel all meeting room bookings (single booking system)"""
     try:
         update_data = {
             'status': 'vacant',
             'current_booking': None,
+            'bookings': [],  # Clear all bookings for single booking system
             'updated_at': datetime.utcnow()
         }
         
@@ -1287,7 +1288,7 @@ async def cancel_booking(room_id: str):
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Meeting room not found")
         
-        return {"message": "Active booking cancelled successfully"}
+        return {"message": "Room booking cancelled successfully"}
         
     except HTTPException:
         raise
