@@ -1128,11 +1128,18 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
             booking_start = booking_info['start_time']
             booking_end = booking_info['end_time']
             
-            # Convert to datetime if they are strings
+            # Normalize datetime objects for comparison
             if isinstance(booking_start, str):
                 booking_start = datetime.fromisoformat(booking_start.replace('Z', '+00:00'))
+                booking_start = booking_start.replace(tzinfo=None) if booking_start.tzinfo else booking_start
+            elif hasattr(booking_start, 'replace') and hasattr(booking_start, 'tzinfo'):
+                booking_start = booking_start.replace(tzinfo=None) if booking_start.tzinfo else booking_start
+                
             if isinstance(booking_end, str):
                 booking_end = datetime.fromisoformat(booking_end.replace('Z', '+00:00'))
+                booking_end = booking_end.replace(tzinfo=None) if booking_end.tzinfo else booking_end
+            elif hasattr(booking_end, 'replace') and hasattr(booking_end, 'tzinfo'):
+                booking_end = booking_end.replace(tzinfo=None) if booking_end.tzinfo else booking_end
             
             # Check if this booking is currently active
             if booking_start <= current_time <= booking_end:
