@@ -100,19 +100,29 @@ const EmployeeDirectory = () => {
 
   const hasSearched = nameSearch || employeeIdSearch || departmentSearch || locationSearch;
 
-  const handleImageUpdate = async (employeeId, newImageUrl) => {
+  const handleImageUpdate = async (employeeId, imageData) => {
     try {
-      // Update on backend
-      await employeeAPI.updateImage(employeeId, newImageUrl);
+      let updatedEmployee;
       
-      // Update local state
+      // Check if imageData is a File object (actual file upload)
+      if (imageData instanceof File) {
+        // Use file upload API for better handling of original images
+        updatedEmployee = await employeeAPI.uploadImage(employeeId, imageData);
+      } else if (typeof imageData === 'string' && imageData.startsWith('data:image/')) {
+        // Handle base64 data (fallback)
+        updatedEmployee = await employeeAPI.updateImage(employeeId, imageData);
+      } else {
+        throw new Error('Invalid image data format');
+      }
+      
+      // Update local state with the response from backend
       setEmployees(prev => prev.map(emp => 
-        emp.id === employeeId ? { ...emp, profileImage: newImageUrl } : emp
+        emp.id === employeeId ? updatedEmployee : emp
       ));
       
       // Update selected employee if it's being viewed
       if (selectedEmployee && selectedEmployee.id === employeeId) {
-        setSelectedEmployee({ ...selectedEmployee, profileImage: newImageUrl });
+        setSelectedEmployee(updatedEmployee);
       }
       
     } catch (error) {
