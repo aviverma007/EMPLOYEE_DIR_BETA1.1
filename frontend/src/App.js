@@ -43,16 +43,16 @@ const AppContent = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={
-            <div className="w-full h-screen flex flex-col">
+            <div className="w-full min-h-screen flex flex-col">
               <Header />
-              <div className="flex-1 w-full px-6 py-4">
+              <div className="flex-1 w-full px-2 sm:px-4 lg:px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Main Navigation - Reordered: Home, Employee Directory, Policies, Workflows, Meeting Rooms, Attendance, Help */}
-                  <div className="flex justify-start mb-4">
-                  <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1">
+                  {/* Main Navigation - Responsive Design */}
+                  <div className="flex justify-start mb-4 overflow-x-auto">
+                  <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1 min-w-max">
                       <TabsTrigger 
                         value="home" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Home
                       </TabsTrigger>
@@ -63,7 +63,7 @@ const AppContent = () => {
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
-                              className={`h-8 text-sm font-medium rounded-md px-4 py-2 ${
+                              className={`h-8 text-xs sm:text-sm font-medium rounded-md px-2 sm:px-4 py-2 whitespace-nowrap ${
                                 activeTab === "directory" 
                                   ? "bg-blue-600 text-white" 
                                   : "text-blue-700 hover:bg-blue-50"
@@ -99,31 +99,31 @@ const AppContent = () => {
                       
                       <TabsTrigger 
                         value="policies" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Policies
                       </TabsTrigger>
                       <TabsTrigger 
                         value="workflows" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Workflows
                       </TabsTrigger>
                       <TabsTrigger 
                         value="meeting-rooms" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Meeting Rooms
                       </TabsTrigger>
                       <TabsTrigger 
                         value="attendance" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Attendance
                       </TabsTrigger>
                       <TabsTrigger 
                         value="help" 
-                        className="text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-4 py-2"
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Help
                       </TabsTrigger>
