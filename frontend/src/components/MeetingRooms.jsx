@@ -319,10 +319,14 @@ const MeetingRooms = () => {
   };
 
   return (
-    <div className="h-full flex flex-col space-y-6">
+    <div className="h-full flex flex-col space-y-4 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Meeting Rooms</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Meeting Rooms</h1>
+        <div className="flex items-center text-sm text-gray-600">
+          <Calendar className="h-4 w-4 mr-1" />
+          Book multiple slots at once
+        </div>
       </div>
 
       {/* Location and Floor Filters */}
