@@ -73,17 +73,17 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [nameSearch, employeeIdSearch, departmentSearch, designationSearch, locationSearch]);
 
-  // Client-side filtering - show all employees by default, filter when search is applied
+  // Client-side filtering with "starts with" pattern - show all employees by default, filter when search is applied
   const filteredEmployees = useMemo(() => {
     const hasAnySearch = debouncedSearchTerms.name || debouncedSearchTerms.employeeId || 
-                        debouncedSearchTerms.department || debouncedSearchTerms.location;
+                        debouncedSearchTerms.department || debouncedSearchTerms.designation || debouncedSearchTerms.location;
     
     // If no search terms, show all employees
     if (!hasAnySearch) {
       return employees;
     }
 
-    // Apply filtering when search terms are present
+    // Apply filtering when search terms are present using "starts with" pattern
     return employees.filter(employee => {
       const nameMatch = !debouncedSearchTerms.name || 
         employee.name.toLowerCase().startsWith(debouncedSearchTerms.name.toLowerCase());
@@ -92,12 +92,15 @@ const EmployeeDirectory = () => {
         employee.id.toLowerCase().startsWith(debouncedSearchTerms.employeeId.toLowerCase());
       
       const deptMatch = !debouncedSearchTerms.department || 
-        employee.department === debouncedSearchTerms.department;
+        employee.department.toLowerCase().startsWith(debouncedSearchTerms.department.toLowerCase());
+
+      const designationMatch = !debouncedSearchTerms.designation || 
+        employee.grade.toLowerCase().startsWith(debouncedSearchTerms.designation.toLowerCase());
       
       const locationMatch = !debouncedSearchTerms.location || 
-        employee.location === debouncedSearchTerms.location;
+        employee.location.toLowerCase().startsWith(debouncedSearchTerms.location.toLowerCase());
 
-      return nameMatch && idMatch && deptMatch && locationMatch;
+      return nameMatch && idMatch && deptMatch && designationMatch && locationMatch;
     });
   }, [employees, debouncedSearchTerms]);
 
