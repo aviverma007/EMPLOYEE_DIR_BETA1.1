@@ -856,27 +856,25 @@ async def cleanup_expired_bookings():
                 if not end_time or not start_time:
                     continue
                     
-                # Convert to datetime if they are strings
+                # Convert to naive datetime for consistent comparison
                 if isinstance(end_time, str):
                     end_time = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+                    end_time = end_time.replace(tzinfo=None) if end_time.tzinfo else end_time
+                elif hasattr(end_time, 'replace') and hasattr(end_time, 'tzinfo'):
+                    end_time = end_time.replace(tzinfo=None) if end_time.tzinfo else end_time
+                    
                 if isinstance(start_time, str):
                     start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+                    start_time = start_time.replace(tzinfo=None) if start_time.tzinfo else start_time
+                elif hasattr(start_time, 'replace') and hasattr(start_time, 'tzinfo'):
+                    start_time = start_time.replace(tzinfo=None) if start_time.tzinfo else start_time
                 
-                # Handle timezone-aware comparison
-                if end_time.tzinfo and not current_time.tzinfo:
-                    current_time_tz = current_time.replace(tzinfo=end_time.tzinfo)
-                elif current_time.tzinfo and not end_time.tzinfo:
-                    end_time = end_time.replace(tzinfo=current_time.tzinfo)
-                    current_time_tz = current_time
-                else:
-                    current_time_tz = current_time
-                
-                # Keep non-expired bookings
-                if end_time >= current_time_tz:
+                # Keep non-expired bookings (use naive UTC current_time)
+                if end_time >= current_time:
                     active_bookings.append(booking)
                     
                     # Check if this booking is currently active
-                    if start_time <= current_time_tz <= end_time:
+                    if start_time <= current_time <= end_time:
                         current_booking = booking
                         room_status = "occupied"
             
