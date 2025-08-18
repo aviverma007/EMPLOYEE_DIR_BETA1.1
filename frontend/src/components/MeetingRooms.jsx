@@ -461,30 +461,48 @@ const MeetingRooms = () => {
                     </div>
                   </div>
 
-                  {/* Current Booking Info */}
-                  {room.status === 'occupied' && room.current_booking && (
+                  {/* Booking Details - Show for any occupied room with bookings */}
+                  {room.status === 'occupied' && room.bookings && room.bookings.length > 0 && (
                     <div className="bg-red-50 rounded-lg p-3 space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium text-red-800">
                         <User className="h-4 w-4" />
-                        {room.current_booking.employee_name}
+                        Booked by: {room.bookings[0].employee_name}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-red-600">
                         <Clock className="h-3 w-3" />
-                        {formatDateTime(room.current_booking.start_time)} - {formatDateTime(room.current_booking.end_time)}
+                        {formatDateTime(room.bookings[0].start_time)} - {formatDateTime(room.bookings[0].end_time)}
                       </div>
-                      {room.current_booking.remarks && (
-                        <div className="text-xs text-red-600">
-                          {room.current_booking.remarks}
+                      {room.bookings[0].remarks && (
+                        <div className="text-xs text-red-600 bg-white/50 p-2 rounded">
+                          <span className="font-medium">Notes: </span>
+                          {room.bookings[0].remarks}
                         </div>
                       )}
+                      <div className="text-xs text-red-500 opacity-75">
+                        Booking ID: {room.bookings[0].id}
+                      </div>
+                      <div className="text-xs text-red-500 opacity-75">
+                        Booked on: {formatDateTime(room.bookings[0].created_at)}
+                      </div>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleCancelBooking(room.id)}
                         className="w-full text-red-600 border-red-300 hover:bg-red-50"
                       >
+                        <Trash2 className="h-4 w-4 mr-2" />
                         Cancel Booking
                       </Button>
+                    </div>
+                  )}
+                  
+                  {/* Show current active booking info separately if exists */}
+                  {room.current_booking && (
+                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-2">
+                      <div className="text-xs font-medium text-orange-800 flex items-center gap-1">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                        Currently Active Meeting
+                      </div>
                     </div>
                   )}
 
