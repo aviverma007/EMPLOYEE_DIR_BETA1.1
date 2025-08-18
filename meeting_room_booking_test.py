@@ -15,7 +15,7 @@ import time
 from datetime import datetime, timedelta
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://dual-service-run.preview.emergentagent.com/api"
+BACKEND_URL = "https://backend-booking-fix.preview.emergentagent.com/api"
 
 class MeetingRoomBookingTester:
     def __init__(self):
