@@ -59,6 +59,30 @@ api_router = APIRouter(prefix="/api")
 # Initialize Excel parser
 excel_parser = ExcelParser()
 
+# Helper function for datetime normalization
+def normalize_datetime(dt_input):
+    """Convert various datetime inputs to naive UTC datetime for comparison"""
+    if isinstance(dt_input, str):
+        # Handle ISO format strings
+        if 'T' in dt_input:
+            # Remove 'Z' and replace with UTC offset if present
+            dt_str = dt_input.replace('Z', '+00:00')
+            dt_obj = datetime.fromisoformat(dt_str)
+        else:
+            # Handle simple datetime strings
+            dt_obj = datetime.fromisoformat(dt_input)
+        # Convert to naive UTC
+        if dt_obj.tzinfo is not None:
+            dt_obj = dt_obj.astimezone(timezone.utc).replace(tzinfo=None)
+        return dt_obj
+    elif isinstance(dt_input, datetime):
+        # Handle datetime objects
+        if dt_input.tzinfo is not None:
+            return dt_input.astimezone(timezone.utc).replace(tzinfo=None)
+        return dt_input
+    else:
+        raise ValueError(f"Unsupported datetime type: {type(dt_input)}")
+
 # Helper functions for image processing
 def save_base64_image(base64_data: str, employee_id: str) -> str:
     """Convert base64 image data to file and save with employee ID as filename"""
