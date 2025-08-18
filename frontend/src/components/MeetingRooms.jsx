@@ -417,31 +417,31 @@ const MeetingRooms = () => {
             <div className="text-gray-500">Loading meeting rooms...</div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {filteredRooms.map((room) => (
               <Card key={room.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+                <CardHeader className="pb-3">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg">{room.name}</CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-base sm:text-lg truncate">{room.name}</CardTitle>
+                      <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500 mt-1">
                         <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {room.location}
+                          <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="truncate">{room.location}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Building className="h-4 w-4" />
-                          Floor {room.floor}
+                          <Building className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span>Floor {room.floor}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Users className="h-4 w-4" />
-                          {room.capacity}
+                          <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span>{room.capacity}</span>
                         </div>
                       </div>
                     </div>
                     <Badge className={`
                       ${room.status === 'vacant' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
-                      border-0
+                      border-0 text-xs whitespace-nowrap ml-2
                     `}>
                       {room.status.toUpperCase()}
                     </Badge>
