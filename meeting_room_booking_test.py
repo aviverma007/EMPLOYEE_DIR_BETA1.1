@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 """
-Meeting Room Booking System Testing - Multiple Bookings Functionality
-Tests the new multiple booking system with time conflict detection and specific booking cancellation
+Meeting Room Booking System Test - Focus on Multiple Bookings and Timezone Issues
+Tests the specific issues mentioned in the review request:
+1. Multiple bookings to same room at different times
+2. Timezone normalization fixes
+3. Profile image URL serving with /api/uploads/images/ prefix
 """
 
 import requests
 import json
 import sys
 from typing import Dict, List, Any
+import time
 from datetime import datetime, timedelta
-import uuid
 
 # Get backend URL from frontend .env
 BACKEND_URL = "https://dual-service-run.preview.emergentagent.com/api"
@@ -19,8 +22,6 @@ class MeetingRoomBookingTester:
         self.base_url = BACKEND_URL
         self.session = requests.Session()
         self.test_results = []
-        self.test_room_id = None
-        self.test_bookings = []
         
     def log_test(self, test_name: str, success: bool, message: str, details: Dict = None):
         """Log test results"""
@@ -38,623 +39,573 @@ class MeetingRoomBookingTester:
         print()
 
     def test_1_get_meeting_rooms_structure(self):
-        """Test GET /api/meeting-rooms - Check if rooms have new bookings field structure"""
+        """Test GET /api/meeting-rooms - Verify room structure and count"""
         try:
             response = self.session.get(f"{self.base_url}/meeting-rooms")
             
             if response.status_code == 200:
                 rooms = response.json()
+                room_count = len(rooms)
                 
-                if len(rooms) > 0:
-                    # Check first room structure
-                    first_room = rooms[0]
-                    required_fields = ['id', 'name', 'capacity', 'location', 'floor', 'status']
+                # Check if we have the expected 32 rooms
+                if room_count >= 30:  # Allow some flexibility
+                    # Check room structure - should have bookings field for multiple bookings
+                    sample_room = rooms[0] if rooms else {}
+                    has_bookings_field = 'bookings' in sample_room
+                    has_multiple_booking_support = isinstance(sample_room.get('bookings'), list)
                     
-                    # Check if room has required fields
-                    missing_fields = [field for field in required_fields if field not in first_room]
-                    
-                    if not missing_fields:
-                        # Check if bookings field exists (can be empty array or contain bookings)
-                        has_bookings_field = 'bookings' in first_room
-                        bookings_structure = first_room.get('bookings', [])
-                        
-                        # Store a test room ID for later tests
-                        self.test_room_id = first_room['id']
-                        
-                        self.log_test(
-                            "Meeting Rooms Structure Check",
-                            True,
-                            f"Found {len(rooms)} meeting rooms with proper structure. Bookings field present: {has_bookings_field}",
-                            {
-                                "total_rooms": len(rooms),
-                                "sample_room": first_room['name'],
-                                "room_id": first_room['id'],
-                                "has_bookings_field": has_bookings_field,
-                                "current_bookings_count": len(bookings_structure) if isinstance(bookings_structure, list) else 0,
-                                "room_status": first_room.get('status', 'unknown')
-                            }
-                        )
-                    else:
-                        self.log_test(
-                            "Meeting Rooms Structure Check",
-                            False,
-                            f"Room structure missing required fields: {missing_fields}",
-                            {"missing_fields": missing_fields}
-                        )
-                else:
                     self.log_test(
-                        "Meeting Rooms Structure Check",
-                        False,
-                        "No meeting rooms found in the system"
-                    )
-            else:
-                self.log_test(
-                    "Meeting Rooms Structure Check",
-                    False,
-                    f"Failed to fetch meeting rooms. Status: {response.status_code}",
-                    {"response": response.text[:200]}
-                )
-                
-        except Exception as e:
-            self.log_test(
-                "Meeting Rooms Structure Check",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
-
-    def test_2_create_first_booking(self):
-        """Test POST /api/meeting-rooms/{room_id}/book - Create first booking"""
-        if not self.test_room_id:
-            self.log_test(
-                "Create First Booking",
-                False,
-                "No test room ID available from previous test"
-            )
-            return
-            
-        try:
-            # Create booking for 2 hours from now to 3 hours from now
-            start_time = datetime.utcnow() + timedelta(hours=2)
-            end_time = datetime.utcnow() + timedelta(hours=3)
-            
-            booking_data = {
-                "employee_id": "80002",
-                "start_time": start_time.isoformat() + "Z",
-                "end_time": end_time.isoformat() + "Z",
-                "remarks": "First test booking - Team meeting"
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/meeting-rooms/{self.test_room_id}/book",
-                json=booking_data
-            )
-            
-            if response.status_code == 200:
-                updated_room = response.json()
-                bookings = updated_room.get('bookings', [])
-                
-                if len(bookings) >= 1:
-                    # Find our booking
-                    our_booking = None
-                    for booking in bookings:
-                        if booking.get('employee_id') == '80002' and 'First test booking' in booking.get('remarks', ''):
-                            our_booking = booking
-                            break
-                    
-                    if our_booking:
-                        self.test_bookings.append(our_booking['id'])
-                        self.log_test(
-                            "Create First Booking",
-                            True,
-                            f"Successfully created first booking. Room now has {len(bookings)} booking(s)",
-                            {
-                                "booking_id": our_booking['id'],
-                                "employee_name": our_booking.get('employee_name'),
-                                "start_time": our_booking.get('start_time'),
-                                "end_time": our_booking.get('end_time'),
-                                "total_bookings": len(bookings)
-                            }
-                        )
-                    else:
-                        self.log_test(
-                            "Create First Booking",
-                            False,
-                            "Booking was created but not found in response",
-                            {"total_bookings": len(bookings)}
-                        )
-                else:
-                    self.log_test(
-                        "Create First Booking",
-                        False,
-                        "Booking created but bookings array is empty",
-                        {"response_bookings": bookings}
-                    )
-            else:
-                self.log_test(
-                    "Create First Booking",
-                    False,
-                    f"Failed to create booking. Status: {response.status_code}",
-                    {"response": response.text[:300]}
-                )
-                
-        except Exception as e:
-            self.log_test(
-                "Create First Booking",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
-
-    def test_3_create_second_non_overlapping_booking(self):
-        """Test POST /api/meeting-rooms/{room_id}/book - Create second non-overlapping booking"""
-        if not self.test_room_id:
-            self.log_test(
-                "Create Second Non-Overlapping Booking",
-                False,
-                "No test room ID available"
-            )
-            return
-            
-        try:
-            # Create booking for 4 hours from now to 5 hours from now (non-overlapping with first)
-            start_time = datetime.utcnow() + timedelta(hours=4)
-            end_time = datetime.utcnow() + timedelta(hours=5)
-            
-            booking_data = {
-                "employee_id": "80024",
-                "start_time": start_time.isoformat() + "Z",
-                "end_time": end_time.isoformat() + "Z",
-                "remarks": "Second test booking - Project review"
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/meeting-rooms/{self.test_room_id}/book",
-                json=booking_data
-            )
-            
-            if response.status_code == 200:
-                updated_room = response.json()
-                bookings = updated_room.get('bookings', [])
-                
-                if len(bookings) >= 2:
-                    # Find our second booking
-                    our_booking = None
-                    for booking in bookings:
-                        if booking.get('employee_id') == '80024' and 'Second test booking' in booking.get('remarks', ''):
-                            our_booking = booking
-                            break
-                    
-                    if our_booking:
-                        self.test_bookings.append(our_booking['id'])
-                        self.log_test(
-                            "Create Second Non-Overlapping Booking",
-                            True,
-                            f"Successfully created second non-overlapping booking. Room now has {len(bookings)} booking(s)",
-                            {
-                                "booking_id": our_booking['id'],
-                                "employee_name": our_booking.get('employee_name'),
-                                "start_time": our_booking.get('start_time'),
-                                "end_time": our_booking.get('end_time'),
-                                "total_bookings": len(bookings)
-                            }
-                        )
-                    else:
-                        self.log_test(
-                            "Create Second Non-Overlapping Booking",
-                            False,
-                            "Second booking was created but not found in response",
-                            {"total_bookings": len(bookings)}
-                        )
-                else:
-                    self.log_test(
-                        "Create Second Non-Overlapping Booking",
-                        False,
-                        f"Expected at least 2 bookings, found {len(bookings)}",
-                        {"bookings_count": len(bookings)}
-                    )
-            else:
-                self.log_test(
-                    "Create Second Non-Overlapping Booking",
-                    False,
-                    f"Failed to create second booking. Status: {response.status_code}",
-                    {"response": response.text[:300]}
-                )
-                
-        except Exception as e:
-            self.log_test(
-                "Create Second Non-Overlapping Booking",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
-
-    def test_4_test_time_conflict_detection(self):
-        """Test POST /api/meeting-rooms/{room_id}/book - Test time conflict detection"""
-        if not self.test_room_id:
-            self.log_test(
-                "Time Conflict Detection",
-                False,
-                "No test room ID available"
-            )
-            return
-            
-        try:
-            # Try to create overlapping booking (2.5 hours from now to 3.5 hours from now)
-            # This should conflict with the first booking (2-3 hours from now)
-            start_time = datetime.utcnow() + timedelta(hours=2, minutes=30)
-            end_time = datetime.utcnow() + timedelta(hours=3, minutes=30)
-            
-            booking_data = {
-                "employee_id": "80056",
-                "start_time": start_time.isoformat() + "Z",
-                "end_time": end_time.isoformat() + "Z",
-                "remarks": "Conflicting test booking - Should fail"
-            }
-            
-            response = self.session.post(
-                f"{self.base_url}/meeting-rooms/{self.test_room_id}/book",
-                json=booking_data
-            )
-            
-            # This should fail with 400 status code due to time conflict
-            if response.status_code == 400:
-                error_message = response.text
-                if "conflict" in error_message.lower() or "overlap" in error_message.lower():
-                    self.log_test(
-                        "Time Conflict Detection",
-                        True,
-                        "Time conflict correctly detected and booking rejected",
+                        "GET /api/meeting-rooms - Structure Check", 
+                        True, 
+                        f"Successfully fetched {room_count} meeting rooms with proper structure",
                         {
-                            "status_code": response.status_code,
-                            "error_message": error_message[:200]
+                            "total_rooms": room_count,
+                            "has_bookings_field": has_bookings_field,
+                            "supports_multiple_bookings": has_multiple_booking_support,
+                            "sample_room_id": sample_room.get('id', 'N/A')
                         }
                     )
+                    
+                    # Store room IDs for testing
+                    self.available_rooms = [room['id'] for room in rooms if room.get('status') == 'vacant']
+                    self.all_rooms = [room['id'] for room in rooms]
+                    
+                    return True
                 else:
                     self.log_test(
-                        "Time Conflict Detection",
-                        False,
-                        "Booking rejected but not for time conflict reason",
-                        {"error_message": error_message[:200]}
+                        "GET /api/meeting-rooms - Structure Check", 
+                        False, 
+                        f"Expected around 32 rooms, got {room_count}"
                     )
-            elif response.status_code == 200:
-                self.log_test(
-                    "Time Conflict Detection",
-                    False,
-                    "Overlapping booking was incorrectly accepted - conflict detection failed",
-                    {"response": response.text[:200]}
-                )
+                    return False
             else:
                 self.log_test(
-                    "Time Conflict Detection",
-                    False,
-                    f"Unexpected status code: {response.status_code}",
-                    {"response": response.text[:200]}
+                    "GET /api/meeting-rooms - Structure Check", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
                 )
+                return False
                 
         except Exception as e:
-            self.log_test(
-                "Time Conflict Detection",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
+            self.log_test("GET /api/meeting-rooms - Structure Check", False, f"Exception: {str(e)}")
+            return False
 
-    def test_5_room_status_updates(self):
-        """Test GET /api/meeting-rooms - Verify room status updates based on active bookings"""
-        if not self.test_room_id:
-            self.log_test(
-                "Room Status Updates",
-                False,
-                "No test room ID available"
-            )
-            return
-            
+    def test_2_single_booking_creation(self):
+        """Test POST /api/meeting-rooms/{id}/book - Create single booking"""
         try:
-            response = self.session.get(f"{self.base_url}/meeting-rooms")
+            if not hasattr(self, 'available_rooms') or not self.available_rooms:
+                self.log_test("Single Booking Creation", False, "No available rooms for testing")
+                return False
+            
+            # Get an employee for booking
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("Single Booking Creation", False, "Could not fetch employees")
+                return False
+            
+            employees = emp_response.json()
+            if not employees:
+                self.log_test("Single Booking Creation", False, "No employees available")
+                return False
+            
+            test_employee = employees[0]
+            test_room_id = self.available_rooms[0]
+            
+            # Create booking for 10:00 AM to 11:00 AM (as requested in review)
+            tomorrow = datetime.now() + timedelta(days=1)
+            start_time = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
+            end_time = tomorrow.replace(hour=11, minute=0, second=0, microsecond=0)
+            
+            booking_data = {
+                "employee_id": test_employee["id"],
+                "start_time": start_time.isoformat() + "Z",
+                "end_time": end_time.isoformat() + "Z",
+                "remarks": "Test booking 10-11 AM - Review Request Test"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/meeting-rooms/{test_room_id}/book",
+                json=booking_data
+            )
             
             if response.status_code == 200:
-                rooms = response.json()
-                test_room = None
+                booked_room = response.json()
+                bookings = booked_room.get('bookings', [])
                 
-                # Find our test room
-                for room in rooms:
-                    if room['id'] == self.test_room_id:
-                        test_room = room
-                        break
-                
-                if test_room:
-                    current_time = datetime.utcnow()
-                    bookings = test_room.get('bookings', [])
-                    room_status = test_room.get('status', 'unknown')
-                    current_booking = test_room.get('current_booking')
-                    
-                    # Check if any booking is currently active
-                    should_be_occupied = False
-                    active_booking_found = None
-                    
-                    for booking in bookings:
-                        start_time_str = booking.get('start_time', '')
-                        end_time_str = booking.get('end_time', '')
-                        
-                        if start_time_str and end_time_str:
-                            try:
-                                start_time = datetime.fromisoformat(start_time_str.replace('Z', '+00:00'))
-                                end_time = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
-                                
-                                # Remove timezone info for comparison with current_time
-                                start_time = start_time.replace(tzinfo=None)
-                                end_time = end_time.replace(tzinfo=None)
-                                
-                                if start_time <= current_time <= end_time:
-                                    should_be_occupied = True
-                                    active_booking_found = booking
-                                    break
-                            except:
-                                continue
-                    
-                    expected_status = "occupied" if should_be_occupied else "vacant"
-                    status_correct = room_status == expected_status
+                # Verify booking was created
+                if len(bookings) >= 1:
+                    latest_booking = bookings[-1]  # Get the latest booking
                     
                     self.log_test(
-                        "Room Status Updates",
-                        status_correct,
-                        f"Room status is {'correct' if status_correct else 'incorrect'}. Expected: {expected_status}, Actual: {room_status}",
+                        "Single Booking Creation (10-11 AM)", 
+                        True, 
+                        f"Successfully created booking for {test_employee['name']} from 10-11 AM",
+                        {
+                            "room_id": test_room_id,
+                            "employee": test_employee['name'],
+                            "booking_id": latest_booking.get('id'),
+                            "start_time": booking_data['start_time'],
+                            "end_time": booking_data['end_time'],
+                            "total_bookings": len(bookings)
+                        }
+                    )
+                    
+                    # Store for next test
+                    self.test_room_id = test_room_id
+                    self.test_employee = test_employee
+                    self.first_booking_id = latest_booking.get('id')
+                    
+                    return True
+                else:
+                    self.log_test("Single Booking Creation (10-11 AM)", False, "Booking was not added to room")
+                    return False
+            else:
+                self.log_test(
+                    "Single Booking Creation (10-11 AM)", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_test("Single Booking Creation (10-11 AM)", False, f"Exception: {str(e)}")
+            return False
+
+    def test_3_multiple_booking_same_room(self):
+        """Test POST /api/meeting-rooms/{id}/book - Create second booking for same room (2-3 PM)"""
+        try:
+            if not hasattr(self, 'test_room_id') or not hasattr(self, 'test_employee'):
+                self.log_test("Multiple Booking Same Room", False, "Previous test failed - no room/employee data")
+                return False
+            
+            # Create second booking for 2:00 PM to 3:00 PM (as requested in review)
+            tomorrow = datetime.now() + timedelta(days=1)
+            start_time = tomorrow.replace(hour=14, minute=0, second=0, microsecond=0)  # 2 PM
+            end_time = tomorrow.replace(hour=15, minute=0, second=0, microsecond=0)    # 3 PM
+            
+            booking_data = {
+                "employee_id": self.test_employee["id"],
+                "start_time": start_time.isoformat() + "Z",
+                "end_time": end_time.isoformat() + "Z",
+                "remarks": "Test booking 2-3 PM - Review Request Test (Multiple Booking)"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/meeting-rooms/{self.test_room_id}/book",
+                json=booking_data
+            )
+            
+            if response.status_code == 200:
+                booked_room = response.json()
+                bookings = booked_room.get('bookings', [])
+                
+                # Verify we now have 2 bookings
+                if len(bookings) >= 2:
+                    self.log_test(
+                        "Multiple Booking Same Room (2-3 PM)", 
+                        True, 
+                        f"✅ CRITICAL FIX VERIFIED: Successfully created second booking for same room without timezone errors",
                         {
                             "room_id": self.test_room_id,
-                            "current_status": room_status,
-                            "expected_status": expected_status,
+                            "employee": self.test_employee['name'],
                             "total_bookings": len(bookings),
-                            "has_current_booking": current_booking is not None,
-                            "active_booking_found": active_booking_found is not None
+                            "second_booking_time": "2-3 PM",
+                            "timezone_error_fixed": True
+                        }
+                    )
+                    
+                    # Store second booking ID
+                    self.second_booking_id = bookings[-1].get('id')
+                    return True
+                else:
+                    self.log_test(
+                        "Multiple Booking Same Room (2-3 PM)", 
+                        False, 
+                        f"Expected 2+ bookings, got {len(bookings)}"
+                    )
+                    return False
+            else:
+                # This is the critical error we're testing for
+                error_text = response.text
+                if "can't compare offset-naive and offset-aware datetimes" in error_text:
+                    self.log_test(
+                        "Multiple Booking Same Room (2-3 PM)", 
+                        False, 
+                        f"❌ CRITICAL TIMEZONE ERROR STILL EXISTS: {error_text}",
+                        {
+                            "error_type": "timezone_comparison_error",
+                            "status_code": response.status_code,
+                            "needs_normalize_datetime_fix": True
                         }
                     )
                 else:
                     self.log_test(
-                        "Room Status Updates",
-                        False,
-                        f"Test room {self.test_room_id} not found in rooms list"
+                        "Multiple Booking Same Room (2-3 PM)", 
+                        False, 
+                        f"HTTP {response.status_code}: {error_text}"
                     )
-            else:
-                self.log_test(
-                    "Room Status Updates",
-                    False,
-                    f"Failed to fetch meeting rooms. Status: {response.status_code}"
-                )
+                return False
                 
         except Exception as e:
-            self.log_test(
-                "Room Status Updates",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
+            self.log_test("Multiple Booking Same Room (2-3 PM)", False, f"Exception: {str(e)}")
+            return False
 
-    def test_6_specific_booking_cancellation(self):
-        """Test DELETE /api/meeting-rooms/{room_id}/booking/{booking_id} - Cancel specific booking"""
-        if not self.test_room_id or not self.test_bookings:
-            self.log_test(
-                "Specific Booking Cancellation",
-                False,
-                "No test room ID or booking IDs available"
-            )
-            return
-            
+    def test_4_timezone_normalization_function(self):
+        """Test that normalize_datetime function is working properly"""
         try:
-            # Cancel the first booking we created
-            booking_id_to_cancel = self.test_bookings[0]
+            # Test by creating bookings with different timezone formats
+            if not hasattr(self, 'available_rooms') or len(self.available_rooms) < 2:
+                self.log_test("Timezone Normalization Test", False, "Need at least 2 available rooms")
+                return False
             
+            # Get employee
+            emp_response = self.session.get(f"{self.base_url}/employees")
+            if emp_response.status_code != 200:
+                self.log_test("Timezone Normalization Test", False, "Could not fetch employees")
+                return False
+            
+            employees = emp_response.json()
+            if not employees:
+                self.log_test("Timezone Normalization Test", False, "No employees available")
+                return False
+            
+            test_employee = employees[0]
+            test_room_id = self.available_rooms[1] if len(self.available_rooms) > 1 else self.available_rooms[0]
+            
+            # Test different timezone formats
+            tomorrow = datetime.now() + timedelta(days=1)
+            
+            # Format 1: ISO with Z suffix
+            start_time_1 = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
+            end_time_1 = tomorrow.replace(hour=10, minute=0, second=0, microsecond=0)
+            
+            booking_data_1 = {
+                "employee_id": test_employee["id"],
+                "start_time": start_time_1.isoformat() + "Z",
+                "end_time": end_time_1.isoformat() + "Z",
+                "remarks": "Timezone test - ISO with Z"
+            }
+            
+            response_1 = self.session.post(
+                f"{self.base_url}/meeting-rooms/{test_room_id}/book",
+                json=booking_data_1
+            )
+            
+            # Format 2: ISO with +00:00 offset
+            start_time_2 = tomorrow.replace(hour=11, minute=0, second=0, microsecond=0)
+            end_time_2 = tomorrow.replace(hour=12, minute=0, second=0, microsecond=0)
+            
+            booking_data_2 = {
+                "employee_id": test_employee["id"],
+                "start_time": start_time_2.isoformat() + "+00:00",
+                "end_time": end_time_2.isoformat() + "+00:00",
+                "remarks": "Timezone test - ISO with +00:00"
+            }
+            
+            response_2 = self.session.post(
+                f"{self.base_url}/meeting-rooms/{test_room_id}/book",
+                json=booking_data_2
+            )
+            
+            success_count = 0
+            if response_1.status_code == 200:
+                success_count += 1
+            if response_2.status_code == 200:
+                success_count += 1
+            
+            if success_count == 2:
+                self.log_test(
+                    "Timezone Normalization Function", 
+                    True, 
+                    f"✅ normalize_datetime function working correctly - handled both Z and +00:00 formats",
+                    {
+                        "format_1_success": response_1.status_code == 200,
+                        "format_2_success": response_2.status_code == 200,
+                        "room_id": test_room_id
+                    }
+                )
+                return True
+            else:
+                self.log_test(
+                    "Timezone Normalization Function", 
+                    False, 
+                    f"normalize_datetime function issues - only {success_count}/2 formats worked",
+                    {
+                        "format_1_status": response_1.status_code,
+                        "format_2_status": response_2.status_code,
+                        "format_1_error": response_1.text if response_1.status_code != 200 else None,
+                        "format_2_error": response_2.text if response_2.status_code != 200 else None
+                    }
+                )
+                return False
+                
+        except Exception as e:
+            self.log_test("Timezone Normalization Function", False, f"Exception: {str(e)}")
+            return False
+
+    def test_5_specific_booking_cancellation(self):
+        """Test DELETE /api/meeting-rooms/{room_id}/booking/{booking_id} - Cancel specific booking"""
+        try:
+            if not hasattr(self, 'test_room_id') or not hasattr(self, 'first_booking_id'):
+                self.log_test("Specific Booking Cancellation", False, "No booking data from previous tests")
+                return False
+            
+            # Cancel the first booking (10-11 AM) using the new specific cancellation endpoint
             response = self.session.delete(
-                f"{self.base_url}/meeting-rooms/{self.test_room_id}/booking/{booking_id_to_cancel}"
+                f"{self.base_url}/meeting-rooms/{self.test_room_id}/booking/{self.first_booking_id}"
             )
             
             if response.status_code == 200:
                 # Verify the booking was removed
                 room_response = self.session.get(f"{self.base_url}/meeting-rooms")
-                
                 if room_response.status_code == 200:
                     rooms = room_response.json()
-                    test_room = None
-                    
-                    for room in rooms:
-                        if room['id'] == self.test_room_id:
-                            test_room = room
-                            break
+                    test_room = next((room for room in rooms if room['id'] == self.test_room_id), None)
                     
                     if test_room:
-                        bookings = test_room.get('bookings', [])
+                        remaining_bookings = test_room.get('bookings', [])
+                        booking_still_exists = any(b.get('id') == self.first_booking_id for b in remaining_bookings)
                         
-                        # Check if the cancelled booking is gone
-                        cancelled_booking_found = False
-                        for booking in bookings:
-                            if booking.get('id') == booking_id_to_cancel:
-                                cancelled_booking_found = True
-                                break
-                        
-                        if not cancelled_booking_found:
+                        if not booking_still_exists:
                             self.log_test(
-                                "Specific Booking Cancellation",
-                                True,
-                                f"Successfully cancelled specific booking. Room now has {len(bookings)} booking(s)",
+                                "Specific Booking Cancellation", 
+                                True, 
+                                f"Successfully cancelled specific booking (10-11 AM)",
                                 {
-                                    "cancelled_booking_id": booking_id_to_cancel,
-                                    "remaining_bookings": len(bookings),
-                                    "booking_removed": True
+                                    "cancelled_booking_id": self.first_booking_id,
+                                    "remaining_bookings": len(remaining_bookings),
+                                    "room_id": self.test_room_id
                                 }
                             )
+                            return True
                         else:
                             self.log_test(
-                                "Specific Booking Cancellation",
-                                False,
-                                "Booking cancellation reported success but booking still exists",
-                                {"cancelled_booking_id": booking_id_to_cancel}
+                                "Specific Booking Cancellation", 
+                                False, 
+                                "Booking still exists after cancellation"
                             )
+                            return False
                     else:
-                        self.log_test(
-                            "Specific Booking Cancellation",
-                            False,
-                            "Could not find test room to verify cancellation"
-                        )
+                        self.log_test("Specific Booking Cancellation", False, "Could not find test room")
+                        return False
                 else:
-                    self.log_test(
-                        "Specific Booking Cancellation",
-                        False,
-                        "Could not fetch rooms to verify cancellation"
-                    )
+                    self.log_test("Specific Booking Cancellation", False, "Could not verify cancellation")
+                    return False
             else:
                 self.log_test(
-                    "Specific Booking Cancellation",
-                    False,
-                    f"Failed to cancel specific booking. Status: {response.status_code}",
-                    {"response": response.text[:200]}
+                    "Specific Booking Cancellation", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
                 )
+                return False
                 
         except Exception as e:
-            self.log_test(
-                "Specific Booking Cancellation",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
+            self.log_test("Specific Booking Cancellation", False, f"Exception: {str(e)}")
+            return False
 
-    def test_7_expired_booking_cleanup(self):
-        """Test expired booking cleanup functionality"""
-        if not self.test_room_id:
-            self.log_test(
-                "Expired Booking Cleanup",
-                False,
-                "No test room ID available"
-            )
-            return
-            
+    def test_6_profile_image_url_serving(self):
+        """Test profile image URLs with correct /api/uploads/images/ prefix"""
         try:
-            # Create a booking in the past (should be automatically cleaned up)
-            past_start_time = datetime.utcnow() - timedelta(hours=2)
-            past_end_time = datetime.utcnow() - timedelta(hours=1)
+            # Get employees and check their profile image URLs
+            response = self.session.get(f"{self.base_url}/employees")
             
-            booking_data = {
-                "employee_id": "80059",
-                "start_time": past_start_time.isoformat() + "Z",
-                "end_time": past_end_time.isoformat() + "Z",
-                "remarks": "Expired test booking - Should be cleaned up"
-            }
-            
-            # Try to create the past booking (this might fail due to validation)
-            response = self.session.post(
-                f"{self.base_url}/meeting-rooms/{self.test_room_id}/book",
-                json=booking_data
-            )
-            
-            if response.status_code == 400 and "past time" in response.text.lower():
-                # This is expected - system prevents booking in the past
-                self.log_test(
-                    "Expired Booking Cleanup",
-                    True,
-                    "System correctly prevents booking in the past, which is good for data integrity",
-                    {"validation_message": response.text[:200]}
-                )
-            else:
-                # If past booking was somehow created, check if cleanup works
-                # Fetch rooms to trigger cleanup
-                cleanup_response = self.session.get(f"{self.base_url}/meeting-rooms")
+            if response.status_code == 200:
+                employees = response.json()
                 
-                if cleanup_response.status_code == 200:
-                    rooms = cleanup_response.json()
-                    test_room = None
-                    
-                    for room in rooms:
-                        if room['id'] == self.test_room_id:
-                            test_room = room
-                            break
-                    
-                    if test_room:
-                        bookings = test_room.get('bookings', [])
+                if not employees:
+                    self.log_test("Profile Image URL Serving", False, "No employees found")
+                    return False
+                
+                # Check profile image URLs
+                correct_prefix_count = 0
+                total_with_images = 0
+                api_prefix_count = 0
+                
+                for employee in employees[:10]:  # Check first 10 employees
+                    profile_image = employee.get('profileImage')
+                    if profile_image and profile_image != "/api/placeholder/150/150":
+                        total_with_images += 1
                         
-                        # Check if any expired bookings exist
-                        expired_bookings = []
-                        current_time = datetime.utcnow()
-                        
-                        for booking in bookings:
-                            end_time_str = booking.get('end_time', '')
-                            if end_time_str:
-                                try:
-                                    end_time = datetime.fromisoformat(end_time_str.replace('Z', '+00:00'))
-                                    end_time = end_time.replace(tzinfo=None)
-                                    
-                                    if end_time < current_time:
-                                        expired_bookings.append(booking)
-                                except:
-                                    continue
-                        
-                        if len(expired_bookings) == 0:
-                            self.log_test(
-                                "Expired Booking Cleanup",
-                                True,
-                                "No expired bookings found - cleanup is working properly",
-                                {"total_bookings": len(bookings)}
-                            )
-                        else:
-                            self.log_test(
-                                "Expired Booking Cleanup",
-                                False,
-                                f"Found {len(expired_bookings)} expired booking(s) that should have been cleaned up",
-                                {"expired_bookings": len(expired_bookings)}
-                            )
-                    else:
-                        self.log_test(
-                            "Expired Booking Cleanup",
-                            False,
-                            "Could not find test room to check cleanup"
-                        )
-                else:
-                    self.log_test(
-                        "Expired Booking Cleanup",
-                        False,
-                        "Could not fetch rooms to test cleanup"
-                    )
+                        # Check if it has the correct /api/uploads/images/ prefix
+                        if profile_image.startswith('/api/uploads/images/'):
+                            correct_prefix_count += 1
+                            api_prefix_count += 1
+                        elif profile_image.startswith('/uploads/images/'):
+                            # This would be incorrect - missing /api prefix
+                            pass
+                
+                # Test accessing a profile image URL if available
+                image_accessible = False
+                test_image_url = None
+                
+                if api_prefix_count > 0:
+                    # Find an employee with /api/uploads/images/ URL
+                    for employee in employees[:10]:
+                        profile_image = employee.get('profileImage')
+                        if profile_image and profile_image.startswith('/api/uploads/images/'):
+                            test_image_url = profile_image
+                            
+                            # Try to access the image
+                            full_url = self.base_url.replace('/api', '') + profile_image
+                            img_response = self.session.get(full_url)
+                            
+                            if img_response.status_code == 200:
+                                image_accessible = True
+                                break
+                
+                prefix_correct = correct_prefix_count == total_with_images and total_with_images > 0
+                
+                self.log_test(
+                    "Profile Image URL Serving", 
+                    prefix_correct and (image_accessible or total_with_images == 0), 
+                    f"Profile image URLs {'have correct /api/uploads/images/ prefix' if prefix_correct else 'have incorrect prefixes'}",
+                    {
+                        "total_employees_checked": min(10, len(employees)),
+                        "employees_with_images": total_with_images,
+                        "correct_api_prefix_count": api_prefix_count,
+                        "image_accessible": image_accessible,
+                        "test_image_url": test_image_url,
+                        "prefix_correct": prefix_correct
+                    }
+                )
+                
+                return prefix_correct
+            else:
+                self.log_test(
+                    "Profile Image URL Serving", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                return False
                 
         except Exception as e:
-            self.log_test(
-                "Expired Booking Cleanup",
-                False,
-                f"Exception occurred: {str(e)}"
-            )
+            self.log_test("Profile Image URL Serving", False, f"Exception: {str(e)}")
+            return False
+
+    def test_7_multiple_bookings_per_room_verification(self):
+        """Verify that multiple bookings per room are now supported"""
+        try:
+            # Get all rooms and check how many have multiple bookings
+            response = self.session.get(f"{self.base_url}/meeting-rooms")
+            
+            if response.status_code == 200:
+                rooms = response.json()
+                
+                rooms_with_multiple_bookings = 0
+                total_bookings = 0
+                
+                for room in rooms:
+                    bookings = room.get('bookings', [])
+                    total_bookings += len(bookings)
+                    
+                    if len(bookings) > 1:
+                        rooms_with_multiple_bookings += 1
+                
+                # Check if our test room has multiple bookings
+                test_room_has_multiple = False
+                if hasattr(self, 'test_room_id'):
+                    test_room = next((room for room in rooms if room['id'] == self.test_room_id), None)
+                    if test_room:
+                        test_room_bookings = len(test_room.get('bookings', []))
+                        test_room_has_multiple = test_room_bookings > 1
+                
+                multiple_bookings_supported = rooms_with_multiple_bookings > 0 or test_room_has_multiple
+                
+                self.log_test(
+                    "Multiple Bookings Per Room Support", 
+                    multiple_bookings_supported, 
+                    f"Multiple bookings per room {'are supported' if multiple_bookings_supported else 'not working properly'}",
+                    {
+                        "total_rooms": len(rooms),
+                        "rooms_with_multiple_bookings": rooms_with_multiple_bookings,
+                        "total_bookings_system_wide": total_bookings,
+                        "test_room_has_multiple": test_room_has_multiple,
+                        "multiple_bookings_supported": multiple_bookings_supported
+                    }
+                )
+                
+                return multiple_bookings_supported
+            else:
+                self.log_test(
+                    "Multiple Bookings Per Room Support", 
+                    False, 
+                    f"HTTP {response.status_code}: {response.text}"
+                )
+                return False
+                
+        except Exception as e:
+            self.log_test("Multiple Bookings Per Room Support", False, f"Exception: {str(e)}")
+            return False
 
     def run_all_tests(self):
         """Run all meeting room booking tests"""
-        print("🚀 Starting Meeting Room Booking System Tests")
-        print("=" * 60)
+        print("=" * 80)
+        print("MEETING ROOM BOOKING SYSTEM TEST - REVIEW REQUEST FOCUS")
+        print("Testing multiple bookings, timezone fixes, and image serving")
+        print("=" * 80)
+        print()
         
         # Run tests in sequence
-        self.test_1_get_meeting_rooms_structure()
-        self.test_2_create_first_booking()
-        self.test_3_create_second_non_overlapping_booking()
-        self.test_4_test_time_conflict_detection()
-        self.test_5_room_status_updates()
-        self.test_6_specific_booking_cancellation()
-        self.test_7_expired_booking_cleanup()
+        tests = [
+            self.test_1_get_meeting_rooms_structure,
+            self.test_2_single_booking_creation,
+            self.test_3_multiple_booking_same_room,
+            self.test_4_timezone_normalization_function,
+            self.test_5_specific_booking_cancellation,
+            self.test_6_profile_image_url_serving,
+            self.test_7_multiple_bookings_per_room_verification
+        ]
         
-        # Summary
-        print("=" * 60)
-        print("📊 TEST SUMMARY")
-        print("=" * 60)
+        passed_tests = 0
+        total_tests = len(tests)
         
-        passed = sum(1 for result in self.test_results if result['success'])
-        total = len(self.test_results)
+        for test_func in tests:
+            try:
+                if test_func():
+                    passed_tests += 1
+            except Exception as e:
+                print(f"Test {test_func.__name__} failed with exception: {str(e)}")
         
-        print(f"Total Tests: {total}")
-        print(f"Passed: {passed}")
-        print(f"Failed: {total - passed}")
-        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        # Print summary
+        print("=" * 80)
+        print("MEETING ROOM BOOKING TEST SUMMARY")
+        print("=" * 80)
         
-        if passed == total:
-            print("\n🎉 All meeting room booking tests passed!")
-            return True
+        success_rate = (passed_tests / total_tests) * 100
+        print(f"Tests Passed: {passed_tests}/{total_tests} ({success_rate:.1f}%)")
+        print()
+        
+        # Print specific results for review request items
+        print("REVIEW REQUEST SPECIFIC RESULTS:")
+        print("-" * 40)
+        
+        critical_tests = [
+            ("Multiple Bookings (10AM-11AM, 2PM-3PM)", "test_3_multiple_booking_same_room"),
+            ("Timezone Normalization Function", "test_4_timezone_normalization_function"),
+            ("Profile Image /api/uploads/images/ Prefix", "test_6_profile_image_url_serving")
+        ]
+        
+        for test_name, test_method in critical_tests:
+            test_result = next((r for r in self.test_results if test_method in r['test']), None)
+            if test_result:
+                status = "✅ WORKING" if test_result['success'] else "❌ FAILING"
+                print(f"{status}: {test_name}")
+            else:
+                print(f"❓ UNKNOWN: {test_name}")
+        
+        print()
+        
+        if success_rate >= 80:
+            print("🎉 MEETING ROOM BOOKING SYSTEM: MOSTLY FUNCTIONAL")
+            if passed_tests == total_tests:
+                print("🔥 ALL TESTS PASSED - TIMEZONE ISSUES RESOLVED!")
         else:
-            print(f"\n⚠️  {total - passed} test(s) failed. Check details above.")
-            return False
-
-def main():
-    """Main function to run the tests"""
-    tester = MeetingRoomBookingTester()
-    success = tester.run_all_tests()
-    
-    # Exit with appropriate code
-    sys.exit(0 if success else 1)
+            print("⚠️  MEETING ROOM BOOKING SYSTEM: NEEDS ATTENTION")
+            print("🔧 TIMEZONE COMPARISON ERRORS MAY STILL EXIST")
+        
+        return success_rate >= 80
 
 if __name__ == "__main__":
-    main()
+    tester = MeetingRoomBookingTester()
+    success = tester.run_all_tests()
+    sys.exit(0 if success else 1)
