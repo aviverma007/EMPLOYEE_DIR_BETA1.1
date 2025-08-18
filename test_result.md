@@ -417,8 +417,7 @@ metadata:
 
 test_plan:
   current_focus: []
-  stuck_tasks:
-    - "Meeting Rooms Management API"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
