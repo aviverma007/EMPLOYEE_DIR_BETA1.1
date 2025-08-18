@@ -881,17 +881,8 @@ async def cleanup_expired_bookings():
                     continue
                     
                 # Convert to naive datetime for consistent comparison
-                if isinstance(end_time, str):
-                    end_time = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
-                    end_time = end_time.replace(tzinfo=None) if end_time.tzinfo else end_time
-                elif hasattr(end_time, 'replace') and hasattr(end_time, 'tzinfo'):
-                    end_time = end_time.replace(tzinfo=None) if end_time.tzinfo else end_time
-                    
-                if isinstance(start_time, str):
-                    start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
-                    start_time = start_time.replace(tzinfo=None) if start_time.tzinfo else start_time
-                elif hasattr(start_time, 'replace') and hasattr(start_time, 'tzinfo'):
-                    start_time = start_time.replace(tzinfo=None) if start_time.tzinfo else start_time
+                end_time = normalize_datetime(end_time)
+                start_time = normalize_datetime(start_time)
                 
                 # Keep non-expired bookings (use naive UTC current_time)
                 if end_time >= current_time:
