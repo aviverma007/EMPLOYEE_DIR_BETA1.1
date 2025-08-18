@@ -51,7 +51,7 @@ except:
     pass  # Ignore permission errors on some systems
 
 # Serve static files for images
-app.mount("/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="uploads")
+app.mount("/api/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="uploads")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
