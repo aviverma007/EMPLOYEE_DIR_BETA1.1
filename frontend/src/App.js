@@ -170,6 +170,23 @@ const AppContent = () => {
                     <TabsContent value="help" className="mt-0 h-full">
                       <Help />
                     </TabsContent>
+
+                    {/* Important Additional Features */}
+                    <TabsContent value="policies" className="mt-0 h-full">
+                      <Policies />
+                    </TabsContent>
+                    
+                    <TabsContent value="workflows" className="mt-0 h-full">
+                      <Workflows />
+                    </TabsContent>
+                    
+                    <TabsContent value="meeting-rooms" className="mt-0 h-full">
+                      <MeetingRooms />
+                    </TabsContent>
+                    
+                    <TabsContent value="attendance" className="mt-0 h-full">
+                      <Attendance />
+                    </TabsContent>
                   </div>
                 </Tabs>
               </div>
