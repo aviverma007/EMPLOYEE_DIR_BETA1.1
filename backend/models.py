@@ -186,6 +186,7 @@ class MeetingRoomCreate(BaseModel):
 class MeetingRoomUpdate(BaseModel):
     status: Optional[str] = None
     current_booking: Optional[MeetingRoomBooking] = None
+    bookings: Optional[List[MeetingRoomBooking]] = None
 
 class MeetingRoomBookingCreate(BaseModel):
     employee_id: str
