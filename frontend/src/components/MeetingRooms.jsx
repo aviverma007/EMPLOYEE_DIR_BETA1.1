@@ -331,19 +331,19 @@ const MeetingRooms = () => {
 
       {/* Location and Floor Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Building className="h-5 w-5" />
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            <Building className="h-4 w-4 sm:h-5 sm:w-5" />
             Location & Floor Selection
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <Select value={selectedLocation} onValueChange={(value) => {
               setSelectedLocation(value);
               setSelectedFloor("all"); // Reset floor when location changes
             }}>
-              <SelectTrigger>
+              <SelectTrigger className="h-10">
                 <SelectValue placeholder="Select Location" />
               </SelectTrigger>
               <SelectContent>
@@ -361,7 +361,7 @@ const MeetingRooms = () => {
               onValueChange={setSelectedFloor}
               disabled={!selectedLocation || selectedLocation === "all"}
             >
-              <SelectTrigger>
+              <SelectTrigger className="h-10">
                 <SelectValue placeholder="Select Floor" />
               </SelectTrigger>
               <SelectContent>
@@ -375,7 +375,7 @@ const MeetingRooms = () => {
             </Select>
 
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger>
+              <SelectTrigger className="h-10">
                 <SelectValue placeholder="Room Status" />
               </SelectTrigger>
               <SelectContent>
@@ -397,6 +397,7 @@ const MeetingRooms = () => {
 
             <Button
               variant="outline"
+              className="h-10"
               onClick={() => {
                 setSelectedLocation("all");
                 setSelectedFloor("all");
