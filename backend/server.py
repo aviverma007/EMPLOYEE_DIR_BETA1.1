@@ -1099,21 +1099,8 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         # Check for time conflicts with existing bookings
         existing_bookings = room.get('bookings', [])
         for existing_booking in existing_bookings:
-            existing_start = existing_booking['start_time']
-            existing_end = existing_booking['end_time']
-            
-            # Normalize existing booking times to naive datetime for comparison
-            if isinstance(existing_start, str):
-                existing_start = datetime.fromisoformat(existing_start.replace('Z', '+00:00'))
-                existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
-            elif hasattr(existing_start, 'replace') and hasattr(existing_start, 'tzinfo'):
-                existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
-                
-            if isinstance(existing_end, str):
-                existing_end = datetime.fromisoformat(existing_end.replace('Z', '+00:00'))
-                existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
-            elif hasattr(existing_end, 'replace') and hasattr(existing_end, 'tzinfo'):
-                existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
+            existing_start = normalize_datetime(existing_booking['start_time'])
+            existing_end = normalize_datetime(existing_booking['end_time'])
             
             # Check for overlap: new booking overlaps if:
             # new_start < existing_end AND new_end > existing_start
