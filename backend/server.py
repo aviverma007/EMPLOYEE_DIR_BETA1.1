@@ -832,39 +832,70 @@ async def delete_help_request(help_id: str):
 
 # Helper function for meeting room cleanup
 async def cleanup_expired_bookings():
-    """Clean up expired meeting room bookings"""
+    """Clean up expired meeting room bookings and update room statuses"""
     try:
         current_time = datetime.utcnow()
         
-        # Find all rooms with current bookings
-        rooms_with_bookings = await db.meeting_rooms.find({
-            "current_booking": {"$ne": None}
-        }).to_list(None)
+        # Find all rooms with bookings
+        rooms_with_bookings = await db.meeting_rooms.find({}).to_list(None)
         
         for room in rooms_with_bookings:
-            booking = room.get('current_booking')
-            if booking and booking.get('end_time'):
-                end_time = booking['end_time']
+            bookings = room.get('bookings', [])
+            if not bookings:
+                continue
+                
+            # Remove expired bookings and find current active booking
+            active_bookings = []
+            current_booking = None
+            room_status = "vacant"
+            
+            for booking in bookings:
+                end_time = booking.get('end_time')
+                start_time = booking.get('start_time')
+                
+                if not end_time or not start_time:
+                    continue
+                    
+                # Convert to datetime if they are strings
+                if isinstance(end_time, str):
+                    end_time = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+                if isinstance(start_time, str):
+                    start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
                 
                 # Handle timezone-aware comparison
                 if end_time.tzinfo and not current_time.tzinfo:
-                    current_time = current_time.replace(tzinfo=end_time.tzinfo)
+                    current_time_tz = current_time.replace(tzinfo=end_time.tzinfo)
                 elif current_time.tzinfo and not end_time.tzinfo:
                     end_time = end_time.replace(tzinfo=current_time.tzinfo)
+                    current_time_tz = current_time
+                else:
+                    current_time_tz = current_time
                 
-                # If booking has expired, clear it
-                if end_time < current_time:
-                    await db.meeting_rooms.update_one(
-                        {"id": room['id']},
-                        {
-                            "$set": {
-                                "status": "vacant",
-                                "current_booking": None,
-                                "updated_at": datetime.utcnow()
-                            }
+                # Keep non-expired bookings
+                if end_time >= current_time_tz:
+                    active_bookings.append(booking)
+                    
+                    # Check if this booking is currently active
+                    if start_time <= current_time_tz <= end_time:
+                        current_booking = booking
+                        room_status = "occupied"
+            
+            # Update room if there were changes
+            if len(active_bookings) != len(bookings) or room.get('status') != room_status:
+                await db.meeting_rooms.update_one(
+                    {"id": room['id']},
+                    {
+                        "$set": {
+                            "status": room_status,
+                            "current_booking": current_booking,
+                            "bookings": active_bookings,
+                            "updated_at": datetime.utcnow()
                         }
-                    )
-                    logging.info(f"Cleaned up expired booking for room {room['id']}")
+                    }
+                )
+                expired_count = len(bookings) - len(active_bookings)
+                if expired_count > 0:
+                    logging.info(f"Cleaned up {expired_count} expired booking(s) for room {room['id']}")
                     
     except Exception as e:
         logging.error(f"Error cleaning up expired bookings: {str(e)}")
