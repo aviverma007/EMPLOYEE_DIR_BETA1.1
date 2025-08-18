@@ -246,7 +246,7 @@ const MeetingRooms = () => {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Meeting Rooms</h1>
         <div className="flex items-center text-sm text-gray-600">
           <Calendar className="h-4 w-4 mr-1" />
-          Book multiple slots at once
+          Single booking per room policy
         </div>
       </div>
 
