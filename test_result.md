@@ -418,6 +418,8 @@ test_plan:
 agent_communication:
     -agent: "main"
     -message: "MAJOR APPLICATION RESTRUCTURE COMPLETED: Successfully transformed the application from a 2-tab employee directory system to a comprehensive 5-tab management platform. Key changes: 1) Replaced user selector page with admin-only access, 2) Created 5-tab navigation (Home, Employee Directory, Work, Knowledge, Help), 3) Implemented complete backend APIs for News, Tasks, Knowledge, and Help with full CRUD operations, 4) Built responsive frontend components for all new features, 5) Combined Employee Directory and Hierarchy Builder in single tab, 6) All new features include advanced functionality like search, filtering, status management, priority levels, and responsive design. Ready for comprehensive backend testing of all new APIs."
+    -agent: "user"
+    -message: "CRITICAL CROSS-SYSTEM ACCESS ISSUE REPORTED: Application showing data on developer's system but not on another system. Profile images being uploaded/saved but not displaying on different systems. Backend image file loading not working cross-system. This suggests networking/configuration issues preventing proper cross-system access to both data and static files."
     -agent: "testing"
     -message: "Comprehensive backend API testing completed successfully. All 12 endpoints tested and working correctly: Employee Management (GET employees with search/filter, PUT image update, POST Excel refresh), Hierarchy Management (GET/POST/DELETE operations), and Utility endpoints (departments, locations, stats). Fixed minor route ordering issue in hierarchy clear endpoint. All 640 employees loaded correctly from Excel. Backend APIs are fully functional and ready for production use."
     -agent: "testing"
