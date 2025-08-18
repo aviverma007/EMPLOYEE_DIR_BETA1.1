@@ -856,7 +856,7 @@ async def delete_help_request(help_id: str):
 
 # Helper function for meeting room cleanup
 async def cleanup_expired_bookings():
-    """Clean up expired meeting room bookings and update room statuses"""
+    """Clean up expired meeting room bookings and update room statuses for single booking system"""
     try:
         current_time = datetime.utcnow()
         
@@ -868,7 +868,7 @@ async def cleanup_expired_bookings():
             if not bookings:
                 continue
                 
-            # Remove expired bookings and find current active booking
+            # For single booking system, check if the one booking is expired
             active_bookings = []
             current_booking = None
             room_status = "vacant"
@@ -887,11 +887,12 @@ async def cleanup_expired_bookings():
                 # Keep non-expired bookings (use naive UTC current_time)
                 if end_time >= current_time:
                     active_bookings.append(booking)
+                    # For single booking system, room is occupied if there are any active bookings
+                    room_status = "occupied"
                     
-                    # Check if this booking is currently active
+                    # Check if this booking is currently active (happening now)
                     if start_time <= current_time <= end_time:
                         current_booking = booking
-                        room_status = "occupied"
             
             # Update room if there were changes
             if len(active_bookings) != len(bookings) or room.get('status') != room_status:
