@@ -268,6 +268,10 @@ const MeetingRooms = () => {
     return employees.find(emp => emp.id === bookingForm.employee_id);
   };
 
+  const getBulkSelectedEmployee = () => {
+    return employees.find(emp => emp.id === bulkBookingForm.employee_id);
+  };
+
   const filteredRooms = rooms.filter(room => {
     if (selectedLocation && selectedLocation !== "all" && room.location !== selectedLocation) return false;
     if (selectedFloor && selectedFloor !== "all" && room.floor !== selectedFloor) return false;
