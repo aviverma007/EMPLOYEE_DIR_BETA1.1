@@ -322,12 +322,12 @@ const EmployeeDirectory = () => {
           <div className="text-blue-500">
             <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
-              {hasSearched ? "No employees found" : "Search to view employees"}
+              {hasSearched ? "No employees found" : "No employees available"}
             </h3>
             <p>
               {hasSearched
                 ? "Try adjusting your search criteria."
-                : "Use the search fields above to find employees by name, ID, department, or location."}
+                : "Employee directory is loading or empty."}
             </p>
           </div>
         </Card>
