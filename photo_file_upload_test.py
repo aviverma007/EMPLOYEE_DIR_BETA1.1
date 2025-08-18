@@ -6,7 +6,7 @@ Tests the file upload method for photos using the corrected external URL
 
 import requests
 import io
-from PIL import Image
+import base64
 import sys
 
 # Use the corrected external URL
@@ -35,15 +35,12 @@ def test_photo_file_upload():
         
         print(f"🧪 Testing file upload for employee: {employee_name} (ID: {employee_id})")
         
-        # Create a small test image (10x10 red square)
-        img = Image.new('RGB', (10, 10), color='red')
-        img_buffer = io.BytesIO()
-        img.save(img_buffer, format='PNG')
-        img_buffer.seek(0)
+        # Create a minimal PNG file (1x1 red pixel)
+        png_data = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==")
         
         # Prepare file for upload
         files = {
-            'file': ('test_image.png', img_buffer, 'image/png')
+            'file': ('test_image.png', io.BytesIO(png_data), 'image/png')
         }
         
         # Upload photo via external URL using file upload method
