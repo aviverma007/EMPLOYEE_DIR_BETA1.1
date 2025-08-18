@@ -14,8 +14,8 @@ from typing import Dict, List, Any
 import time
 from datetime import datetime, timedelta
 
-# Get backend URL from frontend .env
-BACKEND_URL = "https://backend-booking-fix.preview.emergentagent.com/api"
+# Get backend URL - use internal URL for testing
+BACKEND_URL = "http://localhost:8001/api"
 
 class MeetingRoomBookingTester:
     def __init__(self):
