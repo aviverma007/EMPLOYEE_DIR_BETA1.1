@@ -297,7 +297,7 @@ const EmployeeDirectory = () => {
         <Badge variant="secondary" className="px-3 py-1 bg-blue-100 text-blue-700">
           {hasSearched 
             ? `${filteredEmployees.length} of ${employees.length} employees matching search criteria`
-            : `${employees.length} employees available - use search to view`
+            : `Showing all ${employees.length} employees`
           }
         </Badge>
       </div>
