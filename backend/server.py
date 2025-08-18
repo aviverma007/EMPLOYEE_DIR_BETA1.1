@@ -1651,6 +1651,54 @@ async def get_stats():
 async def root():
     return {"message": "Employee Directory API is running"}
 
+@api_router.post("/cleanup-images")
+async def cleanup_image_files():
+    """Clean up legacy image files and orphaned images"""
+    try:
+        cleanup_count = 0
+        
+        # Get all employees from database
+        employees_cursor = db.employees.find({}, {"id": 1})
+        valid_employee_ids = {emp["id"] async for emp in employees_cursor}
+        
+        # Scan upload directory
+        for file_path in UPLOAD_DIR.glob("*"):
+            if file_path.is_file():
+                filename = file_path.name
+                
+                # Check if it's a legacy file with random suffix
+                if '_' in filename:
+                    base_name = filename.split('_')[0]
+                    # If this is a legacy file for a valid employee, remove it
+                    # The new system will create proper files without suffixes
+                    if base_name in valid_employee_ids:
+                        try:
+                            file_path.unlink()
+                            cleanup_count += 1
+                            logging.info(f"Cleaned up legacy image file: {filename}")
+                        except Exception as e:
+                            logging.warning(f"Could not remove legacy file {filename}: {e}")
+                
+                # Check if it's an orphaned file (no corresponding employee)
+                else:
+                    base_name = filename.split('.')[0]  # Remove extension
+                    if base_name not in valid_employee_ids:
+                        try:
+                            file_path.unlink()
+                            cleanup_count += 1
+                            logging.info(f"Cleaned up orphaned image file: {filename}")
+                        except Exception as e:
+                            logging.warning(f"Could not remove orphaned file {filename}: {e}")
+        
+        return {
+            "message": "Image cleanup completed",
+            "files_cleaned": cleanup_count
+        }
+        
+    except Exception as e:
+        logging.error(f"Error during image cleanup: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to cleanup images")
+
 # Temporary endpoint to force Excel reload
 @api_router.post("/force-reload-excel")
 async def force_reload_excel():
