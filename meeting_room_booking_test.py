@@ -527,7 +527,7 @@ class MeetingRoomBookingTester:
             past_end_time = datetime.utcnow() - timedelta(hours=1)
             
             booking_data = {
-                "employee_id": "EMP004",
+                "employee_id": "80059",
                 "start_time": past_start_time.isoformat() + "Z",
                 "end_time": past_end_time.isoformat() + "Z",
                 "remarks": "Expired test booking - Should be cleaned up"
