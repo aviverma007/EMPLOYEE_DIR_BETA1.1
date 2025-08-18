@@ -572,11 +572,11 @@ const MeetingRooms = () => {
                             </div>
                           </div>
 
-                          {/* Remarks */}
+                          {/* Meeting Details */}
                           <div>
-                            <Label>Remarks</Label>
+                            <Label>Meeting Purpose / Notes</Label>
                             <Textarea
-                              placeholder="Meeting purpose, notes..."
+                              placeholder="e.g., Team standup, Client presentation, Training session..."
                               value={bookingForm.remarks}
                               onChange={(e) => setBookingForm(prev => ({ ...prev, remarks: e.target.value }))}
                               rows={3}
@@ -587,7 +587,7 @@ const MeetingRooms = () => {
                             <Button
                               onClick={handleBookRoom}
                               disabled={!bookingForm.employee_id || !bookingForm.start_time || !bookingForm.end_time}
-                              className="flex-1"
+                              className="flex-1 bg-blue-600 hover:bg-blue-700"
                             >
                               <Check className="h-4 w-4 mr-2" />
                               Confirm Booking
