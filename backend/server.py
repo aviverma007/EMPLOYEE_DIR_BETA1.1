@@ -1172,6 +1172,155 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         logging.error(f"Error booking meeting room: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to book meeting room")
 
+@api_router.post("/meeting-rooms/{room_id}/book-multiple", response_model=MeetingRoom)
+async def bulk_book_meeting_room(room_id: str, bulk_booking: MeetingRoomBulkBookingCreate):
+    """Book multiple time slots for the same meeting room in one request"""
+    try:
+        # Validate employee exists
+        employee = await db.employees.find_one({"id": bulk_booking.employee_id})
+        if not employee:
+            raise HTTPException(status_code=400, detail="Employee not found")
+        
+        # Get room
+        room = await db.meeting_rooms.find_one({"id": room_id})
+        if not room:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Validate and parse all time slots first
+        validated_slots = []
+        current_time = datetime.utcnow()
+        
+        for i, slot in enumerate(bulk_booking.time_slots):
+            if not slot.get('start_time') or not slot.get('end_time'):
+                raise HTTPException(status_code=400, detail=f"Time slot {i+1}: start_time and end_time are required")
+            
+            # Parse datetime strings and convert to naive UTC
+            start_time_raw = datetime.fromisoformat(slot['start_time'].replace('Z', '+00:00'))
+            end_time_raw = datetime.fromisoformat(slot['end_time'].replace('Z', '+00:00'))
+            
+            start_time = start_time_raw.replace(tzinfo=None) if start_time_raw.tzinfo else start_time_raw
+            end_time = end_time_raw.replace(tzinfo=None) if end_time_raw.tzinfo else end_time_raw
+            
+            # Validate individual time slot
+            if start_time >= end_time:
+                raise HTTPException(status_code=400, detail=f"Time slot {i+1}: End time must be after start time")
+            
+            if start_time < current_time:
+                raise HTTPException(status_code=400, detail=f"Time slot {i+1}: Cannot book room for past time")
+            
+            validated_slots.append({
+                'start_time': start_time,
+                'end_time': end_time,
+                'remarks': slot.get('remarks', f"Bulk booking slot {i+1}")
+            })
+        
+        # Check for conflicts between requested slots
+        for i, slot1 in enumerate(validated_slots):
+            for j, slot2 in enumerate(validated_slots[i+1:], i+1):
+                if slot1['start_time'] < slot2['end_time'] and slot1['end_time'] > slot2['start_time']:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Time conflict between requested slots {i+1} and {j+1}"
+                    )
+        
+        # Check for conflicts with existing bookings
+        existing_bookings = room.get('bookings', [])
+        for i, slot in enumerate(validated_slots):
+            for existing_booking in existing_bookings:
+                existing_start = existing_booking['start_time']
+                existing_end = existing_booking['end_time']
+                
+                # Normalize existing booking times for comparison
+                if isinstance(existing_start, str):
+                    existing_start = datetime.fromisoformat(existing_start.replace('Z', '+00:00'))
+                    existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
+                elif hasattr(existing_start, 'replace') and hasattr(existing_start, 'tzinfo'):
+                    existing_start = existing_start.replace(tzinfo=None) if existing_start.tzinfo else existing_start
+                    
+                if isinstance(existing_end, str):
+                    existing_end = datetime.fromisoformat(existing_end.replace('Z', '+00:00'))
+                    existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
+                elif hasattr(existing_end, 'replace') and hasattr(existing_end, 'tzinfo'):
+                    existing_end = existing_end.replace(tzinfo=None) if existing_end.tzinfo else existing_end
+                
+                # Check for overlap
+                if slot['start_time'] < existing_end and slot['end_time'] > existing_start:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Time slot {i+1} conflicts with existing booking from {existing_start} to {existing_end}"
+                    )
+        
+        # Create all bookings
+        new_bookings = []
+        for slot in validated_slots:
+            new_booking = {
+                'id': str(uuid.uuid4()),
+                'employee_id': bulk_booking.employee_id,
+                'employee_name': employee['name'],
+                'start_time': slot['start_time'],
+                'end_time': slot['end_time'],
+                'remarks': slot['remarks'],
+                'created_at': datetime.utcnow()
+            }
+            new_bookings.append(new_booking)
+        
+        # Add all new bookings to the bookings list
+        updated_bookings = existing_bookings + new_bookings
+        
+        # Determine current status and current_booking based on current time
+        current_booking = None
+        room_status = "vacant"
+        
+        for booking_info in updated_bookings:
+            booking_start = booking_info['start_time']
+            booking_end = booking_info['end_time']
+            
+            # Normalize datetime objects for comparison
+            if isinstance(booking_start, str):
+                booking_start = datetime.fromisoformat(booking_start.replace('Z', '+00:00'))
+                booking_start = booking_start.replace(tzinfo=None) if booking_start.tzinfo else booking_start
+            elif hasattr(booking_start, 'replace') and hasattr(booking_start, 'tzinfo'):
+                booking_start = booking_start.replace(tzinfo=None) if booking_start.tzinfo else booking_start
+                
+            if isinstance(booking_end, str):
+                booking_end = datetime.fromisoformat(booking_end.replace('Z', '+00:00'))
+                booking_end = booking_end.replace(tzinfo=None) if booking_end.tzinfo else booking_end
+            elif hasattr(booking_end, 'replace') and hasattr(booking_end, 'tzinfo'):
+                booking_end = booking_end.replace(tzinfo=None) if booking_end.tzinfo else booking_end
+            
+            # Check if this booking is currently active
+            if booking_start <= current_time <= booking_end:
+                current_booking = booking_info
+                room_status = "occupied"
+                break
+        
+        # Update room with new bookings
+        update_data = {
+            'status': room_status,
+            'current_booking': current_booking,
+            'bookings': updated_bookings,
+            'updated_at': datetime.utcnow()
+        }
+        
+        result = await db.meeting_rooms.update_one(
+            {"id": room_id},
+            {"$set": update_data}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Meeting room not found")
+        
+        # Return updated room
+        updated_room = await db.meeting_rooms.find_one({"id": room_id})
+        updated_room.pop('_id', None)
+        return MeetingRoom(**updated_room)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error bulk booking meeting room: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to bulk book meeting room")
+
 @api_router.delete("/meeting-rooms/{room_id}/booking")
 async def cancel_booking(room_id: str):
     """Cancel current/active meeting room booking"""
