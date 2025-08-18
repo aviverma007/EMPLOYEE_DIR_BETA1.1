@@ -7,7 +7,7 @@ Tests the new search parameter in attendance API
 import requests
 import json
 
-BACKEND_URL = "https://sequential-bookings.preview.emergentagent.com/api"
+BACKEND_URL = "https://dual-service-run.preview.emergentagent.com/api"
 
 def test_attendance_search():
     session = requests.Session()
