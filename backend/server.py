@@ -166,8 +166,8 @@ def get_employee_image_url(employee_id: str) -> Optional[str]:
         for ext in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
             file_path = UPLOAD_DIR / f"{employee_id}.{ext}"
             if file_path.exists():
-                # Return the URL path that can be served by FastAPI static files
-                image_url = f"/uploads/images/{employee_id}.{ext}"
+                # Return the full URL that includes the API prefix for proper routing
+                image_url = f"/api/uploads/images/{employee_id}.{ext}"
                 logging.debug(f"Found image for employee {employee_id}: {image_url}")
                 return image_url
         
