@@ -239,9 +239,9 @@ backend:
 
   - task: "Meeting Rooms Management API"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -254,6 +254,9 @@ backend:
         -working: true
         -agent: "testing"
         -comment: "REVIEW REQUEST VERIFICATION COMPLETED: Successfully tested all specific requirements from the review request. ✅ Excel Data Loading: Exactly 640 employees loaded correctly from Excel file. ✅ Meeting Rooms Update: All 9 14th floor meeting rooms have the correct new names (OVAL MEETING ROOM, PETRONAS MEETING ROOM, GLOBAL CENTER MEETING ROOM, LOUVRE MEETING ROOM, GOLDEN GATE MEETING ROOM, EMPIRE STATE MEETING ROOM, MARINA BAY MEETING ROOM, BURJ MEETING ROOM, BOARD ROOM) with correct capacities (10, 5, 5, 5, 10, 5, 5, 5, 20 people respectively). ✅ API Functionality: GET /api/meeting-rooms endpoint with filters working perfectly - IFC location returns 11 rooms total, floor 14 filter returns exactly 9 rooms as expected. ✅ Booking System: Booking functionality working correctly with new room structure - successfully created and cancelled test booking on OVAL MEETING ROOM. Minor: Equipment/amenities field shows empty due to field name mismatch in backend (uses 'amenities' in initialization but model expects 'equipment'), but core functionality is perfect. All 4/4 focused tests passed (100% success rate). Meeting Rooms System fully meets all review request requirements."
+        -working: false
+        -agent: "testing"
+        -comment: "MULTIPLE BOOKING SYSTEM TESTING COMPLETED: Tested the new multiple booking functionality as requested in review. RESULTS: ✅ Meeting Room Structure: All 32 rooms have proper bookings field structure with array support for multiple bookings. ✅ Single Booking Creation: Successfully created individual bookings - first booking works correctly. ✅ Specific Booking Cancellation: New DELETE /api/meeting-rooms/{room_id}/booking/{booking_id} endpoint working perfectly. ✅ Room Status Logic: Room status updates correctly based on current vs active bookings (occupied rooms have current_booking, vacant rooms don't). ✅ Expired Booking Cleanup: Automatic cleanup working properly - no expired bookings found. ✅ Time Validation: Past booking attempts correctly rejected. ❌ CRITICAL ISSUE: Multiple bookings fail due to timezone comparison error 'can't compare offset-naive and offset-aware datetimes' in backend booking logic. First booking succeeds but subsequent bookings to same room fail with 500 error. Time conflict detection cannot be properly tested due to this timezone bug. RECOMMENDATION: Fix timezone handling in booking comparison logic (lines 1066-1096 in server.py) to enable full multiple booking functionality."
 
   - task: "Attendance Management API"
     implemented: true
