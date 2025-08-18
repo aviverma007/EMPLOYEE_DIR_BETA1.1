@@ -40,13 +40,6 @@ const MeetingRooms = () => {
     end_time: "",
     remarks: ""
   });
-  const [bulkBookingMode, setBulkBookingMode] = useState(false);
-  const [bulkBookingForm, setBulkBookingForm] = useState({
-    employee_id: "",
-    time_slots: [
-      { start_time: "", end_time: "", remarks: "" }
-    ]
-  });
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showBookingDialog, setShowBookingDialog] = useState(false);
   const [employeeSearch, setEmployeeSearch] = useState("");
