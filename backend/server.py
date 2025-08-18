@@ -1313,20 +1313,22 @@ async def cancel_specific_booking(room_id: str, booking_id: str):
         if len(updated_bookings) == len(existing_bookings):
             raise HTTPException(status_code=404, detail="Booking not found")
         
-        # Determine current status and current_booking based on remaining bookings and current time
+        # With single booking system, determine status based on remaining bookings
         current_time = datetime.utcnow()
         current_booking = None
         room_status = "vacant"
         
-        for booking_info in updated_bookings:
-            booking_start = normalize_datetime(booking_info['start_time'])
-            booking_end = normalize_datetime(booking_info['end_time'])
-            
-            # Check if this booking is currently active
-            if booking_start <= current_time <= booking_end:
-                current_booking = booking_info
-                room_status = "occupied"
-                break
+        # If there are any bookings remaining, room is occupied
+        if updated_bookings:
+            room_status = "occupied"
+            # Check if any remaining booking is currently active
+            for booking_info in updated_bookings:
+                booking_start = normalize_datetime(booking_info['start_time'])
+                booking_end = normalize_datetime(booking_info['end_time'])
+                
+                if booking_start <= current_time <= booking_end:
+                    current_booking = booking_info
+                    break
         
         # Update room
         update_data = {
