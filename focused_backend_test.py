@@ -11,7 +11,7 @@ from typing import Dict, List, Any
 import time
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://dp-visibility-fix.preview.emergentagent.com/api"
+BACKEND_URL = "https://sequential-bookings.preview.emergentagent.com/api"
 
 class FocusedBackendTester:
     def __init__(self):
