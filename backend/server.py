@@ -132,14 +132,17 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         file_path = UPLOAD_DIR / filename
         
         # Remove any existing image files for this employee first
-        for existing_file in UPLOAD_DIR.glob(f"{employee_id}.*"):
+        for existing_file in UPLOAD_DIR.glob(f"{employee_id}*"):
             try:
                 existing_file.unlink()
-            except:
-                pass
+                logging.info(f"Removed existing image file: {existing_file}")
+            except Exception as e:
+                logging.warning(f"Could not remove existing file {existing_file}: {e}")
         
         # Save the new file
         with open(file_path, 'wb') as buffer:
+            # Reset file pointer to beginning and read all content
+            file.file.seek(0)
             content = file.file.read()
             buffer.write(content)
         
@@ -149,12 +152,12 @@ def save_uploaded_file(file: UploadFile, employee_id: str) -> str:
         except:
             pass
         
-        # Return success indicator (not storing URL in DB)
-        return f"image_saved_{employee_id}"
+        logging.info(f"Successfully saved uploaded file for employee {employee_id} as {filename} ({len(content)} bytes)")
+        return f"/uploads/images/{filename}"
         
     except Exception as e:
-        logging.error(f"Error saving uploaded file: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to save image file")
+        logging.error(f"Error saving uploaded file for employee {employee_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to save image file: {str(e)}")
 
 def get_employee_image_url(employee_id: str) -> Optional[str]:
     """Get employee profile image URL if file exists on filesystem"""
