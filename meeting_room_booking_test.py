@@ -137,7 +137,7 @@ class MeetingRoomBookingTester:
                     # Find our booking
                     our_booking = None
                     for booking in bookings:
-                        if booking.get('employee_id') == 'EMP001' and 'First test booking' in booking.get('remarks', ''):
+                        if booking.get('employee_id') == '80002' and 'First test booking' in booking.get('remarks', ''):
                             our_booking = booking
                             break
                     
