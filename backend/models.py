@@ -194,6 +194,11 @@ class MeetingRoomBookingCreate(BaseModel):
     end_time: str
     remarks: str = ""
 
+class MeetingRoomBulkBookingCreate(BaseModel):
+    employee_id: str
+    time_slots: List[Dict[str, str]] = Field(..., description="List of time slots with start_time, end_time, and optional remarks")
+    # Example: [{"start_time": "2025-01-01T09:00:00Z", "end_time": "2025-01-01T10:00:00Z", "remarks": "Morning meeting"}, ...]
+
 # Policy models
 class Policy(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
