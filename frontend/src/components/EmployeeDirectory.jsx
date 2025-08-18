@@ -151,6 +151,7 @@ const EmployeeDirectory = () => {
     setNameSearch("");
     setEmployeeIdSearch("");
     setDepartmentSearch("");
+    setDesignationSearch("");
     setLocationSearch("");
   };
 
