@@ -78,11 +78,11 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
       {employees.map((employee) => (
         <Card key={employee.id} className="hover:shadow-lg transition-all duration-300 border-blue-200 shadow-sm bg-white group cursor-pointer hover:border-blue-300">
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center space-y-4">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col items-center space-y-3 sm:space-y-4">
               {/* Profile Image */}
               <div className="relative">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center">
