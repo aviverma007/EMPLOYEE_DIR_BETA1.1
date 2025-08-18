@@ -43,9 +43,10 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
   };
 
   const handleImageSubmit = async () => {
-    if (imagePreview && selectedEmployee) {
+    if (imageFile && selectedEmployee) {
       try {
-        await onImageUpdate(selectedEmployee.id, imagePreview);
+        // Pass the actual File object for better original image handling
+        await onImageUpdate(selectedEmployee.id, imageFile);
         toast.success("Profile image updated successfully!");
         setImageFile(null);
         setImagePreview("");
