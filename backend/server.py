@@ -1062,16 +1062,24 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         if not room:
             raise HTTPException(status_code=404, detail="Meeting room not found")
         
-        # Parse datetime strings
+        # Parse datetime strings and normalize to UTC
         start_time = datetime.fromisoformat(booking.start_time.replace('Z', '+00:00'))
         end_time = datetime.fromisoformat(booking.end_time.replace('Z', '+00:00'))
+        
+        # Convert to naive UTC for consistent comparison
+        if start_time.tzinfo:
+            start_time = start_time.utctimetuple()
+            start_time = datetime(*start_time[:6])
+        if end_time.tzinfo:
+            end_time = end_time.utctimetuple() 
+            end_time = datetime(*end_time[:6])
         
         # Validate booking time
         if start_time >= end_time:
             raise HTTPException(status_code=400, detail="End time must be after start time")
         
-        # Make datetime.utcnow() timezone-aware for comparison
-        current_time = datetime.utcnow().replace(tzinfo=start_time.tzinfo) if start_time.tzinfo else datetime.utcnow()
+        # Use UTC for current time comparison
+        current_time = datetime.utcnow()
         if start_time < current_time:
             raise HTTPException(status_code=400, detail="Cannot book room for past time")
         
@@ -1081,11 +1089,24 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
             existing_start = existing_booking['start_time']
             existing_end = existing_booking['end_time']
             
-            # Convert to datetime if they are strings
+            # Convert existing booking times to naive datetime objects for comparison
             if isinstance(existing_start, str):
                 existing_start = datetime.fromisoformat(existing_start.replace('Z', '+00:00'))
+                if existing_start.tzinfo:
+                    existing_start = existing_start.utctimetuple()
+                    existing_start = datetime(*existing_start[:6])
+            elif hasattr(existing_start, 'tzinfo') and existing_start.tzinfo:
+                existing_start = existing_start.utctimetuple()
+                existing_start = datetime(*existing_start[:6])
+                
             if isinstance(existing_end, str):
                 existing_end = datetime.fromisoformat(existing_end.replace('Z', '+00:00'))
+                if existing_end.tzinfo:
+                    existing_end = existing_end.utctimetuple()
+                    existing_end = datetime(*existing_end[:6])
+            elif hasattr(existing_end, 'tzinfo') and existing_end.tzinfo:
+                existing_end = existing_end.utctimetuple()
+                existing_end = datetime(*existing_end[:6])
             
             # Check for overlap: new booking overlaps if:
             # new_start < existing_end AND new_end > existing_start
