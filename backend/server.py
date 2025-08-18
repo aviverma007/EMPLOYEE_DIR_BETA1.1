@@ -1060,13 +1060,32 @@ async def book_meeting_room(room_id: str, booking: MeetingRoomBookingCreate):
         if not room:
             raise HTTPException(status_code=404, detail="Meeting room not found")
         
-        # Parse datetime strings and convert to naive UTC for consistent comparison
-        start_time_raw = datetime.fromisoformat(booking.start_time.replace('Z', '+00:00'))
-        end_time_raw = datetime.fromisoformat(booking.end_time.replace('Z', '+00:00'))
+        # Parse and normalize datetime strings for consistent comparison
+        def normalize_datetime(dt_input):
+            """Convert various datetime inputs to naive UTC datetime for comparison"""
+            if isinstance(dt_input, str):
+                # Handle ISO format strings
+                if 'T' in dt_input:
+                    # Remove 'Z' and replace with UTC offset if present
+                    dt_str = dt_input.replace('Z', '+00:00')
+                    dt_obj = datetime.fromisoformat(dt_str)
+                else:
+                    # Handle simple datetime strings
+                    dt_obj = datetime.fromisoformat(dt_input)
+                # Convert to naive UTC
+                if dt_obj.tzinfo is not None:
+                    dt_obj = dt_obj.astimezone(timezone.utc).replace(tzinfo=None)
+                return dt_obj
+            elif isinstance(dt_input, datetime):
+                # Handle datetime objects
+                if dt_input.tzinfo is not None:
+                    return dt_input.astimezone(timezone.utc).replace(tzinfo=None)
+                return dt_input
+            else:
+                raise ValueError(f"Unsupported datetime type: {type(dt_input)}")
         
-        # Convert to naive UTC
-        start_time = start_time_raw.replace(tzinfo=None) if start_time_raw.tzinfo else start_time_raw
-        end_time = end_time_raw.replace(tzinfo=None) if end_time_raw.tzinfo else end_time_raw
+        start_time = normalize_datetime(booking.start_time)
+        end_time = normalize_datetime(booking.end_time)
         
         # Validate booking time
         if start_time >= end_time:
