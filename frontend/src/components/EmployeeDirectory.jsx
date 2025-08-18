@@ -104,7 +104,7 @@ const EmployeeDirectory = () => {
     });
   }, [employees, debouncedSearchTerms]);
 
-  const hasSearched = nameSearch || employeeIdSearch || departmentSearch || locationSearch;
+  const hasSearched = nameSearch || employeeIdSearch || departmentSearch || designationSearch || locationSearch;
 
   const handleImageUpdate = async (employeeId, imageData) => {
     try {
