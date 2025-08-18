@@ -38,6 +38,19 @@ export const employeeAPI = {
       profileImage: imageUrl
     });
     return response.data;
+  },
+
+  // Upload employee profile image file (original images)
+  uploadImage: async (employeeId, imageFile) => {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    
+    const response = await api.post(`/api/employees/${employeeId}/upload-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
   }
 };
 
