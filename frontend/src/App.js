@@ -19,7 +19,12 @@ import HierarchyBuilder from "./components/HierarchyBuilder";
 
 // Import required components for complete feature set
 import Home from "./components/Home";
+import Help from "./components/Help";
+import Work from "./components/Work";
+import Knowledge from "./components/Knowledge";
 import Policies from "./components/Policies";
+import Workflows from "./components/Workflows";
+import Attendance from "./components/Attendance";
 import MeetingRooms from "./components/MeetingRooms";
 import HolidayCalendar from "./components/HolidayCalendar";
 
