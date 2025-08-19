@@ -227,16 +227,26 @@ const MeetingRooms = () => {
     return `${hour12}:${minutes} ${ampm}`;
   };
 
-  const getTimeOptions = () => {
-    const times = [];
-    for (let hour = 9; hour <= 20; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const time12 = formatTime12Hour(time24);
-        times.push({ value: time24, label: time12 });
+  const clearAllBookings = async () => {
+    if (window.confirm('Are you sure you want to clear ALL bookings from ALL meeting rooms? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`${backendUrl}/meeting-rooms/clear-all-bookings`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          fetchRooms(); // Refresh room data
+          alert(`Success! ${result.message}`);
+        } else {
+          const error = await response.json();
+          alert(`Error clearing bookings: ${error.detail || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error clearing all bookings:', error);
+        alert('Failed to clear bookings');
       }
     }
-    return times;
   };
 
   return (
