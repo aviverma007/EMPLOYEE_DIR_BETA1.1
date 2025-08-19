@@ -654,19 +654,6 @@ const Home = () => {
                 </div>
               )}
             </div>
-            
-            <a
-              href="mailto:it@smartworlddevelopers.com"
-              className="bg-purple-600 hover:bg-purple-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
-            >
-              <div className="flex flex-col items-center space-y-1">
-                <Globe className="h-4 w-4" />
-                <div>
-                  <h4 className="font-medium text-sm">IT Support</h4>
-                  <p className="text-xs opacity-90">Help Desk</p>
-                </div>
-              </div>
-            </a>
           </div>
         </div>
       )}
