@@ -130,32 +130,32 @@ const HolidayCalendar = () => {
         <p className="text-gray-600 text-sm">Company holidays and observances for the year</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-        {/* Calendar - Reduced Size */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
+        {/* Calendar - Further Reduced Size */}
         <div className="lg:col-span-3">
           <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => navigateMonth('prev')}
                   className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-3 w-3" />
                 </button>
-                <CardTitle className="text-lg font-bold">
+                <CardTitle className="text-base font-bold">
                   {months[currentMonth]} {currentYear}
                 </CardTitle>
                 <button
                   onClick={() => navigateMonth('next')}
                   className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-3 w-3" />
                 </button>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               {/* Weekday headers */}
-              <div className="grid grid-cols-7 gap-1 mb-2">
+              <div className="grid grid-cols-7 gap-0.5 mb-2">
                 {weekdays.map((day) => (
                   <div
                     key={day}
@@ -166,8 +166,8 @@ const HolidayCalendar = () => {
                 ))}
               </div>
 
-              {/* Calendar grid - Smaller cells */}
-              <div className="grid grid-cols-7 gap-1">
+              {/* Calendar grid - Much smaller cells */}
+              <div className="grid grid-cols-7 gap-0.5">
                 {calendarDays.map((day, index) => {
                   const isCurrentDay = day && 
                     currentMonth === today.getMonth() && 
@@ -181,20 +181,20 @@ const HolidayCalendar = () => {
                     <div
                       key={index}
                       className={`
-                        aspect-square flex items-center justify-center relative cursor-pointer
+                        w-8 h-8 flex items-center justify-center relative cursor-pointer
                         transition-all duration-200 rounded text-xs font-medium
                         ${!day ? 'invisible' : ''}
                         ${isCurrentDay ? 'bg-blue-600 text-white shadow-md' : ''}
                         ${holiday ? 'bg-gradient-to-br from-orange-100 to-purple-100 text-gray-800 shadow-sm' : ''}
                         ${!holiday && !isCurrentDay ? 'hover:bg-gray-100' : ''}
                         ${isWeekend && !holiday && !isCurrentDay ? 'text-gray-500' : ''}
-                        ${selectedDate === day ? 'ring-2 ring-blue-400' : ''}
+                        ${selectedDate === day ? 'ring-1 ring-blue-400' : ''}
                       `}
                       onClick={() => day && setSelectedDate(day)}
                     >
                       {day}
                       {holiday && (
-                        <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></div>
+                        <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-red-500 rounded-full border border-white"></div>
                       )}
                     </div>
                   );
