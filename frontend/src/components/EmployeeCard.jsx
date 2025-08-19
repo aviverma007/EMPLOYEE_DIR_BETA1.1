@@ -160,13 +160,21 @@ const EmployeeCard = ({ employees, onImageUpdate, onEmployeeClick }) => {
                 )}
               </div>
 
-              {/* Employee Info - Condensed View */}
-              <div className="text-center space-y-2" onClick={() => onEmployeeClick(employee)}>
-                <h3 className="font-semibold text-lg text-blue-900 hover:text-blue-600 transition-colors">{employee.name}</h3>
+              {/* Employee Info - Updated Layout: Image → Emp ID → Name → Designation → Department */}
+              <div className="text-center space-y-1" onClick={() => onEmployeeClick(employee)}>
+                {/* Employee ID */}
                 <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
                   {employee.id}
                 </Badge>
-                <p className="text-sm font-medium text-blue-600">{employee.department}</p>
+                
+                {/* Employee Name */}
+                <h3 className="font-semibold text-lg text-blue-900 hover:text-blue-600 transition-colors">{employee.name}</h3>
+                
+                {/* Designation (Grade) */}
+                <p className="text-sm font-medium text-blue-800">{employee.grade}</p>
+                
+                {/* Department */}
+                <p className="text-sm text-blue-600">{employee.department}</p>
                 
                 {/* View Details Button */}
                 <Button
