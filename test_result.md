@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Replace user selector page with 5-tab home page: Home (daily news), Employee Directory (existing + hierarchy), Work (task management), Knowledge (company info), Help (support messaging with replies). Admin-only access."
+user_problem_statement: "run the application and on the landing page under admin button create new button for user but keep all the things inside user just as same as admin"
 
 backend:
   - task: "Employee Management API"
