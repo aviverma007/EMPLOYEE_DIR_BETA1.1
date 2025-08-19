@@ -60,45 +60,58 @@ const AppContent = () => {
                         Home
                       </TabsTrigger>
                       
-                      {/* Both Admin and User get Employee Directory with Hierarchy dropdown */}
-                      <div className="relative">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className={`h-8 text-xs sm:text-sm font-medium rounded-md px-2 sm:px-4 py-2 whitespace-nowrap ${
-                                activeTab === "directory" 
-                                  ? "bg-blue-600 text-white" 
-                                  : "text-blue-700 hover:bg-blue-50"
-                              } flex items-center justify-center gap-1`}
-                              onClick={() => setActiveTab("directory")}
-                            >
-                              Employee Directory
-                              <ChevronDown className="h-3 w-3" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="center" className="w-48">
-                            <DropdownMenuItem 
-                              onClick={() => {
-                                setActiveTab("directory");
-                                setActiveDirectorySection("directory");
-                              }}
-                              className="cursor-pointer"
-                            >
-                              Employee Directory
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => {
-                                setActiveTab("directory");
-                                setActiveDirectorySection("hierarchy");
-                              }}
-                              className="cursor-pointer"
-                            >
-                              Hierarchy Builder
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                      {/* Admin gets Employee Directory with Hierarchy dropdown, User gets just Employee Directory */}
+                      {isAdmin() ? (
+                        <div className="relative">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className={`h-8 text-xs sm:text-sm font-medium rounded-md px-2 sm:px-4 py-2 whitespace-nowrap ${
+                                  activeTab === "directory" 
+                                    ? "bg-blue-600 text-white" 
+                                    : "text-blue-700 hover:bg-blue-50"
+                                } flex items-center justify-center gap-1`}
+                                onClick={() => setActiveTab("directory")}
+                              >
+                                Employee Directory
+                                <ChevronDown className="h-3 w-3" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="center" className="w-48">
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                  setActiveTab("directory");
+                                  setActiveDirectorySection("directory");
+                                }}
+                                className="cursor-pointer"
+                              >
+                                Employee Directory
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                  setActiveTab("directory");
+                                  setActiveDirectorySection("hierarchy");
+                                }}
+                                className="cursor-pointer"
+                              >
+                                Hierarchy Builder
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      ) : (
+                        <TabsTrigger 
+                          value="directory" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          onClick={() => {
+                            setActiveTab("directory");
+                            setActiveDirectorySection("directory");
+                          }}
+                        >
+                          Employee Directory
+                        </TabsTrigger>
+                      )}
                       
                       {/* Both Admin and User get limited tabs as requested */}
                       <TabsTrigger 
