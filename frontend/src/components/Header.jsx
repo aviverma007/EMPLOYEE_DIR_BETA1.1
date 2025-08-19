@@ -49,19 +49,19 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md border-b border-blue-200">
-      <div className="w-full px-4 py-2">
+    <header className={`bg-white shadow-lg border-b border-blue-200 ${isAdmin() ? 'border-b-2' : ''}`}>
+      <div className={`w-full ${isAdmin() ? 'px-6 py-4' : 'px-4 py-2'}`}>
         <div className="flex justify-between items-center">
           {/* Left side - Logo and System Name */}
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-3">
+          <div className={`flex items-center ${isAdmin() ? 'space-x-4' : 'space-x-3'}`}>
+            <div className={`flex items-center ${isAdmin() ? 'space-x-4' : 'space-x-3'}`}>
               <img 
                 src="https://customer-assets.emergentagent.com/job_site-modifier-3/artifacts/j921etso_2%5B2%5D.png"
                 alt="Company Logo"
-                className="h-12 w-12 object-contain rounded-lg shadow-sm"
+                className={`object-contain rounded-lg ${isAdmin() ? 'h-24 w-24 shadow-md' : 'h-12 w-12 shadow-sm'}`}
               />
               <div>
-                <p className="text-lg font-semibold text-blue-600">
+                <p className={`font-semibold text-blue-600 ${isAdmin() ? 'text-2xl' : 'text-lg'}`}>
                   Employee Management System
                 </p>
               </div>
@@ -69,12 +69,12 @@ const Header = () => {
           </div>
           
           {/* Right side - Profile, Refresh, Logout */}
-          <div className="flex items-center space-x-2">
+          <div className={`flex items-center ${isAdmin() ? 'space-x-3' : 'space-x-2'}`}>
             {/* User Info */}
-            <div className="flex items-center space-x-2">
+            <div className={`flex items-center ${isAdmin() ? 'space-x-3' : 'space-x-2'}`}>
               <div className="text-right">
                 <p className="text-sm font-medium text-blue-900">{user?.name}</p>
-                <div className="flex items-center justify-end space-x-1">
+                <div className={`flex items-center justify-end ${isAdmin() ? 'space-x-2' : 'space-x-1'}`}>
                   <p className="text-xs text-blue-600">ID: {user?.employeeId}</p>
                   <Badge 
                     variant={isAdmin() ? "default" : "secondary"} 
@@ -88,7 +88,7 @@ const Header = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center space-x-1">
+            <div className={`flex items-center ${isAdmin() ? 'space-x-2' : 'space-x-1'}`}>
               {isAdmin() && (
                 <Button 
                   onClick={handleRefresh}
