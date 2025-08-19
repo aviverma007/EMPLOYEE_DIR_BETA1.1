@@ -120,53 +120,53 @@ const HolidayCalendar = () => {
   };
 
   return (
-    <div className="p-6 bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-full">
-      {/* Header */}
-      <div className="mb-6">
+    <div className="p-4 bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-full">
+      {/* Compact Header */}
+      <div className="mb-4">
         <div className="flex items-center space-x-3 mb-2">
-          <Calendar className="h-8 w-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-800">Holiday Calendar 2025</h1>
+          <Calendar className="h-6 w-6 text-blue-600" />
+          <h1 className="text-2xl font-bold text-gray-800">Holiday Calendar 2025</h1>
         </div>
-        <p className="text-gray-600">Company holidays and observances for the year</p>
+        <p className="text-gray-600 text-sm">Company holidays and observances for the year</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Calendar - Reduced Size */}
+        <div className="lg:col-span-3">
           <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => navigateMonth('prev')}
-                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
+                  className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
-                <CardTitle className="text-xl font-bold">
+                <CardTitle className="text-lg font-bold">
                   {months[currentMonth]} {currentYear}
                 </CardTitle>
                 <button
                   onClick={() => navigateMonth('next')}
-                  className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
+                  className="p-1 hover:bg-white hover:bg-opacity-20 rounded-full transition-colors"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               {/* Weekday headers */}
-              <div className="grid grid-cols-7 gap-1 mb-4">
+              <div className="grid grid-cols-7 gap-1 mb-2">
                 {weekdays.map((day) => (
                   <div
                     key={day}
-                    className="text-center text-sm font-semibold text-gray-600 py-2"
+                    className="text-center text-xs font-semibold text-gray-600 py-1"
                   >
                     {day}
                   </div>
                 ))}
               </div>
 
-              {/* Calendar grid */}
+              {/* Calendar grid - Smaller cells */}
               <div className="grid grid-cols-7 gap-1">
                 {calendarDays.map((day, index) => {
                   const isCurrentDay = day && 
@@ -182,7 +182,7 @@ const HolidayCalendar = () => {
                       key={index}
                       className={`
                         aspect-square flex items-center justify-center relative cursor-pointer
-                        transition-all duration-200 rounded-lg text-sm font-medium
+                        transition-all duration-200 rounded text-xs font-medium
                         ${!day ? 'invisible' : ''}
                         ${isCurrentDay ? 'bg-blue-600 text-white shadow-md' : ''}
                         ${holiday ? 'bg-gradient-to-br from-orange-100 to-purple-100 text-gray-800 shadow-sm' : ''}
@@ -194,7 +194,7 @@ const HolidayCalendar = () => {
                     >
                       {day}
                       {holiday && (
-                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></div>
+                        <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></div>
                       )}
                     </div>
                   );
@@ -204,44 +204,39 @@ const HolidayCalendar = () => {
           </Card>
         </div>
 
-        {/* Holiday Details */}
-        <div className="space-y-6">
+        {/* Holiday Details - Compact */}
+        <div className="space-y-4">
           {/* Selected Date Details */}
           {selectedDate && (
             <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                <CardTitle className="text-lg flex items-center space-x-2">
-                  <CalendarDays className="h-5 w-5" />
-                  <span>{months[currentMonth]} {selectedDate}, {currentYear}</span>
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2">
+                <CardTitle className="text-sm flex items-center space-x-2">
+                  <CalendarDays className="h-4 w-4" />
+                  <span>{months[currentMonth]} {selectedDate}</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
+              <CardContent className="p-3">
                 {(() => {
                   const holiday = getHolidayInfo(selectedDate, currentMonth, currentYear);
                   if (holiday) {
                     return (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
-                          <span className="font-semibold text-gray-800">{holiday.name}</span>
+                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                          <span className="font-semibold text-gray-800 text-sm">{holiday.name}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-gray-600">
-                          <Clock className="h-4 w-4" />
-                          <span>{holiday.day}</span>
+                          <Clock className="h-3 w-3" />
+                          <span className="text-sm">{holiday.day}</span>
                         </div>
-                        <Badge className={`${getHolidayTypeColor(holiday.type)} border`}>
+                        <Badge className={`${getHolidayTypeColor(holiday.type)} border text-xs`}>
                           {holiday.type}
                         </Badge>
-                        {holiday.type === "Weekend Holiday" && (
-                          <p className="text-sm text-blue-600 bg-blue-50 p-2 rounded">
-                            This holiday falls on a weekend
-                          </p>
-                        )}
                       </div>
                     );
                   } else {
                     return (
-                      <p className="text-gray-500 text-center py-4">No holiday on this date</p>
+                      <p className="text-gray-500 text-center py-2 text-sm">No holiday</p>
                     );
                   }
                 })()}
@@ -249,81 +244,76 @@ const HolidayCalendar = () => {
             </Card>
           )}
 
-          {/* Monthly Holidays List */}
+          {/* Monthly Holidays List - Compact */}
           <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white">
-              <CardTitle className="text-lg">
+            <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-2">
+              <CardTitle className="text-sm">
                 {months[currentMonth]} Holidays ({currentMonthHolidays.length})
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               {currentMonthHolidays.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {currentMonthHolidays.map((holiday) => {
                     const holidayDate = new Date(holiday.date);
                     return (
                       <div
                         key={holiday.id}
-                        className="bg-gradient-to-r from-gray-50 to-blue-50 p-3 rounded-lg border-l-4 border-blue-500 hover:shadow-md transition-shadow cursor-pointer"
+                        className="bg-gradient-to-r from-gray-50 to-blue-50 p-2 rounded border-l-2 border-blue-500 hover:shadow-sm transition-shadow cursor-pointer"
                         onClick={() => setSelectedDate(holidayDate.getDate())}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-semibold text-gray-800">{holiday.name}</h4>
+                          <h4 className="font-semibold text-gray-800 text-sm">{holiday.name}</h4>
                           <Badge className={`text-xs ${getHolidayTypeColor(holiday.type)} border`}>
                             {holiday.type}
                           </Badge>
                         </div>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600">
-                          <div className="flex items-center space-x-1">
-                            <CalendarDays className="h-4 w-4" />
-                            <span>{holidayDate.getDate()}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Clock className="h-4 w-4" />
-                            <span>{holiday.day}</span>
-                          </div>
+                        <div className="flex items-center space-x-2 text-xs text-gray-600">
+                          <span>{holidayDate.getDate()}</span>
+                          <span>•</span>
+                          <span>{holiday.day}</span>
                         </div>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p>No holidays this month</p>
+                <div className="text-center py-4 text-gray-500">
+                  <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No holidays this month</p>
                 </div>
               )}
             </CardContent>
           </Card>
 
-          {/* Holiday Stats */}
+          {/* Holiday Stats - Compact */}
           <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-              <CardTitle className="text-lg">Holiday Statistics</CardTitle>
+            <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2">
+              <CardTitle className="text-sm">Holiday Stats</CardTitle>
             </CardHeader>
-            <CardContent className="p-4 space-y-3">
+            <CardContent className="p-3 space-y-2">
               <div className="flex items-center justify-between p-2 bg-orange-50 rounded">
-                <span className="text-orange-800 font-medium">National Holidays</span>
-                <Badge className="bg-orange-200 text-orange-800">
+                <span className="text-orange-800 font-medium text-xs">National</span>
+                <Badge className="bg-orange-200 text-orange-800 text-xs">
                   {holidays.filter(h => h.type === "National").length}
                 </Badge>
               </div>
               <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                <span className="text-purple-800 font-medium">Religious Holidays</span>
-                <Badge className="bg-purple-200 text-purple-800">
+                <span className="text-purple-800 font-medium text-xs">Religious</span>
+                <Badge className="bg-purple-200 text-purple-800 text-xs">
                   {holidays.filter(h => h.type === "Religious").length}
                 </Badge>
               </div>
               <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                <span className="text-blue-800 font-medium">Weekend Holidays</span>
-                <Badge className="bg-blue-200 text-blue-800">
+                <span className="text-blue-800 font-medium text-xs">Weekend</span>
+                <Badge className="bg-blue-200 text-blue-800 text-xs">
                   {holidays.filter(h => h.type === "Weekend Holiday").length}
                 </Badge>
               </div>
-              <div className="border-t pt-3 mt-3">
+              <div className="border-t pt-2 mt-2">
                 <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                  <span className="text-gray-800 font-bold">Total Holidays</span>
-                  <Badge className="bg-gray-200 text-gray-800 font-bold">
+                  <span className="text-gray-800 font-bold text-xs">Total</span>
+                  <Badge className="bg-gray-200 text-gray-800 font-bold text-xs">
                     {holidays.length}
                   </Badge>
                 </div>
@@ -333,10 +323,10 @@ const HolidayCalendar = () => {
         </div>
       </div>
 
-      {/* Note */}
-      <Card className="mt-6 border-l-4 border-yellow-500 bg-yellow-50">
-        <CardContent className="p-4">
-          <p className="text-sm text-yellow-800">
+      {/* Compact Note */}
+      <Card className="mt-4 border-l-4 border-yellow-500 bg-yellow-50">
+        <CardContent className="p-3">
+          <p className="text-xs text-yellow-800">
             <strong>Note:</strong> Roaster system to be followed for Sales, CRM and site teams as approved by respective HOD's. 
             Weekend holidays are observed on the actual dates but may not result in additional leave days.
           </p>

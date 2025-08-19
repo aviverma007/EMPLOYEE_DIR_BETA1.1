@@ -20,7 +20,7 @@ import {
   Building,
   UserCheck,
   Calendar,
-  Mail
+  ChevronDown
 } from "lucide-react";
 
 const Home = () => {
@@ -34,6 +34,7 @@ const Home = () => {
   const [showAddTodo, setShowAddTodo] = useState(false);
   const [currentJoineeIndex, setCurrentJoineeIndex] = useState(0);
   const [employees, setEmployees] = useState([]);
+  const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const { isAdmin } = useAuth();
 
   // SmartWorld project banner images
@@ -45,7 +46,17 @@ const Home = () => {
     "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/twxag3rn_smart-world-sky-arc.webp"
   ];
 
-  // External link buttons
+  // Project links data
+  const projectLinks = [
+    { name: "SKY ARC", url: "https://smartworlddevelopers.com/project/sky-arc/" },
+    { name: "THE EDITION", url: "https://smartworlddevelopers.com/project/theedition/" },
+    { name: "ONE DXP", url: "https://smartworlddevelopers.com/project/onedxp/" },
+    { name: "ORCHARD STREET", url: "https://smartworlddevelopers.com/project/orchardstreet/" },
+    { name: "ORCHARD", url: "https://smartworlddevelopers.com/project/orchard/" },
+    { name: "GEMS", url: "https://smartworlddevelopers.com/project/gems/" }
+  ];
+
+  // External link buttons - removed Contact and updated Company Portal
   const externalButtons = [
     {
       title: "Adrenaline",
@@ -58,7 +69,7 @@ const Home = () => {
       title: "Company Portal",
       icon: <Building className="h-4 w-4" />,
       description: "Main corporate website",
-      url: "#",
+      url: "https://smartworlddevelopers.com/",
       color: "bg-blue-600 hover:bg-blue-700 text-white"
     },
     {
@@ -66,7 +77,8 @@ const Home = () => {
       icon: <Globe className="h-4 w-4" />,
       description: "Our development projects",
       url: "#",
-      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300",
+      isDropdown: true
     },
     {
       title: "Events",
@@ -74,13 +86,6 @@ const Home = () => {
       description: "Company events & updates",
       url: "#",
       color: "bg-blue-600 hover:bg-blue-700 text-white"
-    },
-    {
-      title: "Contact",
-      icon: <Mail className="h-4 w-4" />,
-      description: "Get in touch with us",
-      url: "#",
-      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
     }
   ];
 
@@ -185,6 +190,11 @@ const Home = () => {
       month: 'short', 
       day: 'numeric' 
     });
+  };
+
+  // Handle projects dropdown
+  const handleProjectsClick = () => {
+    setShowProjectsDropdown(!showProjectsDropdown);
   };
 
   // Define different tiles for Admin vs User
@@ -526,31 +536,77 @@ const Home = () => {
         ))}
       </div>
 
-      {/* External Links Section - Only show for Admin as separate section */}
+      {/* External Links Section - Full Width Stretch for Admin */}
       {isAdmin() && (
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="w-full flex gap-3 justify-stretch">
             {externalButtons.map((button, index) => (
-              <a
-                key={index}
-                href={button.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center`}
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  {button.icon}
-                  <div>
-                    <h4 className="font-medium text-sm">{button.title}</h4>
-                    <p className="text-xs opacity-75">{button.description}</p>
+              <div key={index} className="flex-1 relative">
+                {button.isDropdown ? (
+                  <div className="relative">
+                    <button
+                      onClick={handleProjectsClick}
+                      className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full`}
+                    >
+                      <div className="flex flex-col items-center space-y-1">
+                        <div className="flex items-center space-x-1">
+                          {button.icon}
+                          <ChevronDown className={`h-4 w-4 transition-transform ${showProjectsDropdown ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">{button.title}</h4>
+                          <p className="text-xs opacity-75">{button.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                    
+                    {showProjectsDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
+                        {projectLinks.map((project, projIndex) => (
+                          <a
+                            key={projIndex}
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0"
+                            onClick={() => setShowProjectsDropdown(false)}
+                          >
+                            {project.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
-                </div>
-              </a>
+                ) : (
+                  <a
+                    href={button.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block`}
+                  >
+                    <div className="flex flex-col items-center space-y-1">
+                      {button.icon}
+                      <div>
+                        <h4 className="font-medium text-sm">{button.title}</h4>
+                        <p className="text-xs opacity-75">{button.description}</p>
+                      </div>
+                      <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
+                    </div>
+                  </a>
+                )}
+              </div>
             ))}
           </div>
         </div>
+      )}
+
+      {/* Close dropdown when clicking outside */}
+      {showProjectsDropdown && (
+        <div 
+          className="fixed inset-0 z-30" 
+          onClick={() => setShowProjectsDropdown(false)}
+        />
       )}
     </div>
   );

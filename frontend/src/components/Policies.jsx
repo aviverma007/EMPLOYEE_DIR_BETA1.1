@@ -148,6 +148,11 @@ const Policies = () => {
     setShowViewDialog(true);
   };
 
+  const openPolicyFile = (link) => {
+    // Open the policy file in a new tab
+    window.open(link, '_blank');
+  };
+
   return (
     <div className="h-full flex flex-col space-y-6">
       {/* Banner Image */}
@@ -192,11 +197,12 @@ const Policies = () => {
                     {section.policies.map((policy, index) => (
                       <div 
                         key={index}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-all duration-300 transform animate-in slide-in-from-left-4 fade-in"
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-all duration-300 transform animate-in slide-in-from-left-4 fade-in cursor-pointer"
                         style={{ 
                           animationDelay: `${index * 50}ms`,
                           animationFillMode: 'both'
                         }}
+                        onClick={() => openPolicyFile(policy.link)}
                       >
                         <div className="flex-1">
                           <div className="font-medium text-gray-800 mb-1">
@@ -210,6 +216,10 @@ const Policies = () => {
                           size="sm"
                           variant="ghost"
                           className="text-blue-600 hover:text-blue-800 ml-2 transform hover:scale-105 transition-transform"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openPolicyFile(policy.link);
+                          }}
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
