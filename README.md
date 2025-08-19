@@ -264,191 +264,328 @@ employee-directory/
 └── README.md                # This file
 ```
 
-## 🔧 Configuration
-
-### Environment Variables
-
-#### Backend (.env)
-```env
-MONGO_URL=mongodb://localhost:27017/smartworld_db
-PORT=8001
-ENVIRONMENT=development
-```
-
-#### Frontend (.env)
-```env
-REACT_APP_BACKEND_URL=http://localhost:8001
-```
-
-### Excel Data Files
-
-The system uses Excel files for data import:
-- `backend/employee_directory.xlsx` - Employee data
-- `backend/attendance_data.xlsx` - Attendance records
-
-### Default Admin Access
-
-- **Login**: Admin Access button (no password required in development)
-- **Role**: Administrator with full system access
-
-## 🌐 Accessing the Application
+## 🌐 **Accessing the Application**
 
 Once everything is running:
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3000  
 - **Backend API**: http://localhost:8001
 - **API Documentation**: http://localhost:8001/docs
+- **Admin Login**: Use "Admin Access" button (no password required)
 
-## 📊 System Features
+## 📊 **System Features**
 
-### Core Modules
-1. **Employee Directory** - Complete employee management
-2. **Hierarchy Builder** - Organizational structure
-3. **Attendance System** - Punch in/out tracking
-4. **Task Management** - Project and task tracking
-5. **News Feed** - Company announcements
-6. **Knowledge Base** - Company documentation
-7. **Help/Support** - Support ticket system
-8. **Meeting Rooms** - Room booking system
-9. **Policies** - Company policy management
+### **5-Tab Navigation System**
+1. **Home** - Daily news management and company updates
+2. **Employee Directory** - 640+ employees with search, filters, hierarchy builder
+3. **Work** - Task management and assignment system  
+4. **Knowledge** - Company policies, procedures, and documentation
+5. **Help** - Support ticketing system with threaded replies
 
-### Data Management
-- **Excel Integration** - Import/export employee data
+### **Advanced Features**
+- **Excel Integration** - 640 employees loaded from `employee_directory.xlsx`
+- **Meeting Room Booking** - 32 rooms across multiple locations (IFC, Noida, etc.)
+- **Attendance Tracking** - Punch in/out with location tracking
+- **Image Upload** - Profile pictures with base64 and file upload support
+- **Hierarchy Management** - Organizational structure visualization
+- **Search Functionality** - "Starts with" pattern across all fields
 - **Real-time Updates** - Live data synchronization
-- **Search & Filter** - Advanced search capabilities
-- **File Upload** - Profile images and documents
 
-## 🛠️ Troubleshooting
+### **Meeting Room System**
+- **IFC Location**: 11 rooms (floors 11, 12, 14)
+  - Floor 14: 9 conference rooms (OVAL, PETRONAS, BOARD ROOM, etc.)
+- **Other Locations**: Noida, Central Office, Project Offices
+- **Single Booking Policy** - One booking per room at a time
+- **Status Tracking** - Real-time vacant/occupied status
 
-### Common Issues
+## 🛠️ **Troubleshooting**
 
-#### MongoDB Connection Issues
-```bash
-# Check MongoDB status
+### **Excel Data Issues**
+
+#### **Problem**: "Database already has employees, skipping Excel load"
+```cmd
+# Solution 1: Force reload script  
+python force_excel_load.py
+
+# Solution 2: Environment variable
+set FORCE_EXCEL_RELOAD=true
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+
+# Solution 3: Check and verify
+python check_setup.py
+```
+
+#### **Problem**: "Excel file not found"
+```cmd
+# Verify file location
+dir employee_directory.xlsx  # Should be in backend folder
+
+# Check parser configuration
+python -c "from excel_parser import ExcelParser; print(ExcelParser().file_path)"
+```
+
+### **MongoDB Issues**
+
+#### **Windows MongoDB Setup**
+```cmd
+# Install MongoDB Community Server
+# Start MongoDB service
+net start MongoDB
+
+# Verify connection
+mongo --eval "db.runCommand({connectionStatus: 1})"
+```
+
+#### **Connection Problems**
+```cmd
+# Check MongoDB status  
+# Windows:
+sc query MongoDB
+
+# Linux:  
 sudo systemctl status mongodb
 
-# Check MongoDB logs
-sudo tail -f /var/log/mongodb/mongod.log
-
-# Restart MongoDB
-sudo systemctl restart mongodb
+# Test connection
+python -c "from pymongo import MongoClient; print(MongoClient().admin.command('ismaster'))"
 ```
 
-#### Port Already in Use
-```bash
-# Find process using port 8001
-sudo lsof -i :8001
+### **Frontend Dependency Conflicts**
 
-# Kill process
-sudo kill -9 <PID>
+#### **React 19 + ESLint 9 Issues**
+```cmd
+# Method 1: Legacy peer deps
+npm install --legacy-peer-deps
+
+# Method 2: Force install
+npm install --force  
+
+# Method 3: Use Yarn
+npm install -g yarn
+yarn install
+
+# Method 4: Nuclear option
+nuclear_fix.bat  # Windows
 ```
 
-#### Python Virtual Environment Issues
-```bash
-# Recreate virtual environment
-rm -rf venv
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+#### **Date-fns Version Conflicts**
+```cmd
+# Fix react-day-picker compatibility
+npm install date-fns@3.6.0 --legacy-peer-deps
+npm install react-day-picker@8.8.0 --legacy-peer-deps
 ```
 
-#### Node.js Dependencies Issues
-```bash
-# Clear npm cache
-npm cache clean --force
+### **Backend Issues**
 
-# Delete node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
+#### **Server Won't Start**
+```cmd
+# Check Python version
+python --version  # Should be 3.8+
+
+# Verify dependencies
+pip list | findstr fastapi
+pip list | findstr uvicorn  
+pip list | findstr pymongo
+
+# Check virtual environment
+.venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux
+
+# Check logs
+uvicorn server:app --host 0.0.0.0 --port 8001 --log-level debug
 ```
 
-### Service Management
+#### **Import Errors**
+```cmd
+# Reinstall requirements
+pip install -r requirements.txt --force-reinstall
 
-#### Using Supervisor
-```bash
-# Check all services
-sudo supervisorctl status
-
-# Restart specific service
-sudo supervisorctl restart backend
-sudo supervisorctl restart frontend
-
-# View logs
-sudo supervisorctl tail -f backend
-sudo supervisorctl tail -f frontend
+# Install missing packages
+pip install openpyxl et_xmlfile pandas motor
 ```
 
-#### Manual Process Management
-```bash
-# Check processes
-ps aux | grep python  # Backend
-ps aux | grep node     # Frontend
+### **Port Conflicts**
 
-# Stop processes
-pkill -f "uvicorn"    # Stop backend
-pkill -f "react"      # Stop frontend
+#### **Port 8001 Already in Use**
+```cmd
+# Windows - Find process
+netstat -ano | findstr :8001
+taskkill /PID <PID> /F
+
+# Linux - Find and kill process  
+lsof -i :8001
+kill -9 <PID>
+
+# Use different port
+uvicorn server:app --host 0.0.0.0 --port 8002 --reload
 ```
 
-## 🔐 Security Considerations
+#### **Port 3000 Already in Use**
+```cmd
+# Kill React process
+# Windows:
+taskkill /f /im node.exe
 
-### Production Settings
-1. **Change default MongoDB port**
-2. **Enable MongoDB authentication**
-3. **Use HTTPS with SSL certificates**
-4. **Set strong environment variables**
-5. **Configure firewall rules**
-6. **Enable CORS properly**
+# Linux:  
+pkill -f react-scripts
 
-### Example Production Environment
+# Use different port
+set PORT=3001 && npm start  # Windows
+PORT=3001 npm start         # Linux
+```
+
+## 🔧 **Configuration Files**
+
+### **Backend Environment (.env)**
 ```env
-# Backend .env (production)
-MONGO_URL=mongodb://username:password@localhost:27017/smartworld_db
+# MongoDB Configuration  
+MONGO_URL="mongodb://localhost:27017"
+DB_NAME="employee_directory_db"
+
+# Excel Configuration
+FORCE_EXCEL_RELOAD=true
+EXCEL_FILE_PATH="employee_directory.xlsx"
+
+# Server Configuration
+HOST="0.0.0.0"
 PORT=8001
-ENVIRONMENT=production
-ALLOWED_ORIGINS=["https://yourdomain.com"]
+DEBUG=true
 ```
 
-## 📝 API Documentation
+### **Frontend Environment (.env)**
+```env
+# Backend API URL
+REACT_APP_BACKEND_URL=http://localhost:8001
 
-The system provides automatic API documentation:
-- **Swagger UI**: http://localhost:8001/docs
-- **ReDoc**: http://localhost:8001/redoc
+# Development Configuration  
+WDS_SOCKET_PORT=3000
+GENERATE_SOURCEMAP=false
+```
 
-### Key API Endpoints
-- `GET /api/employees` - Employee directory
-- `GET /api/attendance` - Attendance records
-- `GET /api/tasks` - Task management
-- `GET /api/news` - Company news
-- `GET /api/knowledge` - Knowledge base
+## 📚 **API Documentation**
 
-## 🤝 Contributing
+### **Excel Data Endpoints**
+- `POST /api/refresh-excel` - Force reload Excel data
+- `GET /api/stats` - System statistics (employee count, etc.)
+- `GET /api/departments` - List all departments (24 total)
+- `GET /api/locations` - List all locations (23 total)
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/new-feature`)
-3. Commit changes (`git commit -am 'Add new feature'`)
-4. Push to branch (`git push origin feature/new-feature`)
-5. Create Pull Request
+### **Employee Management**
+- `GET /api/employees` - List all employees (640 records)
+- `GET /api/employees?search=John` - Search employees (starts-with)
+- `PUT /api/employees/{id}/image` - Update profile image (base64)
+- `POST /api/employees/{id}/upload-image` - Upload image file
 
-## 📄 License
+### **Meeting Rooms**
+- `GET /api/meeting-rooms` - List all rooms (32 total)
+- `GET /api/meeting-rooms?location=IFC` - Filter by location
+- `POST /api/meeting-rooms/{id}/book` - Book room (single booking)
+- `DELETE /api/meeting-rooms/{room_id}/booking/{booking_id}` - Cancel booking
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### **Complete API Documentation**
+Visit: http://localhost:8001/docs for interactive API documentation
 
-## 🆘 Support
+## 🔐 **Security & Production**
 
-For support and questions:
-- **Documentation**: Check this README
-- **Issues**: Create GitHub issue
-- **Email**: contact@smartworlddevelopers.com
+### **Production Environment Variables**
+```env
+# Backend Production
+MONGO_URL="mongodb://username:password@localhost:27017/production_db"
+ENVIRONMENT="production"
+ALLOWED_ORIGINS=["https://yourdomain.com"]
+DEBUG=false
 
-## 🔄 Updates
+# Frontend Production  
+REACT_APP_BACKEND_URL=https://api.yourdomain.com
+```
 
-### Latest Version Features
-- ✅ Real estate project banner integration
-- ✅ Enhanced search functionality (starts-with pattern)
-- ✅ Scrollable todo lists
-- ✅ External quick links integration
-- ✅ Improved UI/UX design
+### **Production Deployment**
+1. **Build Frontend**: `npm run build`
+2. **Serve Static Files**: Configure nginx/apache
+3. **Process Manager**: Use PM2 or supervisor
+4. **SSL Certificate**: Configure HTTPS
+5. **Database Security**: Enable MongoDB authentication
+6. **Firewall**: Configure proper ports (80, 443, not 3000/8001)
+
+## 📋 **Quick Reference Commands**
+
+### **Daily Development Workflow**
+```cmd
+# Start everything (Windows)
+cd backend && run_server.bat
+cd frontend && simple_start.bat
+
+# Start everything (Linux)
+cd backend && source venv/bin/activate && uvicorn server:app --reload --host 0.0.0.0 --port 8001
+cd frontend && npm start
+
+# Force refresh Excel data
+cd backend && python force_excel_load.py
+
+# Check system health  
+cd backend && python check_setup.py
+```
+
+### **Reset Everything**
+```cmd
+# Clear database and reload
+cd backend && python force_excel_load.py
+
+# Reset frontend dependencies  
+cd frontend && nuclear_fix.bat  # Windows
+cd frontend && rm -rf node_modules package-lock.json && npm install --legacy-peer-deps  # Linux
+```
+
+## 🆘 **Getting Help**
+
+### **Common Error Messages & Solutions**
+
+| Error | Solution |
+|-------|----------|
+| "Database already has employees" | Run `python force_excel_load.py` |
+| "Excel file not found" | Ensure `employee_directory.xlsx` is in backend folder |
+| "MongoDB connection failed" | Start MongoDB service: `net start MongoDB` |
+| "Cannot find module 'ajv/dist/compile/codegen'" | Run `npm install --legacy-peer-deps` |
+| "ERESOLVE could not resolve" | Use `npm install --force` or `yarn install` |
+| "Port 8001 is already in use" | Kill process: `netstat -ano \| findstr :8001` |
+
+### **System Requirements Verification**
+```cmd
+# Check all requirements
+node --version    # Should be 16+
+python --version  # Should be 3.8+
+mongo --version   # Should be 4.4+
+npm --version     # Should be 8+
+```
+
+### **Emergency Reset (Nuclear Option)**
+```cmd
+# Complete reset - Windows
+setup_windows.bat
+
+# Complete reset - Linux  
+./setup.sh
+```
+
+## 📄 **File Checklist**
+
+Before running, ensure these files exist:
+- ✅ `backend/employee_directory.xlsx` (640 employees)
+- ✅ `backend/attendance_data.xlsx` (attendance records)
+- ✅ `backend/.env` (environment variables)  
+- ✅ `frontend/.env` (backend URL configuration)
+- ✅ `backend/requirements.txt` (Python dependencies)
+- ✅ `frontend/package.json` (Node.js dependencies)
+
+## 🎉 **Success Indicators**
+
+You'll know everything is working when you see:
+- **Backend**: "Successfully loaded 640 employees from Excel"
+- **Frontend**: "Compiled successfully!" 
+- **Browser**: Application loads at http://localhost:3000
+- **API Docs**: Available at http://localhost:8001/docs
+- **Data**: Employee directory shows 640 employees
+- **Meeting Rooms**: 32 rooms available for booking
 
 ---
 
-**Made with ❤️ by SmartWorld Developers**
+**🚀 Made with ❤️ for SmartWorld Developers | Complete Windows & Linux Support**
