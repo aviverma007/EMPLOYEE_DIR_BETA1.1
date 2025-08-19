@@ -27,46 +27,81 @@ const Policies = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-  // Policy structure data
+  // Policy structure data based on actual company policy files
   const policyStructure = {
     hr: {
       title: "HR POLICY",
       policies: [
-        { title: "Employee Code of Conduct", link: "#", description: "Guidelines for professional behavior and workplace ethics" },
-        { title: "Leave and Attendance Policy", link: "#", description: "Rules for time off requests and attendance requirements" },
-        { title: "Performance Management", link: "#", description: "Performance evaluation and improvement processes" },
-        { title: "Grievance Procedure", link: "#", description: "Process for reporting and resolving workplace issues" },
-        { title: "Anti-Harassment Policy", link: "#", description: "Zero tolerance policy for workplace harassment" }
+        { 
+          title: "Leave Policy", 
+          link: "/company policies/_14_33_50e319284d7e4fe4_Leave Policy (Revised).pdf", 
+          description: "Comprehensive leave policy including annual, sick, and special leaves" 
+        },
+        { 
+          title: "Employee Referral Program", 
+          link: "/company policies/_14_19_2fe9bd4b1c514d00_Employee referral policy.pdf", 
+          description: "Guidelines for employee referral bonus and procedures" 
+        },
+        { 
+          title: "Sexual Harassment Prevention", 
+          link: "/company policies/_12_39_b356500c83384d2d_Sexual Harassment At Work Redressal Policy_26-Apr-22.pdf", 
+          description: "Zero tolerance policy and redressal mechanism for workplace harassment" 
+        },
+        { 
+          title: "Dress Code Guidelines", 
+          link: "/company policies/_13_55_00673d13502c42da_Dress code policy.pdf", 
+          description: "Professional dress code standards for workplace appearance" 
+        }
       ]
     },
-    it: {
-      title: "IT POLICY",
+    attendance: {
+      title: "ATTENDANCE POLICY",
       policies: [
-        { title: "Data Security Guidelines", link: "#", description: "Best practices for protecting company data" },
-        { title: "System Access Control", link: "#", description: "Rules for system login and access permissions" },
-        { title: "Software Usage Policy", link: "#", description: "Approved software and licensing guidelines" },
-        { title: "Email and Communication", link: "#", description: "Professional email usage and communication standards" },
-        { title: "Device Management", link: "#", description: "Company device usage and security requirements" }
+        { 
+          title: "Business Hours Attendance", 
+          link: "/company policies/_11_11_70bde4e9a0a04aed_Business Hours Attendance Policy.pdf", 
+          description: "Working hours, timings, and attendance tracking procedures" 
+        },
+        { 
+          title: "Revised Attendance Policy 2025", 
+          link: "/company policies/_36_12_f19af68b04f849ee_Revised Attendance Policy w.e.f 21st May 25.pdf", 
+          description: "Updated attendance rules effective from May 21st, 2025" 
+        },
+        { 
+          title: "Flexible Work Schedule", 
+          link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
+          description: "Guidelines for flexible working hours and remote work options" 
+        }
       ]
     },
-    admin: {
-      title: "ADMIN POLICY",
+    finance: {
+      title: "FINANCE POLICY",
       policies: [
-        { title: "Office Space Management", link: "#", description: "Guidelines for workspace allocation and usage" },
-        { title: "Expense Reimbursement", link: "#", description: "Process for business expense claims and approvals" },
-        { title: "Travel Policy", link: "#", description: "Business travel guidelines and procedures" },
-        { title: "Vendor Management", link: "#", description: "Procurement and vendor relationship guidelines" },
-        { title: "Document Management", link: "#", description: "File storage, retention, and organization standards" }
+        { 
+          title: "Local Conveyance Policy", 
+          link: "/company policies/_15_9_02985794b8584650_Local Conveyance policy.pdf", 
+          description: "Reimbursement guidelines for local travel and transportation" 
+        },
+        { 
+          title: "Tour & Travel Policy", 
+          link: "/company policies/_23_44_6eca6e909cee4aa7_Tour Travel Policy.pdf", 
+          description: "Business travel expenses, booking procedures, and reimbursements" 
+        },
+        { 
+          title: "Night Shift Meal Allowance", 
+          link: "/company policies/_38_0_62d66a9aaaf645cc_Meal and Conveyance for Employees Working at Night on Sites.pdf", 
+          description: "Meal and conveyance allowance for employees working night shifts on sites" 
+        }
       ]
     },
-    other: {
-      title: "OTHER POLICIES",
+    governance: {
+      title: "GOVERNANCE POLICY",
       policies: [
-        { title: "Health and Safety", link: "#", description: "Workplace safety standards and emergency procedures" },
-        { title: "Environmental Policy", link: "#", description: "Company commitment to environmental responsibility" },
-        { title: "Quality Assurance", link: "#", description: "Standards for maintaining product and service quality" },
-        { title: "Compliance Framework", link: "#", description: "Regulatory compliance and audit procedures" },
-        { title: "Business Continuity", link: "#", description: "Plans for maintaining operations during disruptions" }
+        { 
+          title: "Whistle Blower Policy", 
+          link: "/company policies/_16_4_3edd02c8f36f429f_Whistle Blower Policy.pdf", 
+          description: "Protected reporting mechanism for unethical practices and violations" 
+        }
       ]
     }
   };
