@@ -634,7 +634,7 @@ const Home = () => {
                     </button>
                     
                     {showUserProjectsDropdown && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50 min-w-48">
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white border border-blue-200 rounded-md shadow-lg z-50 min-w-48">
                         <div className="p-2 bg-blue-50 border-b border-blue-200">
                           <h4 className="text-xs font-semibold text-blue-800 text-center">SmartWorld Projects</h4>
                         </div>
