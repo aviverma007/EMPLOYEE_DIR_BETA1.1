@@ -17,9 +17,9 @@ const Policies = () => {
   const [loading, setLoading] = useState(true);
   const [expandedSections, setExpandedSections] = useState({
     hr: true,
-    it: false,
-    admin: false,
-    other: false
+    attendance: false,
+    finance: false,
+    governance: false
   });
   
   const [selectedPolicy, setSelectedPolicy] = useState(null);
