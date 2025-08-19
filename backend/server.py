@@ -53,6 +53,11 @@ except:
 # Serve static files for images
 app.mount("/api/uploads", StaticFiles(directory=str(ROOT_DIR / "uploads")), name="uploads")
 
+# Serve static files for company policies
+POLICIES_DIR = Path("/app/company policies")
+if POLICIES_DIR.exists():
+    app.mount("/company policies", StaticFiles(directory=str(POLICIES_DIR)), name="policies")
+
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
