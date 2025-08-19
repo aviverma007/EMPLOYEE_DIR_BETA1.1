@@ -581,7 +581,7 @@ const Home = () => {
       {!isAdmin() && (
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Access</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <a
               href="https://maxhr.myadrenalin.com/AdrenalinMax/"
               target="_blank"
@@ -612,18 +612,48 @@ const Home = () => {
               </div>
             </a>
             
-            <a
-              href="mailto:hr@smartworlddevelopers.com"
-              className="bg-orange-600 hover:bg-orange-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
-            >
-              <div className="flex flex-col items-center space-y-1">
-                <User className="h-4 w-4" />
-                <div>
-                  <h4 className="font-medium text-sm">HR Support</h4>
-                  <p className="text-xs opacity-90">Contact</p>
+            {/* Projects Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowUserProjectsDropdown(!showUserProjectsDropdown)}
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center w-full"
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  <div className="flex items-center space-x-1">
+                    <Globe className="h-4 w-4" />
+                    <ChevronDown className={`h-3 w-3 transition-transform ${showUserProjectsDropdown ? 'rotate-180' : ''}`} />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm">Projects</h4>
+                    <p className="text-xs opacity-90">Our Developments</p>
+                  </div>
                 </div>
-              </div>
-            </a>
+              </button>
+              
+              {showUserProjectsDropdown && (
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-orange-200 rounded-md shadow-lg z-50 max-h-64 overflow-y-auto">
+                  <div className="p-2 bg-orange-50 border-b border-orange-200">
+                    <h4 className="text-xs font-semibold text-orange-800 text-center">SmartWorld Projects</h4>
+                  </div>
+                  {projectLinks.map((project, projIndex) => (
+                    <a
+                      key={projIndex}
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block px-4 py-3 text-sm text-orange-700 hover:bg-orange-50 transition-colors border-b border-orange-100 last:border-b-0 flex items-center justify-between group"
+                      onClick={() => setShowUserProjectsDropdown(false)}
+                    >
+                      <span className="font-medium">{project.name}</span>
+                      <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-70 transition-opacity" />
+                    </a>
+                  ))}
+                  <div className="p-2 bg-gray-50 text-center">
+                    <span className="text-xs text-gray-500">Click to visit project details</span>
+                  </div>
+                </div>
+              )}
+            </div>
             
             <a
               href="mailto:it@smartworlddevelopers.com"
