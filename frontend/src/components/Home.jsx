@@ -187,8 +187,55 @@ const Home = () => {
     });
   };
 
-  // Define the tiles - Remove celebrations, workflow, and company daily news
-  const tiles = [
+  // Define different tiles for Admin vs User
+  const adminTiles = [
+    {
+      title: "PICTURES",
+      icon: <Image className="h-6 w-6" />,
+      description: "Company gallery and events",
+      color: "bg-blue-600",
+      textColor: "text-white"
+    },
+    {
+      title: "NEW JOINEES",
+      icon: <Users className="h-6 w-6" />,
+      description: "New team members since July 2025",
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900",
+      interactive: true
+    },
+    {
+      title: "CELEBRATIONS",
+      icon: <PartyPopper className="h-6 w-6" />,
+      description: "Birthdays, anniversaries & achievements",
+      color: "bg-blue-600",
+      textColor: "text-white"
+    },
+    {
+      title: "TO DO LIST",
+      icon: <CheckSquare className="h-6 w-6" />,
+      description: "Your personal task manager",
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900",
+      interactive: true
+    },
+    {
+      title: "WORKFLOW",
+      icon: <Workflow className="h-6 w-6" />,
+      description: "Process management & tracking",
+      color: "bg-blue-600",
+      textColor: "text-white"
+    },
+    {
+      title: "DAILY COMPANY NEWS",
+      icon: <Newspaper className="h-6 w-6" />,
+      description: "Latest updates and announcements",
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900"
+    }
+  ];
+
+  const userTiles = [
     {
       title: "PICTURES",
       icon: <Image className="h-6 w-6" />,
@@ -221,6 +268,8 @@ const Home = () => {
       interactive: true
     }
   ];
+
+  const tiles = isAdmin() ? adminTiles : userTiles;
 
   return (
     <div className="h-full flex flex-col space-y-4">
