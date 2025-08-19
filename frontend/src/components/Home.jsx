@@ -389,26 +389,19 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
-                  {/* Photo Gallery Slideshow - Normal Size */}
-                  <div className="flex-1 flex flex-col">
-                    <div className="relative h-32 overflow-hidden rounded-md">
-                      <div 
-                        className="flex flex-col transition-transform duration-1000 ease-in-out h-full"
-                        style={{ 
-                          transform: `translateY(-${currentPhotoIndex * 100}%)`,
-                          minHeight: `${galleryImages.length * 100}%`
-                        }}
-                      >
+                  {/* Simple Photo Gallery - CSS Scroll */}
+                  <div className="flex-1">
+                    <div className="h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
+                      <div className="space-y-2">
                         {galleryImages.map((image, idx) => (
                           <div 
                             key={idx}
-                            className="min-h-full w-full flex-shrink-0"
-                            style={{ height: '100%' }}
+                            className="w-full h-24 rounded-md overflow-hidden"
                           >
                             <img
                               src={image}
                               alt={`Company gallery ${idx + 1}`}
-                              className="w-full h-full object-contain"
+                              className="w-full h-full object-contain bg-gray-100"
                               onError={(e) => {
                                 e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
                               }}
@@ -416,35 +409,6 @@ const Home = () => {
                           </div>
                         ))}
                       </div>
-
-                      {/* Simple Navigation Controls */}
-                      <button
-                        onClick={() => navigatePhotos('prev')}
-                        className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 rounded-full p-1 transition-all"
-                      >
-                        <ChevronLeft className="h-3 w-3 text-gray-600" />
-                      </button>
-                      <button
-                        onClick={() => navigatePhotos('next')}
-                        className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 rounded-full p-1 transition-all"
-                      >
-                        <ChevronRight className="h-3 w-3 text-gray-600" />
-                      </button>
-                    </div>
-                    
-                    {/* Simple Progress Dots */}
-                    <div className="flex justify-center mt-2 space-x-1">
-                      {galleryImages.map((_, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setCurrentPhotoIndex(idx)}
-                          className={`h-1.5 w-1.5 rounded-full transition-all ${
-                            idx === currentPhotoIndex 
-                              ? 'bg-gray-600' 
-                              : 'bg-gray-300'
-                          }`}
-                        />
-                      ))}
                     </div>
                   </div>
                 </div>
