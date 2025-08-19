@@ -563,18 +563,25 @@ const Home = () => {
                     
                     {showProjectsDropdown && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
+                        <div className="p-2 bg-blue-50 border-b border-blue-200">
+                          <h4 className="text-xs font-semibold text-blue-800 text-center">SmartWorld Projects</h4>
+                        </div>
                         {projectLinks.map((project, projIndex) => (
                           <a
                             key={projIndex}
                             href={project.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0"
+                            className="block px-4 py-3 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0 flex items-center justify-between group"
                             onClick={() => setShowProjectsDropdown(false)}
                           >
-                            {project.name}
+                            <span className="font-medium">{project.name}</span>
+                            <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-70 transition-opacity" />
                           </a>
                         ))}
+                        <div className="p-2 bg-gray-50 text-center">
+                          <span className="text-xs text-gray-500">Click to visit project details</span>
+                        </div>
                       </div>
                     )}
                   </div>
