@@ -143,8 +143,10 @@ const AppContent = () => {
                     <TabsContent value="directory" className="mt-0 h-full">
                       {activeDirectorySection === "directory" ? (
                         <EmployeeDirectory />
-                      ) : (
+                      ) : isAdmin() ? (
                         <HierarchyBuilder />
+                      ) : (
+                        <EmployeeDirectory />
                       )}
                     </TabsContent>
                     
