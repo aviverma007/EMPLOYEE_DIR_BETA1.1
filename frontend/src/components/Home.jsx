@@ -506,23 +506,25 @@ const Home = () => {
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
           <div className="w-full flex gap-3 justify-stretch">
-            {externalButtons.map((button, index) => (
+            {userQuickAccessButtons.map((button, index) => (
               <div key={index} className="flex-1 relative">
                 {button.isDropdown ? (
                   <div className="relative">
                     <button
                       onClick={handleProjectsClick}
-                      className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full`}
+                      className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full"
                     >
-                      <div className="flex flex-col items-center space-y-1">
+                      <div className="flex flex-col items-center space-y-2">
+                        <img 
+                          src={button.image} 
+                          alt={button.title}
+                          className="h-8 w-8 object-contain"
+                        />
                         <div className="flex items-center space-x-1">
-                          {button.icon}
+                          <span className="font-medium text-sm">{button.title}</span>
                           <ChevronDown className={`h-4 w-4 transition-transform ${showProjectsDropdown ? 'rotate-180' : ''}`} />
                         </div>
-                        <div>
-                          <h4 className="font-medium text-sm">{button.title}</h4>
-                          <p className="text-xs opacity-75">{button.description}</p>
-                        </div>
+                        <p className="text-xs opacity-75">{button.description}</p>
                       </div>
                     </button>
                     
@@ -555,10 +557,14 @@ const Home = () => {
                     href={button.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block`}
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block"
                   >
-                    <div className="flex flex-col items-center space-y-1">
-                      {button.icon}
+                    <div className="flex flex-col items-center space-y-2">
+                      <img 
+                        src={button.image} 
+                        alt={button.title}
+                        className="h-8 w-8 object-contain"
+                      />
                       <div>
                         <h4 className="font-medium text-sm">{button.title}</h4>
                         <p className="text-xs opacity-75">{button.description}</p>
