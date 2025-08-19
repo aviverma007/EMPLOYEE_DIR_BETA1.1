@@ -136,6 +136,10 @@ const AppContent = () => {
                     </TabsContent>
                     
                     {/* Both Admin and User get limited content as requested */}
+                    <TabsContent value="policies" className="mt-0 h-full">
+                      <Policies />
+                    </TabsContent>
+                    
                     <TabsContent value="meeting-rooms" className="mt-0 h-full">
                       <MeetingRooms />
                     </TabsContent>
