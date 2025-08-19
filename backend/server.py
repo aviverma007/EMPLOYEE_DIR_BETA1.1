@@ -1233,6 +1233,31 @@ async def cancel_specific_booking(room_id: str, booking_id: str):
         logging.error(f"Error cancelling specific booking: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to cancel specific booking")
 
+@api_router.delete("/meeting-rooms/clear-all-bookings")
+async def clear_all_room_bookings():
+    """Clear all meeting room bookings and reset all rooms to vacant status"""
+    try:
+        update_data = {
+            'status': 'vacant',
+            'current_booking': None,
+            'bookings': [],
+            'updated_at': datetime.utcnow()
+        }
+        
+        result = await db.meeting_rooms.update_many(
+            {},  # Update all rooms
+            {"$set": update_data}
+        )
+        
+        return {
+            "message": f"Successfully cleared all bookings from {result.modified_count} meeting rooms",
+            "rooms_updated": result.modified_count
+        }
+        
+    except Exception as e:
+        logging.error(f"Error clearing all bookings: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to clear all bookings")
+
 @api_router.get("/meeting-rooms/locations")
 async def get_meeting_room_locations():
     """Get all available meeting room locations"""
