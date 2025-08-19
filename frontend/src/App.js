@@ -45,7 +45,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-2 sm:px-4 lg:px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Main Navigation - Responsive Design */}
+                  {/* Navigation Tabs - Different for Admin vs User */}
                   <div className="flex justify-start mb-4 overflow-x-auto">
                   <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1 min-w-max">
                       <TabsTrigger 
@@ -55,32 +55,123 @@ const AppContent = () => {
                         Home
                       </TabsTrigger>
                       
-                      {/* Employee Directory - No Dropdown */}
-                      <TabsTrigger 
-                        value="directory" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Employee Directory
-                      </TabsTrigger>
+                      {/* Admin gets Employee Directory with Hierarchy dropdown, User gets simple Employee Directory */}
+                      {isAdmin() ? (
+                        <div className="relative">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className={`h-8 text-xs sm:text-sm font-medium rounded-md px-2 sm:px-4 py-2 whitespace-nowrap ${
+                                  activeTab === "directory" 
+                                    ? "bg-blue-600 text-white" 
+                                    : "text-blue-700 hover:bg-blue-50"
+                                } flex items-center justify-center gap-1`}
+                                onClick={() => setActiveTab("directory")}
+                              >
+                                Employee Directory
+                                <ChevronDown className="h-3 w-3" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="center" className="w-48">
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                  setActiveTab("directory");
+                                  setActiveDirectorySection("directory");
+                                }}
+                                className="cursor-pointer"
+                              >
+                                Employee Directory
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                  setActiveTab("directory");
+                                  setActiveDirectorySection("hierarchy");
+                                }}
+                                className="cursor-pointer"
+                              >
+                                Hierarchy Builder
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      ) : (
+                        <TabsTrigger 
+                          value="directory" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                        >
+                          Employee Directory
+                        </TabsTrigger>
+                      )}
                       
-                      <TabsTrigger 
-                        value="policies" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Policies
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="meeting-rooms" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Meeting Rooms
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="holidays" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Holiday Calendar
-                      </TabsTrigger>
+                      {/* Admin gets more tabs, User gets fewer tabs */}
+                      {isAdmin() ? (
+                        <>
+                          <TabsTrigger 
+                            value="work" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Work
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="knowledge" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Knowledge
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="policies" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Policies
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="workflows" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Workflows
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="meeting-rooms" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Meeting Rooms
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="attendance" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Attendance
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="help" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Help
+                          </TabsTrigger>
+                        </>
+                      ) : (
+                        <>
+                          <TabsTrigger 
+                            value="policies" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Policies
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="meeting-rooms" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Meeting Rooms
+                          </TabsTrigger>
+                          <TabsTrigger 
+                            value="holidays" 
+                            className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                          >
+                            Holiday Calendar
+                          </TabsTrigger>
+                        </>
+                      )}
                     </TabsList>
                   </div>
                   
