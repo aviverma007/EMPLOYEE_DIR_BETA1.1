@@ -15,7 +15,7 @@ from typing import Dict, List, Any
 import time
 
 # Use the corrected external URL from frontend/.env
-EXTERNAL_URL = "https://admin-mirror-1.preview.emergentagent.com/api"
+EXTERNAL_URL = "https://app-updater-2.preview.emergentagent.com/api"
 
 class ExternalURLFixTester:
     def __init__(self):
@@ -352,7 +352,7 @@ class ExternalURLFixTester:
             
             # Convert relative URL to full external URL
             if profile_image_url.startswith('/api/'):
-                full_image_url = f"https://admin-mirror-1.preview.emergentagent.com{profile_image_url}"
+                full_image_url = f"https://app-updater-2.preview.emergentagent.com{profile_image_url}"
             else:
                 full_image_url = profile_image_url
             
