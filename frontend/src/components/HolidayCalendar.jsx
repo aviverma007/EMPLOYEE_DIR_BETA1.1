@@ -313,13 +313,41 @@ const HolidayCalendar = () => {
             </CardContent>
           </Card>
 
-          {/* Additional Content Space Available Here */}
-          <Card className="shadow-lg border-0 bg-green-50">
-            <CardContent className="p-3 text-center">
-              <div className="text-green-700">
-                <Calendar className="h-8 w-8 mx-auto mb-2" />
-                <h3 className="text-sm font-semibold mb-1">Space Available</h3>
-                <p className="text-xs">Additional content can be added here due to compact calendar design</p>
+          {/* Full Holiday List for 2025 */}
+          <Card className="shadow-lg border-0 bg-blue-50">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-1">
+              <CardTitle className="text-xs">All Holidays 2025</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2 max-h-60 overflow-y-auto">
+              <div className="space-y-1">
+                {holidays.map((holiday) => {
+                  const holidayDate = new Date(holiday.date);
+                  return (
+                    <div
+                      key={holiday.id}
+                      className="bg-white p-2 rounded border-l-3 border-blue-500 hover:shadow-sm transition-shadow cursor-pointer"
+                      onClick={() => {
+                        setCurrentMonth(holidayDate.getMonth());
+                        setCurrentYear(holidayDate.getFullYear());
+                        setSelectedDate(holidayDate.getDate());
+                      }}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <h4 className="font-semibold text-gray-800 text-xs">{holiday.name}</h4>
+                        <Badge className={`${getHolidayTypeColor(holiday.type)} border text-xs px-1 py-0`}>
+                          {holiday.type}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <span className="text-xs">{holidayDate.toLocaleDateString('en-US', { 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}</span>
+                        <span className="text-xs">({holiday.day})</span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </CardContent>
           </Card>
