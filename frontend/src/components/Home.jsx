@@ -37,6 +37,7 @@ const Home = () => {
   const [employees, setEmployees] = useState([]);
   const [showProjectsDropdown, setShowProjectsDropdown] = useState(false);
   const [showUserProjectsDropdown, setShowUserProjectsDropdown] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const { isAdmin } = useAuth();
 
   // SmartWorld project banner images
