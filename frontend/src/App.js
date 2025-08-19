@@ -70,28 +70,16 @@ const AppContent = () => {
                         Policies
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="workflows" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Workflows
-                      </TabsTrigger>
-                      <TabsTrigger 
                         value="meeting-rooms" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Meeting Rooms
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="attendance" 
+                        value="holidays" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
-                        Attendance
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="help" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Help
+                        Holiday Calendar
                       </TabsTrigger>
                     </TabsList>
                   </div>
