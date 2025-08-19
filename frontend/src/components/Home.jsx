@@ -622,7 +622,9 @@ const Home = () => {
                   <p className="text-xs opacity-90">{tile.description}</p>
                 </div>
               )}
-            </CardContent>
+                </CardContent>
+              </>
+            )}
           </Card>
         ))}
       </div>
