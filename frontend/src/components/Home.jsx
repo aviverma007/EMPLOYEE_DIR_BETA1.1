@@ -495,7 +495,7 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
-                  {/* Quick Links Buttons - Compact Version */}
+                  {/* Quick Links Buttons - Compact Version - Only for Users */}
                   <div className="grid grid-cols-2 gap-2 flex-1">
                     {externalButtons.map((button, index) => (
                       <a
@@ -525,6 +525,33 @@ const Home = () => {
           </Card>
         ))}
       </div>
+
+      {/* External Links Section - Only show for Admin as separate section */}
+      {isAdmin() && (
+        <div className="mt-4">
+          <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {externalButtons.map((button, index) => (
+              <a
+                key={index}
+                href={button.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center`}
+              >
+                <div className="flex flex-col items-center space-y-1">
+                  {button.icon}
+                  <div>
+                    <h4 className="font-medium text-sm">{button.title}</h4>
+                    <p className="text-xs opacity-75">{button.description}</p>
+                  </div>
+                  <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
