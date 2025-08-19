@@ -671,11 +671,14 @@ const Home = () => {
         </div>
       )}
 
-      {/* Close dropdown when clicking outside */}
-      {showProjectsDropdown && (
+      {/* Close dropdowns when clicking outside */}
+      {(showProjectsDropdown || showUserProjectsDropdown) && (
         <div 
           className="fixed inset-0 z-30" 
-          onClick={() => setShowProjectsDropdown(false)}
+          onClick={() => {
+            setShowProjectsDropdown(false);
+            setShowUserProjectsDropdown(false);
+          }}
         />
       )}
     </div>
