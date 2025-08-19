@@ -10,7 +10,7 @@ import base64
 import sys
 
 # Use the corrected external URL
-EXTERNAL_URL = "https://app-executor-1.preview.emergentagent.com/api"
+EXTERNAL_URL = "https://admin-mirror-1.preview.emergentagent.com/api"
 
 def test_photo_file_upload():
     """Test photo file upload functionality via external URL"""
@@ -61,7 +61,7 @@ def test_photo_file_upload():
                 
                 # Test image accessibility
                 if profile_image_url.startswith('/api/'):
-                    full_image_url = f"https://app-executor-1.preview.emergentagent.com{profile_image_url}"
+                    full_image_url = f"https://admin-mirror-1.preview.emergentagent.com{profile_image_url}"
                 else:
                     full_image_url = profile_image_url
                 
