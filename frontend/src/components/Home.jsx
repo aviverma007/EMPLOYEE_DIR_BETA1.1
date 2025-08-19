@@ -579,83 +579,80 @@ const Home = () => {
         </div>
       )}
 
-      {/* User Quick Links Section - Different from Admin */}
+      {/* User Quick Links Section - Image-based design as requested */}
       {!isAdmin() && (
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Access</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <a
-              href="https://maxhr.myadrenalin.com/AdrenalinMax/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-600 hover:bg-green-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
-            >
-              <div className="flex flex-col items-center space-y-1">
-                <UserCheck className="h-4 w-4" />
-                <div>
-                  <h4 className="font-medium text-sm">HR Portal</h4>
-                  <p className="text-xs opacity-90">Adrenaline</p>
-                </div>
-              </div>
-            </a>
-            
-            <a
-              href="https://smartworlddevelopers.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-blue-600 hover:bg-blue-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
-            >
-              <div className="flex flex-col items-center space-y-1">
-                <Building className="h-4 w-4" />
-                <div>
-                  <h4 className="font-medium text-sm">Company</h4>
-                  <p className="text-xs opacity-90">Website</p>
-                </div>
-              </div>
-            </a>
-            
-            {/* Projects Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setShowUserProjectsDropdown(!showUserProjectsDropdown)}
-                className="bg-orange-600 hover:bg-orange-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center w-full"
-              >
-                <div className="flex flex-col items-center space-y-1">
-                  <div className="flex items-center space-x-1">
-                    <Globe className="h-4 w-4" />
-                    <ChevronDown className={`h-3 w-3 transition-transform ${showUserProjectsDropdown ? 'rotate-180' : ''}`} />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-sm">Projects</h4>
-                    <p className="text-xs opacity-90">Our Developments</p>
-                  </div>
-                </div>
-              </button>
-              
-              {showUserProjectsDropdown && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-orange-200 rounded-md shadow-lg z-50 max-h-64 overflow-y-auto">
-                  <div className="p-2 bg-orange-50 border-b border-orange-200">
-                    <h4 className="text-xs font-semibold text-orange-800 text-center">SmartWorld Projects</h4>
-                  </div>
-                  {projectLinks.map((project, projIndex) => (
-                    <a
-                      key={projIndex}
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-4 py-3 text-sm text-orange-700 hover:bg-orange-50 transition-colors border-b border-orange-100 last:border-b-0 flex items-center justify-between group"
-                      onClick={() => setShowUserProjectsDropdown(false)}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {userQuickAccessButtons.map((button, index) => (
+              <div key={index} className="relative">
+                {button.isDropdown ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserProjectsDropdown(!showUserProjectsDropdown)}
+                      className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full"
                     >
-                      <span className="font-medium">{project.name}</span>
-                      <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-70 transition-opacity" />
-                    </a>
-                  ))}
-                  <div className="p-2 bg-gray-50 text-center">
-                    <span className="text-xs text-gray-500">Click to visit project details</span>
+                      <div className="flex flex-col items-center space-y-2">
+                        <img 
+                          src={button.image} 
+                          alt={button.title}
+                          className="h-8 w-8 object-contain"
+                        />
+                        <div className="flex items-center space-x-1">
+                          <span className="font-medium text-sm">{button.title}</span>
+                          <ChevronDown className={`h-3 w-3 transition-transform ${showUserProjectsDropdown ? 'rotate-180' : ''}`} />
+                        </div>
+                        <p className="text-xs opacity-75">{button.description}</p>
+                      </div>
+                    </button>
+                    
+                    {showUserProjectsDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
+                        <div className="p-2 bg-blue-50 border-b border-blue-200">
+                          <h4 className="text-xs font-semibold text-blue-800 text-center">SmartWorld Projects</h4>
+                        </div>
+                        {projectLinks.map((project, projIndex) => (
+                          <a
+                            key={projIndex}
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-4 py-3 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0 flex items-center justify-between group"
+                            onClick={() => setShowUserProjectsDropdown(false)}
+                          >
+                            <span className="font-medium">{project.name}</span>
+                            <ExternalLink className="h-3 w-3 opacity-40 group-hover:opacity-70 transition-opacity" />
+                          </a>
+                        ))}
+                        <div className="p-2 bg-gray-50 text-center">
+                          <span className="text-xs text-gray-500">Click to visit project details</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
-            </div>
+                ) : (
+                  <a
+                    href={button.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block"
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <img 
+                        src={button.image} 
+                        alt={button.title}
+                        className="h-8 w-8 object-contain"
+                      />
+                      <div>
+                        <h4 className="font-medium text-sm">{button.title}</h4>
+                        <p className="text-xs opacity-75">{button.description}</p>
+                      </div>
+                      <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
+                    </div>
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       )}
