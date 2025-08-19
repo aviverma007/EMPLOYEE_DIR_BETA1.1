@@ -265,10 +265,23 @@ const MeetingRooms = () => {
     <div className="h-full flex flex-col space-y-4 p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Meeting Rooms</h1>
-        <div className="flex items-center text-sm text-gray-600">
-          <Calendar className="h-4 w-4 mr-1" />
-          Single booking per room policy
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Meeting Rooms</h1>
+          <div className="flex items-center text-sm text-gray-600">
+            <Calendar className="h-4 w-4 mr-1" />
+            Single booking per room policy
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={clearAllBookings}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Clear All Bookings
+          </Button>
         </div>
       </div>
 
