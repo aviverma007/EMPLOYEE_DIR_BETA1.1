@@ -325,7 +325,7 @@ const Home = () => {
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <div className="text-center text-white">
                   <h2 className="text-3xl font-bold mb-2">Welcome to SmartWorld</h2>
-                  <p className="text-lg">Building Tomorrow's Workforce Today</p>
+                  <p className="text-lg">BUILDING HOMES FOR FUTURE TODAY</p>
                 </div>
               </div>
             </div>
