@@ -24,7 +24,7 @@ const Policies = () => {
 
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-  // Policy structure data based on actual company policy files
+  // Policy structure data - Only HR policies for users as requested
   const policyStructure = {
     hr: {
       title: "HR POLICY",
@@ -48,12 +48,7 @@ const Policies = () => {
           title: "Dress Code Guidelines", 
           link: "/company policies/_13_55_00673d13502c42da_Dress code policy.pdf", 
           description: "Professional dress code standards for workplace appearance" 
-        }
-      ]
-    },
-    attendance: {
-      title: "ATTENDANCE POLICY",
-      policies: [
+        },
         { 
           title: "Business Hours Attendance", 
           link: "/company policies/_11_11_70bde4e9a0a04aed_Business Hours Attendance Policy.pdf", 
@@ -68,12 +63,7 @@ const Policies = () => {
           title: "Flexible Work Schedule", 
           link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
           description: "Guidelines for flexible working hours and remote work options" 
-        }
-      ]
-    },
-    finance: {
-      title: "FINANCE POLICY",
-      policies: [
+        },
         { 
           title: "Local Conveyance Policy", 
           link: "/company policies/_15_9_02985794b8584650_Local Conveyance policy.pdf", 
@@ -88,12 +78,7 @@ const Policies = () => {
           title: "Night Shift Meal Allowance", 
           link: "/company policies/_38_0_62d66a9aaaf645cc_Meal and Conveyance for Employees Working at Night on Sites.pdf", 
           description: "Meal and conveyance allowance for employees working night shifts on sites" 
-        }
-      ]
-    },
-    governance: {
-      title: "GOVERNANCE POLICY",
-      policies: [
+        },
         { 
           title: "Whistle Blower Policy", 
           link: "/company policies/_16_4_3edd02c8f36f429f_Whistle Blower Policy.pdf", 
