@@ -249,6 +249,18 @@ const MeetingRooms = () => {
     }
   };
 
+  const getTimeOptions = () => {
+    const times = [];
+    for (let hour = 9; hour <= 20; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+        const time12 = formatTime12Hour(time24);
+        times.push({ value: time24, label: time12 });
+      }
+    }
+    return times;
+  };
+
   return (
     <div className="h-full flex flex-col space-y-4 p-4 sm:p-6">
       {/* Header */}
