@@ -20,7 +20,8 @@ import {
   Building,
   UserCheck,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  User
 } from "lucide-react";
 
 const Home = () => {
