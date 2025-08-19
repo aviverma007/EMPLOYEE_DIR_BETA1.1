@@ -73,14 +73,14 @@ const EmployeeDirectory = () => {
     return () => clearTimeout(timer);
   }, [nameSearch, employeeIdSearch, departmentSearch, designationSearch, locationSearch]);
 
-  // Client-side filtering with "starts with" pattern - don't show employees by default until search is made
+  // Client-side filtering with "starts with" pattern - Admin sees all, User needs to search
   const filteredEmployees = useMemo(() => {
     const hasAnySearch = debouncedSearchTerms.name || debouncedSearchTerms.employeeId || 
                         debouncedSearchTerms.department || debouncedSearchTerms.designation || debouncedSearchTerms.location;
     
-    // If no search terms, return empty array (don't show any employees)
+    // Admin sees all employees by default, User sees none until search
     if (!hasAnySearch) {
-      return [];
+      return isAdmin() ? employees : [];
     }
 
     // Apply filtering when search terms are present using "starts with" pattern
