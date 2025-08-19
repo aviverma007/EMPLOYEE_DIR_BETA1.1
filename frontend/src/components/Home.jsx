@@ -49,6 +49,15 @@ const Home = () => {
     "https://customer-assets.emergentagent.com/job_alpha-search-fix/artifacts/twxag3rn_smart-world-sky-arc.webp"
   ];
 
+  // Company gallery images for photo slideshow
+  const galleryImages = [
+    "https://customer-assets.emergentagent.com/job_38901552-4b3f-4152-8c86-1ce1635ab130/artifacts/70beszdu_IMG-20250814-WA0090.jpg",
+    "https://customer-assets.emergentagent.com/job_38901552-4b3f-4152-8c86-1ce1635ab130/artifacts/xq6fbjnj_IMG-20250814-WA0147.jpg",
+    "https://customer-assets.emergentagent.com/job_38901552-4b3f-4152-8c86-1ce1635ab130/artifacts/apkd9exk_IMG-20250814-WA0181.jpeg",
+    "https://customer-assets.emergentagent.com/job_38901552-4b3f-4152-8c86-1ce1635ab130/artifacts/w6boogvj_IMG-20250814-WA0201.jpg",
+    "https://customer-assets.emergentagent.com/job_38901552-4b3f-4152-8c86-1ce1635ab130/artifacts/exnv01mp_IMG-20250814-WA0224.jpg"
+  ];
+
   // Project links data
   const projectLinks = [
     { name: "SKY ARC", url: "https://smartworlddevelopers.com/project/sky-arc/" },
