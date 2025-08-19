@@ -606,35 +606,35 @@ const Home = () => {
         </div>
       )}
 
-      {/* User Quick Links Section - Image-based design as requested */}
+      {/* User Quick Links Section - Image-only design as requested (NO square boundaries) */}
       {!isAdmin() && (
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Access</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {userQuickAccessButtons.map((button, index) => (
-              <div key={index} className="relative">
+              <div key={index} className="relative flex flex-col items-center">
                 {button.isDropdown ? (
                   <div className="relative">
                     <button
                       onClick={() => setShowUserProjectsDropdown(!showUserProjectsDropdown)}
-                      className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full"
+                      className="group transition-all duration-200 hover:scale-110 text-center"
                     >
                       <div className="flex flex-col items-center space-y-2">
                         <img 
                           src={button.image} 
                           alt={button.title}
-                          className="h-8 w-8 object-contain"
+                          className="h-12 w-12 object-contain drop-shadow-lg hover:drop-shadow-xl transition-all duration-200"
                         />
                         <div className="flex items-center space-x-1">
-                          <span className="font-medium text-sm">{button.title}</span>
-                          <ChevronDown className={`h-3 w-3 transition-transform ${showUserProjectsDropdown ? 'rotate-180' : ''}`} />
+                          <span className="font-medium text-sm text-blue-700">{button.title}</span>
+                          <ChevronDown className={`h-3 w-3 text-blue-500 transition-transform ${showUserProjectsDropdown ? 'rotate-180' : ''}`} />
                         </div>
-                        <p className="text-xs opacity-75">{button.description}</p>
+                        <p className="text-xs text-blue-600">{button.description}</p>
                       </div>
                     </button>
                     
                     {showUserProjectsDropdown && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50 min-w-48">
                         <div className="p-2 bg-blue-50 border-b border-blue-200">
                           <h4 className="text-xs font-semibold text-blue-800 text-center">SmartWorld Projects</h4>
                         </div>
@@ -662,19 +662,18 @@ const Home = () => {
                     href={button.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300 text-blue-700 rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block"
+                    className="group transition-all duration-200 hover:scale-110 text-center"
                   >
                     <div className="flex flex-col items-center space-y-2">
                       <img 
                         src={button.image} 
                         alt={button.title}
-                        className="h-8 w-8 object-contain"
+                        className="h-12 w-12 object-contain drop-shadow-lg hover:drop-shadow-xl transition-all duration-200"
                       />
                       <div>
-                        <h4 className="font-medium text-sm">{button.title}</h4>
-                        <p className="text-xs opacity-75">{button.description}</p>
+                        <h4 className="font-medium text-sm text-blue-700">{button.title}</h4>
+                        <p className="text-xs text-blue-600">{button.description}</p>
                       </div>
-                      <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
                     </div>
                   </a>
                 )}
