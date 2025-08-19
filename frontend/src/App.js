@@ -100,31 +100,7 @@ const AppContent = () => {
                         </DropdownMenu>
                       </div>
                       
-                      {/* Both Admin and User get all the same tabs */}
-                      <TabsTrigger 
-                        value="work" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Work
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="knowledge" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Knowledge
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="policies" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Policies
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="workflows" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Workflows
-                      </TabsTrigger>
+                      {/* Both Admin and User get limited tabs as requested */}
                       <TabsTrigger 
                         value="meeting-rooms" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
@@ -132,16 +108,10 @@ const AppContent = () => {
                         Meeting Rooms
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="attendance" 
+                        value="holiday-calendar" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
-                        Attendance
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="help" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Help
+                        Holiday Calendar
                       </TabsTrigger>
                     </TabsList>
                   </div>
