@@ -1,19 +1,35 @@
-# SmartWorld Employee Management System
+# 🏢 Employee Directory System - Complete Setup Guide
 
 A comprehensive full-stack employee management system built with React, FastAPI, and MongoDB. This system provides complete employee directory management, attendance tracking, task management, and more.
+
+## 🎯 **CRITICAL: Excel Data Loading Solution**
+
+**If you're experiencing "Database already has employees, skipping Excel load" - this section solves it completely!**
+
+### ⚡ Quick Fix Commands
+```bash
+# Backend - Force Excel Reload
+cd backend
+python force_excel_load.py
+
+# OR set environment variable
+set FORCE_EXCEL_RELOAD=true  # Windows
+export FORCE_EXCEL_RELOAD=true  # Linux/Mac
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+```
 
 ## 🏗️ Project Overview
 
 This is a modern employee management system that includes:
-- **Employee Directory** with search and filtering
-- **Hierarchy Builder** for organizational structure
-- **Attendance Management** with punch in/out tracking
+- **Employee Directory** (640+ employees from Excel)
+- **Hierarchy Builder** for organizational structure  
 - **Task Management** system
 - **News Feed** for company updates
 - **Knowledge Base** for company information
 - **Help/Support** system with threaded replies
-- **Meeting Room Booking** system
-- **Policy Management**
+- **Meeting Room Booking** (32 rooms across multiple locations)
+- **Attendance Management** with punch in/out tracking
+- **Policy Management** with categorization
 
 ## 🛠️ Technology Stack
 
