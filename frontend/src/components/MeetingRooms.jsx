@@ -230,7 +230,7 @@ const MeetingRooms = () => {
   const clearAllBookings = async () => {
     if (window.confirm('Are you sure you want to clear ALL bookings from ALL meeting rooms? This action cannot be undone.')) {
       try {
-        const response = await fetch(`${backendUrl}/meeting-rooms/clear-all-bookings`, {
+        const response = await fetch(`${backendUrl}/api/meeting-rooms/clear-all-bookings`, {
           method: 'DELETE',
         });
 
