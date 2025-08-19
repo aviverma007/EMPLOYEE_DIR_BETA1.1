@@ -186,8 +186,41 @@ const AppContent = () => {
                     </TabsContent>
                     
                     <TabsContent value="directory" className="mt-0 h-full">
-                      <EmployeeDirectory />
+                      {isAdmin() ? (
+                        activeDirectorySection === "directory" ? (
+                          <EmployeeDirectory />
+                        ) : (
+                          <HierarchyBuilder />
+                        )
+                      ) : (
+                        <EmployeeDirectory />
+                      )}
                     </TabsContent>
+                    
+                    {/* Admin-only tabs */}
+                    {isAdmin() && (
+                      <>
+                        <TabsContent value="work" className="mt-0 h-full">
+                          <Work />
+                        </TabsContent>
+                        
+                        <TabsContent value="knowledge" className="mt-0 h-full">
+                          <Knowledge />
+                        </TabsContent>
+                        
+                        <TabsContent value="workflows" className="mt-0 h-full">
+                          <Workflows />
+                        </TabsContent>
+                        
+                        <TabsContent value="attendance" className="mt-0 h-full">
+                          <Attendance />
+                        </TabsContent>
+
+                        <TabsContent value="help" className="mt-0 h-full">
+                          <Help />
+                        </TabsContent>
+                      </>
+                    )}
                     
                     <TabsContent value="policies" className="mt-0 h-full">
                       <Policies />
@@ -197,9 +230,12 @@ const AppContent = () => {
                       <MeetingRooms />
                     </TabsContent>
                     
-                    <TabsContent value="holidays" className="mt-0 h-full">
-                      <HolidayCalendar />
-                    </TabsContent>
+                    {/* User-only Holiday Calendar */}
+                    {!isAdmin() && (
+                      <TabsContent value="holidays" className="mt-0 h-full">
+                        <HolidayCalendar />
+                      </TabsContent>
+                    )}
                   </div>
                 </Tabs>
               </div>
