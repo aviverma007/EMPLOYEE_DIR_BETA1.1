@@ -186,15 +186,6 @@ const Home = () => {
     }
   };
 
-  // Navigate photos manually
-  const navigatePhotos = (direction) => {
-    if (direction === 'next') {
-      setCurrentPhotoIndex(prev => (prev + 1) % galleryImages.length);
-    } else {
-      setCurrentPhotoIndex(prev => (prev - 1 + galleryImages.length) % galleryImages.length);
-    }
-  };
-
   // Todo list functions
   const addTodoItem = () => {
     if (newTodoText.trim()) {
