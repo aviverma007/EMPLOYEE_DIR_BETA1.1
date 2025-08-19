@@ -403,7 +403,71 @@ const Home = () => {
               </div>
             </CardHeader>
             <CardContent className="pt-0 flex-1 flex flex-col">
-              {tile.interactive && tile.title === "NEW JOINEES" ? (
+              {tile.interactive && tile.title === "PICTURES" ? (
+                <div className="flex-1 flex flex-col">
+                  <p className="text-xs opacity-90 mb-3">{tile.description}</p>
+                  
+                  {/* Photo Gallery Slideshow - Vertical Scrolling Animation */}
+                  <div className="flex-1 flex flex-col">
+                    <div className="relative h-32 overflow-hidden rounded-lg bg-white/10">
+                      <div 
+                        className="flex flex-col transition-transform duration-1000 ease-in-out h-full"
+                        style={{ 
+                          transform: `translateY(-${currentPhotoIndex * 100}%)`,
+                          minHeight: `${galleryImages.length * 100}%`
+                        }}
+                      >
+                        {galleryImages.map((image, idx) => (
+                          <div 
+                            key={idx}
+                            className="min-h-full w-full relative flex-shrink-0"
+                            style={{ height: '100%' }}
+                          >
+                            <img
+                              src={image}
+                              alt={`Company gallery ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Manual Navigation Controls */}
+                      <button
+                        onClick={() => navigatePhotos('prev')}
+                        className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 rounded-full p-1 transition-all"
+                      >
+                        <ChevronLeft className="h-3 w-3 text-blue-700" />
+                      </button>
+                      <button
+                        onClick={() => navigatePhotos('next')}
+                        className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-90 rounded-full p-1 transition-all"
+                      >
+                        <ChevronRight className="h-3 w-3 text-blue-700" />
+                      </button>
+                    </div>
+                    
+                    {/* Photo Progress Indicator */}
+                    <div className="flex justify-center mt-2 space-x-1">
+                      {galleryImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentPhotoIndex(idx)}
+                          className={`h-1.5 rounded-full transition-all duration-300 ${
+                            idx === currentPhotoIndex 
+                              ? 'bg-white w-4' 
+                              : 'bg-white bg-opacity-50 w-1.5'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : tile.interactive && tile.title === "NEW JOINEES" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
