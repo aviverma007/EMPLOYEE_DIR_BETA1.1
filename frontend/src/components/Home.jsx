@@ -58,36 +58,32 @@ const Home = () => {
     { name: "GEMS", url: "https://smartworlddevelopers.com/project/gems/" }
   ];
 
-  // External link buttons - removed Contact and updated Company Portal
-  const externalButtons = [
+  // External link buttons with images - updated for User profile quick access
+  const userQuickAccessButtons = [
     {
-      title: "Adrenaline",
-      icon: <UserCheck className="h-4 w-4" />,
-      description: "Employee HR Portal",
+      title: "HR Portal",
+      description: "Adrenaline",
       url: "https://maxhr.myadrenalin.com/AdrenalinMax/",
-      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
+      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/otz1j4e1_adrenaline%20hrms%20logo.png"
     },
     {
-      title: "Company Portal",
-      icon: <Building className="h-4 w-4" />,
-      description: "Main corporate website",
+      title: "Company",
+      description: "Website",
       url: "https://smartworlddevelopers.com/",
-      color: "bg-blue-600 hover:bg-blue-700 text-white"
+      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/d2zoi8qy_company%20logo.png"
     },
     {
       title: "Projects",
-      icon: <Globe className="h-4 w-4" />,
-      description: "Our development projects",
+      description: "Our Developments",
       url: "#",
-      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300",
+      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/ulju1r77_projects.png",
       isDropdown: true
     },
     {
-      title: "Events",
-      icon: <Calendar className="h-4 w-4" />,
-      description: "Company events & updates",
-      url: "#",
-      color: "bg-blue-600 hover:bg-blue-700 text-white"
+      title: "MAFOI",
+      description: "HR Suite",
+      url: "https://mafoi.hfactor.app/hrsuite/#/login/smartworld",
+      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/hnug73tl_MAFOI%20logo.jpg"
     }
   ];
 
