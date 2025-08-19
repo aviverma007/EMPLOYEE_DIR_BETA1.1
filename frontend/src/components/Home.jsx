@@ -493,31 +493,6 @@ const Home = () => {
                     </Button>
                   )}
                 </div>
-              ) : tile.interactive && tile.title === "QUICK LINKS" ? (
-                <div className="flex-1 flex flex-col">
-                  <p className="text-xs opacity-90 mb-3">{tile.description}</p>
-                  
-                  {/* Quick Links Buttons - Horizontal rectangular layout */}
-                  <div className="flex flex-wrap gap-2 flex-1">
-                    {externalButtons.map((button, index) => (
-                      <a
-                        key={index}
-                        href={button.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white hover:bg-blue-50 border border-blue-200 hover:border-blue-300 rounded-md px-3 py-2 shadow-sm transition-all duration-200 hover:shadow-md group text-center text-blue-700 flex-1 min-w-[140px]"
-                      >
-                        <div className="flex items-center justify-center space-x-2">
-                          {button.icon}
-                          <div className="text-left">
-                            <h4 className="font-medium text-xs">{button.title}</h4>
-                            <p className="text-[10px] opacity-75 line-clamp-1">{button.description}</p>
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
               ) : (
                 <div className="flex-1 flex items-start">
                   <p className="text-xs opacity-90">{tile.description}</p>
