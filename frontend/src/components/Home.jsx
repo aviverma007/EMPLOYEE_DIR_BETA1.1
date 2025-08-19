@@ -268,14 +268,6 @@ const Home = () => {
       color: "bg-white border-2 border-blue-200",
       textColor: "text-blue-900",
       interactive: true
-    },
-    {
-      title: "QUICK LINKS",
-      icon: <ExternalLink className="h-6 w-6" />,
-      description: "Access external portals and services",
-      color: "bg-blue-600",
-      textColor: "text-white",
-      interactive: true
     }
   ];
 
