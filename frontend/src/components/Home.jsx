@@ -536,68 +536,70 @@ const Home = () => {
         ))}
       </div>
 
-      {/* External Links Section - Full Width Stretch for Both Admin and User */}
-      <div className="mt-4">
-        <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
-        <div className="w-full flex gap-3 justify-stretch">
-          {externalButtons.map((button, index) => (
-            <div key={index} className="flex-1 relative">
-              {button.isDropdown ? (
-                <div className="relative">
-                  <button
-                    onClick={handleProjectsClick}
-                    className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full`}
+      {/* External Links Section - Full Width Stretch for Admin Only */}
+      {isAdmin() && (
+        <div className="mt-4">
+          <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Links</h3>
+          <div className="w-full flex gap-3 justify-stretch">
+            {externalButtons.map((button, index) => (
+              <div key={index} className="flex-1 relative">
+                {button.isDropdown ? (
+                  <div className="relative">
+                    <button
+                      onClick={handleProjectsClick}
+                      className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full`}
+                    >
+                      <div className="flex flex-col items-center space-y-1">
+                        <div className="flex items-center space-x-1">
+                          {button.icon}
+                          <ChevronDown className={`h-4 w-4 transition-transform ${showProjectsDropdown ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">{button.title}</h4>
+                          <p className="text-xs opacity-75">{button.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                    
+                    {showProjectsDropdown && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
+                        {projectLinks.map((project, projIndex) => (
+                          <a
+                            key={projIndex}
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0"
+                            onClick={() => setShowProjectsDropdown(false)}
+                          >
+                            {project.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <a
+                    href={button.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block`}
                   >
                     <div className="flex flex-col items-center space-y-1">
-                      <div className="flex items-center space-x-1">
-                        {button.icon}
-                        <ChevronDown className={`h-4 w-4 transition-transform ${showProjectsDropdown ? 'rotate-180' : ''}`} />
-                      </div>
+                      {button.icon}
                       <div>
                         <h4 className="font-medium text-sm">{button.title}</h4>
                         <p className="text-xs opacity-75">{button.description}</p>
                       </div>
+                      <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
                     </div>
-                  </button>
-                  
-                  {showProjectsDropdown && (
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-blue-200 rounded-md shadow-lg z-50">
-                      {projectLinks.map((project, projIndex) => (
-                        <a
-                          key={projIndex}
-                          href={project.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 transition-colors border-b border-blue-100 last:border-b-0"
-                          onClick={() => setShowProjectsDropdown(false)}
-                        >
-                          {project.name}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <a
-                  href={button.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${button.color} ${button.color.includes('text-white') ? 'text-white' : 'text-blue-700'} rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md group text-center w-full block`}
-                >
-                  <div className="flex flex-col items-center space-y-1">
-                    {button.icon}
-                    <div>
-                      <h4 className="font-medium text-sm">{button.title}</h4>
-                      <p className="text-xs opacity-75">{button.description}</p>
-                    </div>
-                    <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-75 transition-opacity" />
-                  </div>
-                </a>
-              )}
-            </div>
-          ))}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Close dropdown when clicking outside */}
       {showProjectsDropdown && (
