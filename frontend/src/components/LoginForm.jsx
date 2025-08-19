@@ -50,24 +50,46 @@ const LoginForm = () => {
           </div>
         </div>
 
-        {/* Login Button */}
-        <Card className="border-blue-200 shadow-lg">
-          <CardHeader className="bg-blue-50">
-            <CardTitle className="text-blue-900 text-center">Administrator Access</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <Button
-              onClick={handleLogin}
-              className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
-            >
-              <Shield className="h-6 w-6 mr-3" />
-              <div className="text-left">
-                <div className="font-semibold">Enter Admin Dashboard</div>
-                <div className="text-sm opacity-90">Full access to all features</div>
-              </div>
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Login Buttons */}
+        <div className="space-y-4">
+          {/* Admin Access Card */}
+          <Card className="border-blue-200 shadow-lg">
+            <CardHeader className="bg-blue-50">
+              <CardTitle className="text-blue-900 text-center">Administrator Access</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <Button
+                onClick={handleAdminLogin}
+                className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
+              >
+                <Shield className="h-6 w-6 mr-3" />
+                <div className="text-left">
+                  <div className="font-semibold">Enter Admin Dashboard</div>
+                  <div className="text-sm opacity-90">Full access to all features</div>
+                </div>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* User Access Card */}
+          <Card className="border-green-200 shadow-lg">
+            <CardHeader className="bg-green-50">
+              <CardTitle className="text-green-900 text-center">User Access</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <Button
+                onClick={handleUserLogin}
+                className="w-full h-16 bg-green-600 hover:bg-green-700 text-white font-medium text-lg"
+              >
+                <User className="h-6 w-6 mr-3" />
+                <div className="text-left">
+                  <div className="font-semibold">Enter User Dashboard</div>
+                  <div className="text-sm opacity-90">Full access to all features</div>
+                </div>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
