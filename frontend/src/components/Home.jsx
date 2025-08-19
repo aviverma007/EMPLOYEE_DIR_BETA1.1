@@ -240,7 +240,7 @@ const Home = () => {
     {
       title: "NEW JOINEES",
       icon: <Users className="h-6 w-6" />,
-      description: "New team members since July 2025",
+      description: "Recent additions to our team",
       color: "bg-white border-2 border-blue-200",
       textColor: "text-blue-900",
       interactive: true
