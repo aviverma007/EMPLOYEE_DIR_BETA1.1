@@ -575,6 +575,70 @@ const Home = () => {
         </div>
       )}
 
+      {/* User Quick Links Section - Different from Admin */}
+      {!isAdmin() && (
+        <div className="mt-4">
+          <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Access</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <a
+              href="https://maxhr.myadrenalin.com/AdrenalinMax/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-600 hover:bg-green-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <UserCheck className="h-4 w-4" />
+                <div>
+                  <h4 className="font-medium text-sm">HR Portal</h4>
+                  <p className="text-xs opacity-90">Adrenaline</p>
+                </div>
+              </div>
+            </a>
+            
+            <a
+              href="https://smartworlddevelopers.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <Building className="h-4 w-4" />
+                <div>
+                  <h4 className="font-medium text-sm">Company</h4>
+                  <p className="text-xs opacity-90">Website</p>
+                </div>
+              </div>
+            </a>
+            
+            <a
+              href="mailto:hr@smartworlddevelopers.com"
+              className="bg-orange-600 hover:bg-orange-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <User className="h-4 w-4" />
+                <div>
+                  <h4 className="font-medium text-sm">HR Support</h4>
+                  <p className="text-xs opacity-90">Contact</p>
+                </div>
+              </div>
+            </a>
+            
+            <a
+              href="mailto:it@smartworlddevelopers.com"
+              className="bg-purple-600 hover:bg-purple-700 text-white rounded-md p-3 shadow-sm transition-all duration-200 hover:shadow-md text-center"
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <Globe className="h-4 w-4" />
+                <div>
+                  <h4 className="font-medium text-sm">IT Support</h4>
+                  <p className="text-xs opacity-90">Help Desk</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      )}
+
       {/* Close dropdown when clicking outside */}
       {showProjectsDropdown && (
         <div 
