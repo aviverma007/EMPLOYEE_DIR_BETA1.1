@@ -426,12 +426,11 @@ const Home = () => {
                             <img
                               src={image}
                               alt={`Company gallery ${idx + 1}`}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                               onError={(e) => {
                                 e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
                               }}
                             />
-                            <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                           </div>
                         ))}
                       </div>
