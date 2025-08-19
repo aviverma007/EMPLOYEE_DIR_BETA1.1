@@ -19,11 +19,9 @@ import HierarchyBuilder from "./components/HierarchyBuilder";
 
 // Import required components for complete feature set
 import Home from "./components/Home";
-import Help from "./components/Help";
 import Policies from "./components/Policies";
-import Workflows from "./components/Workflows";
-import Attendance from "./components/Attendance";
 import MeetingRooms from "./components/MeetingRooms";
+import HolidayCalendar from "./components/HolidayCalendar";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
