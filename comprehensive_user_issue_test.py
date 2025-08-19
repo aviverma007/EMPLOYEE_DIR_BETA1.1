@@ -15,7 +15,7 @@ import time
 
 # URLs to test
 INTERNAL_URL = "http://localhost:8001/api"
-EXTERNAL_URL = "https://change-maker-1.preview.emergentagent.com/api"
+EXTERNAL_URL = "https://profile-gallery-4.preview.emergentagent.com/api"
 
 class ComprehensiveUserIssueTester:
     def __init__(self):
