@@ -394,77 +394,80 @@ const Home = () => {
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
+            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col ${tile.title === "PICTURES" ? "overflow-hidden" : ""}`}
           >
-            <CardHeader className="pb-2 flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                {tile.icon}
-                <CardTitle className="text-base font-bold">{tile.title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0 flex-1 flex flex-col">
-              {tile.interactive && tile.title === "PICTURES" ? (
-                <div className="flex-1 flex flex-col -mx-6 -mb-6 -mt-2">
-                  {/* Photo Gallery Slideshow - Full Image Display */}
-                  <div className="flex-1 flex flex-col">
-                    <div className="relative h-40 overflow-hidden">
-                      <div 
-                        className="flex flex-col transition-transform duration-1000 ease-in-out h-full"
-                        style={{ 
-                          transform: `translateY(-${currentPhotoIndex * 100}%)`,
-                          minHeight: `${galleryImages.length * 100}%`
-                        }}
-                      >
-                        {galleryImages.map((image, idx) => (
-                          <div 
-                            key={idx}
-                            className="min-h-full w-full relative flex-shrink-0"
-                            style={{ height: '100%' }}
-                          >
-                            <img
-                              src={image}
-                              alt={`Company gallery ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Minimal Navigation Controls */}
-                      <button
-                        onClick={() => navigatePhotos('prev')}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full p-1.5 transition-all"
-                      >
-                        <ChevronLeft className="h-4 w-4 text-white" />
-                      </button>
-                      <button
-                        onClick={() => navigatePhotos('next')}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full p-1.5 transition-all"
-                      >
-                        <ChevronRight className="h-4 w-4 text-white" />
-                      </button>
-                      
-                      {/* Minimal Progress Dots */}
-                      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
-                        {galleryImages.map((_, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => setCurrentPhotoIndex(idx)}
-                            className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                              idx === currentPhotoIndex 
-                                ? 'bg-white' 
-                                : 'bg-white bg-opacity-50'
-                            }`}
+            {tile.title === "PICTURES" && tile.interactive ? (
+              /* Full Image Display for Pictures - No Header */
+              <div className="flex-1 flex flex-col h-full">
+                {/* Photo Gallery Slideshow - Full Image Display */}
+                <div className="flex-1 flex flex-col h-full">
+                  <div className="relative h-full overflow-hidden">
+                    <div 
+                      className="flex flex-col transition-transform duration-1000 ease-in-out h-full"
+                      style={{ 
+                        transform: `translateY(-${currentPhotoIndex * 100}%)`,
+                        minHeight: `${galleryImages.length * 100}%`
+                      }}
+                    >
+                      {galleryImages.map((image, idx) => (
+                        <div 
+                          key={idx}
+                          className="min-h-full w-full relative flex-shrink-0"
+                          style={{ height: '100%' }}
+                        >
+                          <img
+                            src={image}
+                            alt={`Company gallery ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+                            }}
                           />
-                        ))}
-                      </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Minimal Navigation Controls */}
+                    <button
+                      onClick={() => navigatePhotos('prev')}
+                      className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full p-1.5 transition-all"
+                    >
+                      <ChevronLeft className="h-4 w-4 text-white" />
+                    </button>
+                    <button
+                      onClick={() => navigatePhotos('next')}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-50 rounded-full p-1.5 transition-all"
+                    >
+                      <ChevronRight className="h-4 w-4 text-white" />
+                    </button>
+                    
+                    {/* Minimal Progress Dots */}
+                    <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1.5">
+                      {galleryImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentPhotoIndex(idx)}
+                          className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                            idx === currentPhotoIndex 
+                              ? 'bg-white shadow-lg' 
+                              : 'bg-white bg-opacity-60'
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
                 </div>
-              ) : tile.interactive && tile.title === "NEW JOINEES" ? (
+              </div>
+            ) : (
+              <>
+                <CardHeader className="pb-2 flex-shrink-0">
+                  <div className="flex items-center space-x-2">
+                    {tile.icon}
+                    <CardTitle className="text-base font-bold">{tile.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0 flex-1 flex flex-col">
+                  {tile.interactive && tile.title === "NEW JOINEES" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
