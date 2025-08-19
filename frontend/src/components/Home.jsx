@@ -262,6 +262,13 @@ const Home = () => {
       interactive: true
     },
     {
+      title: "CELEBRATIONS",
+      icon: <PartyPopper className="h-6 w-6" />,
+      description: "Birthdays, anniversaries & achievements",
+      color: "bg-blue-600",
+      textColor: "text-white"
+    },
+    {
       title: "TO DO LIST",
       icon: <CheckSquare className="h-6 w-6" />,
       description: "Your personal task manager",
@@ -270,12 +277,18 @@ const Home = () => {
       interactive: true
     },
     {
-      title: "QUICK LINKS",
-      icon: <ExternalLink className="h-6 w-6" />,
-      description: "Access external portals and services",
+      title: "WORKFLOW",
+      icon: <Workflow className="h-6 w-6" />,
+      description: "Process management & tracking",
       color: "bg-blue-600",
-      textColor: "text-white",
-      interactive: true
+      textColor: "text-white"
+    },
+    {
+      title: "DAILY COMPANY NEWS",
+      icon: <Newspaper className="h-6 w-6" />,
+      description: "Latest updates and announcements",
+      color: "bg-white border-2 border-blue-200",
+      textColor: "text-blue-900"
     }
   ];
 
