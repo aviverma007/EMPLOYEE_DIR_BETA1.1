@@ -129,33 +129,13 @@ const AppContent = () => {
                       )}
                     </TabsContent>
                     
-                    {/* Both Admin and User get all the same content */}
-                    <TabsContent value="work" className="mt-0 h-full">
-                      <Work />
-                    </TabsContent>
-                    
-                    <TabsContent value="knowledge" className="mt-0 h-full">
-                      <Knowledge />
-                    </TabsContent>
-                    
-                    <TabsContent value="workflows" className="mt-0 h-full">
-                      <Workflows />
-                    </TabsContent>
-                    
-                    <TabsContent value="attendance" className="mt-0 h-full">
-                      <Attendance />
-                    </TabsContent>
-
-                    <TabsContent value="help" className="mt-0 h-full">
-                      <Help />
-                    </TabsContent>
-                    
-                    <TabsContent value="policies" className="mt-0 h-full">
-                      <Policies />
-                    </TabsContent>
-                    
+                    {/* Both Admin and User get limited content as requested */}
                     <TabsContent value="meeting-rooms" className="mt-0 h-full">
                       <MeetingRooms />
+                    </TabsContent>
+                    
+                    <TabsContent value="holiday-calendar" className="mt-0 h-full">
+                      <HolidayCalendar />
                     </TabsContent>
                   </div>
                 </Tabs>
