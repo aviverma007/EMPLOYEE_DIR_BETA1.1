@@ -10,7 +10,7 @@ import sys
 from datetime import datetime, timedelta
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://live-edit.preview.emergentagent.com/api"
+BACKEND_URL = "https://change-maker-1.preview.emergentagent.com/api"
 
 class AdjacentSlotsTest:
     def __init__(self):
