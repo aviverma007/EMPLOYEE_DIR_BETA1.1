@@ -58,7 +58,40 @@ const Home = () => {
     { name: "GEMS", url: "https://smartworlddevelopers.com/project/gems/" }
   ];
 
-  // External link buttons with images - updated for User profile quick access
+  // External link buttons - removed Contact and updated Company Portal
+  const externalButtons = [
+    {
+      title: "Adrenaline",
+      icon: <UserCheck className="h-4 w-4" />,
+      description: "Employee HR Portal",
+      url: "https://maxhr.myadrenalin.com/AdrenalinMax/",
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
+    },
+    {
+      title: "Company Portal",
+      icon: <Building className="h-4 w-4" />,
+      description: "Main corporate website",
+      url: "https://smartworlddevelopers.com/",
+      color: "bg-blue-600 hover:bg-blue-700 text-white"
+    },
+    {
+      title: "Projects",
+      icon: <Globe className="h-4 w-4" />,
+      description: "Our development projects",
+      url: "#",
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300",
+      isDropdown: true
+    },
+    {
+      title: "Events",
+      icon: <Calendar className="h-4 w-4" />,
+      description: "Company events & updates",
+      url: "#",
+      color: "bg-blue-600 hover:bg-blue-700 text-white"
+    }
+  ];
+
+  // External link buttons with images - FOR USER PROFILE ONLY
   const userQuickAccessButtons = [
     {
       title: "HR Portal",
