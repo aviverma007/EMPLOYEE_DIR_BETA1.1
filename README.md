@@ -33,279 +33,234 @@ This is a modern employee management system that includes:
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18+ with Vite
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
-- **UI Components**: Custom components with Tailwind CSS
-- **Process Management**: Supervisor (for production)
+- **Frontend**: React 18+ with Tailwind CSS
+- **Backend**: FastAPI (Python 3.8+)  
+- **Database**: MongoDB 4.4+
+- **UI Components**: Radix UI + Custom Components
+- **Excel Integration**: openpyxl + pandas
+- **Process Management**: Supervisor (Linux) / Manual (Windows)
 
-## 📋 Prerequisites
+## 📋 Prerequisites & Installation
 
-Before installing, ensure you have the following installed on your server:
+### 🖥️ **Windows Users** (Complete Guide)
 
-### Required Software:
-- **Node.js** (v16 or higher) - [Download Node.js](https://nodejs.org/)
-- **Python** (v3.8 or higher) - [Download Python](https://python.org/)
-- **MongoDB** (v4.4 or higher) - [Download MongoDB](https://mongodb.com/try/download/community)
-- **Git** (for cloning) - [Download Git](https://git-scm.com/)
+#### **Required Software:**
+1. **Node.js 16+** - [Download](https://nodejs.org/)
+2. **Python 3.8+** - [Download](https://python.org/)  
+3. **MongoDB Community** - [Download](https://www.mongodb.com/download-center/community)
+4. **Git** - [Download](https://git-scm.com/)
 
-### Package Managers:
-- **npm** or **yarn** (comes with Node.js)
-- **pip** (comes with Python)
+#### **Step-by-Step Windows Setup:**
 
-## 🚀 Installation Guide
+```cmd
+# 1. Clone Repository
+git clone <your-repo-url>
+cd <repository-folder>
 
-### Method 1: Automatic Setup (Recommended)
+# 2. Run Automated Setup (Recommended)
+setup_windows.bat
 
-1. **Clone the Repository**
-```bash
-git clone <your-repository-url>
-cd smartworld-employee-system
-```
-
-2. **Run Setup Script**
-```bash
-# Make setup script executable
-chmod +x setup.sh
-
-# Run the setup script (installs all dependencies)
-./setup.sh
-```
-
-### Method 2: Manual Setup
-
-#### Step 1: Clone and Navigate
-```bash
-git clone <your-repository-url>
-cd smartworld-employee-system
-```
-
-#### Step 2: Backend Setup
-
-1. **Navigate to Backend Directory**
-```bash
+# 3. OR Manual Setup - Backend
 cd backend
-```
-
-2. **Create Python Virtual Environment**
-```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Linux/Mac:
-source venv/bin/activate
-# On Windows:
-venv\Scripts\activate
-```
-
-3. **Install Python Dependencies**
-```bash
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
-```
+copy local_env_template.env .env
 
-4. **Install Additional Dependencies** (if needed)
-```bash
-pip install fastapi uvicorn motor pymongo pandas openpyxl python-multipart python-dotenv
-```
-
-#### Step 3: Frontend Setup
-
-1. **Navigate to Frontend Directory**
-```bash
+# 4. Manual Setup - Frontend  
 cd ../frontend
+npm install --legacy-peer-deps
+echo REACT_APP_BACKEND_URL=http://localhost:8001 > .env
 ```
 
-2. **Install Node.js Dependencies**
+### 🐧 **Linux/Mac Users**
+
 ```bash
-# Using npm
-npm install
+# 1. Clone Repository
+git clone <your-repo-url>
+cd <repository-folder>
 
-# OR using yarn (recommended)
-yarn install
+# 2. Backend Setup
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env  # Configure as needed
+
+# 3. Frontend Setup
+cd ../frontend  
+npm install --legacy-peer-deps
+echo "REACT_APP_BACKEND_URL=http://localhost:8001" > .env
 ```
 
-#### Step 4: Database Setup
+## 🚨 **Excel Data Loading - Complete Solution**
 
-1. **Install MongoDB**
-   - **Ubuntu/Debian:**
-   ```bash
-   sudo apt update
-   sudo apt install mongodb
-   sudo systemctl start mongodb
-   sudo systemctl enable mongodb
-   ```
-   
-   - **CentOS/RHEL:**
-   ```bash
-   sudo yum install mongodb-org
-   sudo systemctl start mongod
-   sudo systemctl enable mongod
-   ```
-   
-   - **macOS (using Homebrew):**
-   ```bash
-   brew tap mongodb/brew
-   brew install mongodb-community
-   brew services start mongodb/brew/mongodb-community
-   ```
+### **The Problem:**
+Your backend shows: `"Database already has 640 employees, skipping Excel load"`
 
-2. **Verify MongoDB Installation**
-```bash
-mongo --version
+### **💡 Solution 1: Force Reload Script (Recommended)**
+
+```cmd
+cd backend
+python force_excel_load.py
 ```
 
-#### Step 5: Environment Configuration
+**What this does:**
+- Clears all existing data (employees, attendance, etc.)
+- Reloads fresh data from Excel files
+- Initializes meeting rooms and other data
+- Provides detailed logging
 
-1. **Backend Environment (.env)**
+### **💡 Solution 2: Environment Variable**
+
+**Windows:**
+```cmd  
+cd backend
+.venv\Scripts\activate
+set FORCE_EXCEL_RELOAD=true
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+```
+
+**Linux/Mac:**
 ```bash
 cd backend
-cp .env.example .env  # If available, or create new
+source venv/bin/activate
+export FORCE_EXCEL_RELOAD=true
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
 ```
 
-Edit `backend/.env`:
-```env
-MONGO_URL=mongodb://localhost:27017/smartworld_db
-PORT=8001
-ENVIRONMENT=development
-```
+### **💡 Solution 3: Quick Batch File (Windows)**
 
-2. **Frontend Environment (.env)**
-```bash
-cd ../frontend
-cp .env.example .env  # If available, or create new
-```
-
-Edit `frontend/.env`:
-```env
-REACT_APP_BACKEND_URL=http://localhost:8001
-```
-
-## 🏃‍♂️ Running the Application
-
-### Development Mode
-
-#### Method 1: Using Individual Commands
-
-1. **Start MongoDB** (if not running as service)
-```bash
-# Start MongoDB
-sudo systemctl start mongodb
-# OR
-mongod --dbpath /your/db/path
-```
-
-2. **Start Backend Server**
-```bash
+```cmd
 cd backend
-source venv/bin/activate  # Activate virtual environment
-python -m uvicorn server:app --host 0.0.0.0 --port 8001 --reload
+run_server.bat
 ```
 
-3. **Start Frontend Development Server** (in new terminal)
-```bash
+### **💡 Solution 4: Check Setup & Force Load**
+
+```cmd
+cd backend
+python check_setup.py      # Verify all dependencies
+python force_excel_load.py # Clear & reload Excel data  
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+```
+
+## 🚀 **Running the Application**
+
+### **Windows - Method 1 (Automated)**
+
+```cmd
+# Terminal 1 - Backend
+cd backend
+run_server.bat
+
+# Terminal 2 - Frontend  
+cd frontend
+simple_start.bat
+```
+
+### **Windows - Method 2 (Manual)**
+
+```cmd  
+# Terminal 1 - Backend
+cd backend
+.venv\Scripts\activate
+set FORCE_EXCEL_RELOAD=true
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+
+# Terminal 2 - Frontend
 cd frontend
 npm start
-# OR
+```
+
+### **Linux/Mac**
+
+```bash
+# Terminal 1 - Backend  
+cd backend
+source venv/bin/activate
+export FORCE_EXCEL_RELOAD=true
+uvicorn server:app --reload --host 0.0.0.0 --port 8001
+
+# Terminal 2 - Frontend
+cd frontend
+npm start
+```
+
+## 🔧 **Frontend Dependency Issues (Windows)**
+
+### **Problem:** 
+NPM errors with React 19, ESLint 9, date-fns conflicts
+
+### **Solutions:**
+
+#### **Method 1: Legacy Peer Dependencies**
+```cmd
+cd frontend
+rmdir /S /Q node_modules
+del package-lock.json  
+npm install --legacy-peer-deps
+npm start
+```
+
+#### **Method 2: Force Install**
+```cmd
+cd frontend
+npm install --force
+npm start
+```
+
+#### **Method 3: Use Yarn**  
+```cmd
+cd frontend
+npm install -g yarn
+yarn install
 yarn start
 ```
 
-#### Method 2: Using Process Manager (Recommended for Production)
-
-1. **Install Supervisor**
-```bash
-# Ubuntu/Debian
-sudo apt install supervisor
-
-# CentOS/RHEL
-sudo yum install supervisor
+#### **Method 4: Nuclear Fix (Guaranteed)**
+```cmd
+cd frontend
+nuclear_fix.bat
 ```
 
-2. **Configure Supervisor**
-Create supervisor configuration files or use the existing ones:
-
-```bash
-# Copy supervisor configs (if available)
-sudo cp scripts/supervisor/*.conf /etc/supervisor/conf.d/
-
-# Reload supervisor
-sudo supervisorctl reread
-sudo supervisorctl update
+#### **Method 5: Minimal Dependencies**
+```cmd
+cd frontend
+copy package_minimal.json package.json
+npm install
+npm start
 ```
 
-3. **Start All Services**
-```bash
-sudo supervisorctl start all
-```
-
-### Production Deployment
-
-#### Using Docker (Optional)
-
-1. **Build and Run with Docker Compose**
-```bash
-# If docker-compose.yml exists
-docker-compose up -d
-```
-
-#### Manual Production Setup
-
-1. **Setup Nginx Reverse Proxy**
-```bash
-sudo apt install nginx
-```
-
-Create Nginx config (`/etc/nginx/sites-available/smartworld`):
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-
-    location /api {
-        proxy_pass http://localhost:8001;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }
-}
-```
-
-2. **Enable Site**
-```bash
-sudo ln -s /etc/nginx/sites-available/smartworld /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-## 📁 Project Structure
+## 📁 **Project Structure**
 
 ```
-smartworld-employee-system/
+employee-directory/
 ├── backend/                    # FastAPI Backend
-│   ├── server.py              # Main FastAPI application
-│   ├── excel_parser.py        # Excel data processing
-│   ├── attendance_parser.py   # Attendance data processing
+│   ├── server.py              # Main application
 │   ├── models.py              # Database models
+│   ├── excel_parser.py        # Excel data processing  
+│   ├── attendance_parser.py   # Attendance processing
+│   ├── force_excel_load.py    # Force data reload
+│   ├── check_setup.py         # Setup verification
+│   ├── run_server.bat         # Windows server starter
 │   ├── requirements.txt       # Python dependencies
-│   ├── .env                   # Backend environment variables
-│   ├── employee_directory.xlsx # Employee data file
-│   └── attendance_data.xlsx   # Attendance data file
-├── frontend/                   # React Frontend
+│   ├── .env                   # Environment variables
+│   ├── employee_directory.xlsx # Employee data (640 records)
+│   └── attendance_data.xlsx   # Attendance data
+├── frontend/                   # React Frontend  
 │   ├── src/
 │   │   ├── components/        # React components
-│   │   ├── services/          # API services
-│   │   ├── context/           # React context
-│   │   └── App.js            # Main React app
-│   ├── public/               # Static files
-│   ├── package.json          # Node.js dependencies
-│   └── .env                  # Frontend environment variables
-├── scripts/                   # Utility scripts
-├── supervisor/               # Supervisor configuration
+│   │   ├── context/           # Authentication context
+│   │   └── App.js            # Main app with 5-tab layout
+│   ├── package.json          # Dependencies
+│   ├── package_minimal.json  # Minimal dependencies backup
+│   ├── nuclear_fix.bat       # Windows dependency fix
+│   ├── simple_start.bat      # Windows starter
+│   └── .env                  # Frontend environment
+├── setup_windows.bat         # Complete Windows setup
+├── WINDOWS_SETUP_GUIDE.md    # Detailed Windows guide
+├── QUICK_START_WINDOWS.md    # Quick start instructions
 └── README.md                # This file
 ```
 
