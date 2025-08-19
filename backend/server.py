@@ -1878,8 +1878,22 @@ async def startup_db():
         count = await db.employees.count_documents({})
         logger.info(f"Current employee count in database: {count}")
         
-        if count == 0:
-            logger.info("Database empty, loading Excel data...")
+        # Force reload in development mode
+        force_reload = os.environ.get('FORCE_EXCEL_RELOAD', 'false').lower() == 'true'
+        
+        if count == 0 or force_reload:
+            if force_reload:
+                logger.info("Force reload enabled, clearing and reloading Excel data...")
+                await db.employees.delete_many({})
+                await db.attendance.delete_many({})
+                # Clear other collections
+                await db.news.delete_many({})
+                await db.tasks.delete_many({})
+                await db.knowledge.delete_many({})
+                await db.help.delete_many({})
+                await db.hierarchy.delete_many({})
+            else:
+                logger.info("Database empty, loading Excel data...")
             
             # Try to load Excel data with better error handling
             try:
@@ -1905,7 +1919,7 @@ async def startup_db():
                     logger.error(f"Excel file not found at: {excel_file_path}")
                     
         else:
-            logger.info(f"Database already has {count} employees, skipping Excel load")
+            logger.info(f"Database already has {count} employees, skipping Excel load (set FORCE_EXCEL_RELOAD=true in .env to override)")
         
         # Load attendance data from Excel
         try:
