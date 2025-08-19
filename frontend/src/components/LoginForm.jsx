@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 const LoginForm = () => {
   const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleAdminLogin = () => {
     const userData = {
       name: 'Administrator',
       role: 'admin',
@@ -17,6 +17,17 @@ const LoginForm = () => {
     };
     login(userData);
     toast.success('Welcome Administrator!');
+  };
+
+  const handleUserLogin = () => {
+    const userData = {
+      name: 'User',
+      role: 'user',
+      employeeId: 'USER001',
+      loginTime: new Date().toISOString()
+    };
+    login(userData);
+    toast.success('Welcome User!');
   };
 
   return (
