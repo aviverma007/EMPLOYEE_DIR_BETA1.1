@@ -621,8 +621,7 @@ const Home = () => {
                 <div className="flex-1 flex items-start">
                   <p className="text-xs opacity-90">{tile.description}</p>
                 </div>
-              </>
-            )}
+              )}
             </CardContent>
           </Card>
         ))}
