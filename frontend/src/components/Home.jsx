@@ -309,8 +309,8 @@ const Home = () => {
       title: "PICTURES",
       icon: <Image className="h-6 w-6" />,
       description: "Company gallery and events",
-      color: "bg-white border-2 border-gray-200",
-      textColor: "text-gray-800",
+      color: "bg-blue-600",
+      textColor: "text-white",
       interactive: true
     },
     {
