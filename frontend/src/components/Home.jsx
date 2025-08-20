@@ -202,7 +202,7 @@ const Home = () => {
           const nextIndex = prev + 1;
           return nextIndex + 2 >= employees.length ? 0 : nextIndex;
         });
-      }, 3000);
+      }, 5000);
       return () => clearInterval(interval);
     }
   }, [employees.length]);
