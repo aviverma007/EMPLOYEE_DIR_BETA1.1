@@ -385,13 +385,12 @@ const Home = () => {
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} ${
-              tile.title === "PICTURES" 
-                ? "shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden border-0 p-0" 
-                : "shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col"
+            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col ${
+              tile.title === "PICTURES" ? "overflow-hidden border-0 p-0" : ""
             }`}
           >
             {tile.title === "PICTURES" ? (
+              // Full-screen Pictures tile without borders
               <div className="h-full w-full relative overflow-hidden">
                 {/* Full-screen slideshow container */}
                 <div 
@@ -459,7 +458,7 @@ const Home = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0 flex-1 flex flex-col">
-              {tile.interactive && tile.title !== "PICTURES" && tile.title === "NEW JOINEES" ? (
+                  {tile.interactive && tile.title === "NEW JOINEES" ? (
               ) : tile.interactive && tile.title === "NEW JOINEES" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
