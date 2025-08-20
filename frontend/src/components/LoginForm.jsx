@@ -58,7 +58,8 @@ const LoginForm = () => {
               <CardTitle className="text-blue-900 text-center">Administrator Access</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <Button
+              <button
+                type="button"
                 onClick={handleAdminLogin}
                 className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg"
               >
@@ -67,7 +68,7 @@ const LoginForm = () => {
                   <div className="font-semibold">Enter Admin Dashboard</div>
                   <div className="text-sm opacity-90">Full access to all features</div>
                 </div>
-              </Button>
+              </button>
             </CardContent>
           </Card>
 
