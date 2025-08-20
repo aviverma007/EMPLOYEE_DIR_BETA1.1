@@ -130,6 +130,12 @@ const Home = () => {
       isDropdown: true
     },
     {
+      title: "BIMABRO",
+      description: "Employee Portal",
+      url: "https://employee.bimabro.com/",
+      image: "https://customer-assets.emergentagent.com/job_fast-modify/artifacts/s5o6c9cu_BimaBro.jpg"
+    },
+    {
       title: "MAFOI",
       description: "HR Suite",
       url: "https://mafoi.hfactor.app/hrsuite/#/login/smartworld",
