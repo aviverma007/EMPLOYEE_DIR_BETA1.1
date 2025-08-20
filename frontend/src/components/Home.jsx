@@ -556,7 +556,9 @@ const Home = () => {
                   )}
                   
                   {/* Todo Items - Enhanced Scrollable Version */}
-                  <div className="flex-1 space-y-1.5 max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 hover:scrollbar-thumb-blue-500">
+                  <div className={`flex-1 space-y-1.5 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100 hover:scrollbar-thumb-blue-500 ${
+                    !isAdmin() ? 'max-h-28' : 'max-h-32'
+                  }`}>
                     {todoItems.map((item) => (
                       <div key={item.id} className="flex items-center space-x-2 bg-blue-50 rounded p-1.5 hover:bg-blue-100 transition-colors">
                         <Checkbox
