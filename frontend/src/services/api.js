@@ -1,56 +1,28 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-
-console.log('API_BASE_URL configured as:', API_BASE_URL);
-console.log('process.env.REACT_APP_BACKEND_URL:', process.env.REACT_APP_BACKEND_URL);
-
-
-// Create axios instance with base configuration
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Frontend-only API using dataService
+import dataService from './dataService';
 
 // Employee API endpoints
 export const employeeAPI = {
   // Get all employees with optional search and filters
   getAll: async (searchParams = {}) => {
-    const params = new URLSearchParams();
-    if (searchParams.search) params.append('search', searchParams.search);
-    if (searchParams.department && searchParams.department !== 'All Departments') {
-      params.append('department', searchParams.department);
-    }
-    if (searchParams.location && searchParams.location !== 'All Locations') {
-      params.append('location', searchParams.location);
-    }
-    
-    const response = await api.get(`/api/employees?${params}`);
-    return response.data;
+    return await dataService.getEmployees(searchParams);
   },
 
   // Update employee profile image
-  updateImage: async (employeeId, imageUrl) => {
-    const response = await api.put(`/api/employees/${employeeId}/image`, {
-      profileImage: imageUrl
-    });
-    return response.data;
+  updateImage: async (employeeId, imageData) => {
+    return await dataService.updateEmployeeImage(employeeId, imageData);
   },
 
   // Upload employee profile image file (original images)
   uploadImage: async (employeeId, imageFile) => {
-    const formData = new FormData();
-    formData.append('file', imageFile);
-    
-    const response = await api.post(`/api/employees/${employeeId}/upload-image`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    // Convert file to base64 for frontend storage
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(imageFile);
     });
-    return response.data;
+    
+    return await dataService.updateEmployeeImage(employeeId, base64);
   }
 };
 
