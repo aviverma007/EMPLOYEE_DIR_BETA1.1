@@ -168,6 +168,10 @@ const AppContent = () => {
                     <TabsContent value="holiday-calendar" className="mt-0 h-full">
                       <HolidayCalendar />
                     </TabsContent>
+                    
+                    <TabsContent value="help" className="mt-0 h-full">
+                      <Help />
+                    </TabsContent>
                   </div>
                 </Tabs>
               </div>
