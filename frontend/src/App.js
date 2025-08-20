@@ -132,6 +132,12 @@ const AppContent = () => {
                       >
                         Holiday Calendar
                       </TabsTrigger>
+                      <TabsTrigger 
+                        value="help" 
+                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                      >
+                        Help
+                      </TabsTrigger>
                     </TabsList>
                   </div>
                   
