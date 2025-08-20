@@ -398,7 +398,7 @@ const Home = () => {
             className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col ${
               tile.title === "PICTURES" ? "overflow-hidden border-0 p-0" : "transform hover:scale-105"
             } ${
-              !isAdmin() ? 'h-48' : 'h-full'
+              !isAdmin() ? 'h-56' : 'h-full'
             }`}
           >
             {tile.title === "PICTURES" ? (
