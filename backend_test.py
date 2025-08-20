@@ -1,0 +1,262 @@
+#!/usr/bin/env python3
+"""
+Backend Testing Script for Minimal Frontend-Only Employee Directory API
+Tests the minimal backend server to ensure it's working as a placeholder.
+"""
+
+import requests
+import json
+import sys
+import os
+from datetime import datetime
+
+# Get the backend URL from frontend .env file
+def get_backend_url():
+    try:
+        with open('/app/frontend/.env', 'r') as f:
+            for line in f:
+                if line.startswith('REACT_APP_BACKEND_URL='):
+                    return line.split('=', 1)[1].strip()
+    except Exception as e:
+        print(f"Error reading frontend .env: {e}")
+        return None
+
+class MinimalBackendTester:
+    def __init__(self):
+        self.backend_url = get_backend_url()
+        if not self.backend_url:
+            print("❌ Could not get backend URL from frontend/.env")
+            sys.exit(1)
+        
+        print(f"🔗 Testing Backend URL: {self.backend_url}")
+        self.test_results = []
+        self.session = requests.Session()
+        self.session.timeout = 10
+
+    def log_test(self, test_name, success, message, details=None):
+        """Log test results"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name} - {message}")
+        if details:
+            print(f"   Details: {details}")
+        
+        self.test_results.append({
+            'test': test_name,
+            'success': success,
+            'message': message,
+            'details': details,
+            'timestamp': datetime.now().isoformat()
+        })
+
+    def test_server_connectivity(self):
+        """Test 1: Basic server connectivity"""
+        try:
+            response = self.session.get(f"{self.backend_url}")
+            if response.status_code == 200:
+                data = response.json()
+                if "Frontend-Only Employee Directory API" in data.get("message", ""):
+                    self.log_test("Server Connectivity", True, 
+                                f"Server responding correctly (status: {response.status_code})", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Server Connectivity", False, 
+                                f"Unexpected response content", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Server Connectivity", False, 
+                            f"Server returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Server Connectivity", False, f"Connection failed: {str(e)}")
+
+    def test_health_endpoint(self):
+        """Test 2: Health check endpoint"""
+        try:
+            response = self.session.get(f"{self.backend_url}/health")
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "healthy" and data.get("mode") == "frontend-only":
+                    self.log_test("Health Check", True, 
+                                "Health endpoint working correctly", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Health Check", False, 
+                                "Health endpoint returned unexpected data", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Health Check", False, 
+                            f"Health endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Health Check", False, f"Health check failed: {str(e)}")
+
+    def test_cors_configuration(self):
+        """Test 3: CORS configuration"""
+        try:
+            # Test preflight request
+            headers = {
+                'Origin': 'https://example.com',
+                'Access-Control-Request-Method': 'GET',
+                'Access-Control-Request-Headers': 'Content-Type'
+            }
+            response = self.session.options(f"{self.backend_url}/api/employees", headers=headers)
+            
+            cors_headers = {
+                'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                'access-control-allow-methods': response.headers.get('access-control-allow-methods'),
+                'access-control-allow-headers': response.headers.get('access-control-allow-headers')
+            }
+            
+            if cors_headers['access-control-allow-origin'] == '*':
+                self.log_test("CORS Configuration", True, 
+                            "CORS properly configured for all origins", 
+                            f"CORS headers: {cors_headers}")
+            else:
+                self.log_test("CORS Configuration", False, 
+                            "CORS not properly configured", 
+                            f"CORS headers: {cors_headers}")
+        except Exception as e:
+            self.log_test("CORS Configuration", False, f"CORS test failed: {str(e)}")
+
+    def test_employees_endpoint(self):
+        """Test 4: /api/employees endpoint"""
+        try:
+            response = self.session.get(f"{self.backend_url}/api/employees")
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "Data is now managed by frontend"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Employees Endpoint", True, 
+                                "Employees endpoint returns frontend-only message", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Employees Endpoint", False, 
+                                "Employees endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Employees Endpoint", False, 
+                            f"Employees endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Employees Endpoint", False, f"Employees endpoint test failed: {str(e)}")
+
+    def test_departments_endpoint(self):
+        """Test 5: /api/departments endpoint"""
+        try:
+            response = self.session.get(f"{self.backend_url}/api/departments")
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "Data is now managed by frontend"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Departments Endpoint", True, 
+                                "Departments endpoint returns frontend-only message", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Departments Endpoint", False, 
+                                "Departments endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Departments Endpoint", False, 
+                            f"Departments endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Departments Endpoint", False, f"Departments endpoint test failed: {str(e)}")
+
+    def test_stats_endpoint(self):
+        """Test 6: /api/stats endpoint"""
+        try:
+            response = self.session.get(f"{self.backend_url}/api/stats")
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "Data is now managed by frontend"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Stats Endpoint", True, 
+                                "Stats endpoint returns frontend-only message", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Stats Endpoint", False, 
+                                "Stats endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Stats Endpoint", False, 
+                            f"Stats endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Stats Endpoint", False, f"Stats endpoint test failed: {str(e)}")
+
+    def test_catch_all_endpoint(self):
+        """Test 7: Catch-all API endpoint"""
+        try:
+            # Test a random API endpoint that should be caught by catch-all
+            response = self.session.get(f"{self.backend_url}/api/random-endpoint")
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "is now handled by frontend dataService"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Catch-All Endpoint", True, 
+                                "Catch-all endpoint working correctly", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Catch-All Endpoint", False, 
+                                "Catch-all endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Catch-All Endpoint", False, 
+                            f"Catch-all endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Catch-All Endpoint", False, f"Catch-all endpoint test failed: {str(e)}")
+
+    def test_post_request_handling(self):
+        """Test 8: POST request handling via catch-all"""
+        try:
+            test_data = {"test": "data"}
+            response = self.session.post(f"{self.backend_url}/api/test-post", json=test_data)
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "is now handled by frontend dataService"
+                if expected_message in data.get("message", ""):
+                    self.log_test("POST Request Handling", True, 
+                                "POST requests handled correctly by catch-all", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("POST Request Handling", False, 
+                                "POST request returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("POST Request Handling", False, 
+                            f"POST request returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("POST Request Handling", False, f"POST request test failed: {str(e)}")
+
+    def run_all_tests(self):
+        """Run all tests"""
+        print("🚀 Starting Minimal Backend Server Tests")
+        print("=" * 60)
+        
+        self.test_server_connectivity()
+        self.test_health_endpoint()
+        self.test_cors_configuration()
+        self.test_employees_endpoint()
+        self.test_departments_endpoint()
+        self.test_stats_endpoint()
+        self.test_catch_all_endpoint()
+        self.test_post_request_handling()
+        
+        print("\n" + "=" * 60)
+        print("📊 TEST SUMMARY")
+        print("=" * 60)
+        
+        passed = sum(1 for result in self.test_results if result['success'])
+        total = len(self.test_results)
+        
+        print(f"Total Tests: {total}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {total - passed}")
+        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        
+        if passed == total:
+            print("\n🎉 ALL TESTS PASSED! Minimal backend server is working correctly.")
+        else:
+            print(f"\n⚠️  {total - passed} test(s) failed. Check the details above.")
+            
+        return passed == total
+
+if __name__ == "__main__":
+    tester = MinimalBackendTester()
+    success = tester.run_all_tests()
+    sys.exit(0 if success else 1)
