@@ -7,7 +7,7 @@ Tests the new search parameter in attendance API
 import requests
 import json
 
-BACKEND_URL = "https://profile-gallery-4.preview.emergentagent.com/api"
+BACKEND_URL = "https://app-runner-15.preview.emergentagent.com/api"
 
 def test_attendance_search():
     session = requests.Session()

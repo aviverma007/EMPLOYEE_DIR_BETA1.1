@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://profile-gallery-4.preview.emergentagent.com/api"
+BACKEND_URL = "https://app-runner-15.preview.emergentagent.com/api"
 
 class MultipleBookingsTester:
     def __init__(self):
