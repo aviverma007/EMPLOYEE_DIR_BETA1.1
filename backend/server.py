@@ -1990,15 +1990,48 @@ async def get_currency_rates(base: str = "USD", target: str = "INR"):
 async def get_current_time(timezone: str = "Asia/Kolkata"):
     """Get current time in specified timezone"""
     try:
-        current_time = datetime.now().strftime("%A, %B %d, %Y at %I:%M %p")
+        from datetime import datetime
+        import pytz
+        
+        # Get current UTC time and convert to specified timezone
+        utc_now = datetime.utcnow()
+        
+        # Create timezone object
+        if timezone == "Asia/Kolkata":
+            tz = pytz.timezone('Asia/Kolkata')
+        else:
+            tz = pytz.timezone(timezone)
+        
+        # Convert to local timezone
+        local_time = utc_now.replace(tzinfo=pytz.utc).astimezone(tz)
+        
+        # Format the time
+        formatted_time = local_time.strftime("%A, %B %d, %Y at %I:%M:%S %p %Z")
+        formatted_date = local_time.strftime("%Y-%m-%d")
+        formatted_clock = local_time.strftime("%I:%M %p")
+        
         time_data = {
             "timezone": timezone,
-            "current_time": current_time,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            "current_time": formatted_time,
+            "date": formatted_date,
+            "clock": formatted_clock,
+            "day_name": local_time.strftime("%A"),
+            "timestamp": local_time.strftime("%Y-%m-%d %H:%M:%S %Z")
         }
         return time_data
     except Exception as e:
-        return {"error": f"Could not fetch time data: {str(e)}"}
+        # Fallback to simple datetime if pytz is not available
+        now = datetime.now()
+        current_time = now.strftime("%A, %B %d, %Y at %I:%M:%S %p IST")
+        time_data = {
+            "timezone": timezone,
+            "current_time": current_time,
+            "date": now.strftime("%Y-%m-%d"),
+            "clock": now.strftime("%I:%M %p"),
+            "day_name": now.strftime("%A"),
+            "timestamp": now.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        return time_data
 
 async def process_realtime_request(message: str):
     """Process real-time data requests and format response"""
