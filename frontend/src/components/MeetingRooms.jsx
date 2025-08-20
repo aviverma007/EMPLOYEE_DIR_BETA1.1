@@ -143,11 +143,19 @@ const MeetingRooms = () => {
   };
 
   const clearFilters = () => {
-    setFilters({
-      location: '',
-      floor: '',
-      status: ''
-    });
+    if (isAdmin()) {
+      setFilters({
+        location: '',
+        floor: '',
+        status: ''
+      });
+    } else {
+      setFilters({
+        location: 'IFC',
+        floor: '14',
+        status: ''
+      });
+    }
   };
 
   const getUniqueFloors = () => {
