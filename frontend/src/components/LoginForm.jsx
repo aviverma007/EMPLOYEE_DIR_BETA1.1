@@ -78,7 +78,8 @@ const LoginForm = () => {
               <CardTitle className="text-green-900 text-center">User Access</CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <Button
+              <button
+                type="button"
                 onClick={handleUserLogin}
                 className="w-full h-16 bg-green-600 hover:bg-green-700 text-white font-medium text-lg"
               >
@@ -87,7 +88,7 @@ const LoginForm = () => {
                   <div className="font-semibold">Enter User Dashboard</div>
                   <div className="text-sm opacity-90">Access to essential features</div>
                 </div>
-              </Button>
+              </button>
             </CardContent>
           </Card>
         </div>
