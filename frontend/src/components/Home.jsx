@@ -477,11 +477,13 @@ const Home = () => {
                       {/* New Joinees Vertical Scrolling Display - 3 at a time */}
                       {employees.length > 0 ? (
                         <div className="flex-1 flex flex-col">
-                          <div className="space-y-1 h-32 overflow-hidden relative">
+                          <div className={`space-y-1 overflow-hidden relative ${
+                            !isAdmin() ? 'h-20' : 'h-32'
+                          }`}>
                             <div 
                               className="transition-transform duration-1000 ease-in-out"
                               style={{ 
-                                transform: `translateY(-${(currentJoineeIndex) * 33}px)` 
+                                transform: `translateY(-${(currentJoineeIndex) * (isAdmin() ? 33 : 22)}px)` 
                               }}
                             >
                               {/* Create extended array for seamless scrolling */}
