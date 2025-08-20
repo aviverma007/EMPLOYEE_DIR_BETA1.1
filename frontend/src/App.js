@@ -177,30 +177,44 @@ const AppContent = () => {
                       )}
                     </TabsContent>
                     
-                    <TabsContent value="work" className="mt-0 h-full">
-                      <Work />
-                    </TabsContent>
+                    {/* Admin-only content */}
+                    {isAdmin() && (
+                      <TabsContent value="work" className="mt-0 h-full">
+                        <Work />
+                      </TabsContent>
+                    )}
                     
-                    <TabsContent value="knowledge" className="mt-0 h-full">
-                      <Knowledge />
-                    </TabsContent>
+                    {isAdmin() && (
+                      <TabsContent value="knowledge" className="mt-0 h-full">
+                        <Knowledge />
+                      </TabsContent>
+                    )}
                     
+                    {/* Both Admin and User can access Policies */}
                     <TabsContent value="policies" className="mt-0 h-full">
                       <Policies />
                     </TabsContent>
                     
-                    <TabsContent value="workflows" className="mt-0 h-full">
-                      <Workflows />
-                    </TabsContent>
+                    {/* Admin-only content */}
+                    {isAdmin() && (
+                      <TabsContent value="workflows" className="mt-0 h-full">
+                        <Workflows />
+                      </TabsContent>
+                    )}
                     
+                    {/* Both Admin and User can access Meeting Rooms */}
                     <TabsContent value="meeting-rooms" className="mt-0 h-full">
                       <MeetingRooms />
                     </TabsContent>
                     
-                    <TabsContent value="attendance" className="mt-0 h-full">
-                      <Attendance />
-                    </TabsContent>
+                    {/* Admin-only content */}
+                    {isAdmin() && (
+                      <TabsContent value="attendance" className="mt-0 h-full">
+                        <Attendance />
+                      </TabsContent>
+                    )}
                     
+                    {/* Both Admin and User can access Help */}
                     <TabsContent value="help" className="mt-0 h-full">
                       <Help />
                     </TabsContent>
