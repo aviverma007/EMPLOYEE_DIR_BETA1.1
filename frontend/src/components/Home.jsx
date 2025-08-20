@@ -388,13 +388,17 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Tiles Section - Equal Height Grid */}
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Tiles Section - Responsive Height Grid */}
+      <div className={`flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${
+        !isAdmin() ? 'max-h-64' : ''
+      }`}>
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col ${
+            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col ${
               tile.title === "PICTURES" ? "overflow-hidden border-0 p-0" : "transform hover:scale-105"
+            } ${
+              !isAdmin() ? 'h-48' : 'h-full'
             }`}
           >
             {tile.title === "PICTURES" ? (
