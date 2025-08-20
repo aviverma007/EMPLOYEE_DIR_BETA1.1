@@ -50,7 +50,7 @@ const AppContent = () => {
               <Header />
               <div className="flex-1 w-full px-2 sm:px-4 lg:px-6 py-4">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-full flex flex-col">
-                  {/* Navigation Tabs - Both Admin and User get identical access */}
+                  {/* Navigation Tabs - Role-based access */}
                   <div className="flex justify-start mb-4 overflow-x-auto">
                   <TabsList className="flex w-auto h-10 bg-white shadow-md border border-blue-200 rounded-lg p-1 min-w-max">
                       <TabsTrigger 
@@ -60,7 +60,7 @@ const AppContent = () => {
                         Home
                       </TabsTrigger>
                       
-                      {/* Both Admin and User get identical Employee Directory with Hierarchy dropdown */}
+                      {/* Both Admin and User get Employee Directory with Hierarchy dropdown */}
                       <div className="relative">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -100,43 +100,61 @@ const AppContent = () => {
                         </DropdownMenu>
                       </div>
                       
-                      {/* Both Admin and User get all tabs with identical access */}
-                      <TabsTrigger 
-                        value="work" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Work
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="knowledge" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Knowledge
-                      </TabsTrigger>
+                      {/* Admin-only tabs */}
+                      {isAdmin() && (
+                        <TabsTrigger 
+                          value="work" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                        >
+                          Work
+                        </TabsTrigger>
+                      )}
+                      {isAdmin() && (
+                        <TabsTrigger 
+                          value="knowledge" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                        >
+                          Knowledge
+                        </TabsTrigger>
+                      )}
+                      
+                      {/* Both Admin and User get Policies */}
                       <TabsTrigger 
                         value="policies" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Policies
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="workflows" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Workflows
-                      </TabsTrigger>
+                      
+                      {/* Admin-only tab */}
+                      {isAdmin() && (
+                        <TabsTrigger 
+                          value="workflows" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                        >
+                          Workflows
+                        </TabsTrigger>
+                      )}
+                      
+                      {/* Both Admin and User get Meeting Rooms */}
                       <TabsTrigger 
                         value="meeting-rooms" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
                       >
                         Meeting Rooms
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="attendance" 
-                        className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
-                      >
-                        Attendance
-                      </TabsTrigger>
+                      
+                      {/* Admin-only tab */}
+                      {isAdmin() && (
+                        <TabsTrigger 
+                          value="attendance" 
+                          className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
+                        >
+                          Attendance
+                        </TabsTrigger>
+                      )}
+                      
+                      {/* Both Admin and User get Help */}
                       <TabsTrigger 
                         value="help" 
                         className="text-xs sm:text-sm font-medium data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=inactive]:text-blue-700 rounded-md px-2 sm:px-4 py-2 whitespace-nowrap"
