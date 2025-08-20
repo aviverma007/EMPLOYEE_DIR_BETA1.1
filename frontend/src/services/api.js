@@ -30,26 +30,22 @@ export const employeeAPI = {
 export const hierarchyAPI = {
   // Get all hierarchy relationships
   getAll: async () => {
-    const response = await api.get('/api/hierarchy');
-    return response.data;
+    return await dataService.getHierarchy();
   },
 
   // Add new hierarchy relationship
   create: async (relationshipData) => {
-    const response = await api.post('/api/hierarchy', relationshipData);
-    return response.data;
+    return await dataService.createHierarchy(relationshipData);
   },
 
   // Remove hierarchy relationship
   remove: async (employeeId) => {
-    const response = await api.delete(`/api/hierarchy/${employeeId}`);
-    return response.data;
+    return await dataService.deleteHierarchy(employeeId);
   },
 
   // Clear all hierarchy relationships
   clearAll: async () => {
-    const response = await api.delete('/api/hierarchy/clear');
-    return response.data;
+    return await dataService.clearAllHierarchy();
   }
 };
 
