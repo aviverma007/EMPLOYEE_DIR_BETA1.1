@@ -14,6 +14,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Auto-initialize authentication state from localStorage
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
   const login = (userData) => {
     setUser(userData);
     setIsAuthenticated(true);
