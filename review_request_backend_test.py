@@ -15,7 +15,7 @@ from typing import Dict, List, Any
 import time
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://fast-modify.preview.emergentagent.com/api"
+BACKEND_URL = "https://app-launcher-37.preview.emergentagent.com/api"
 
 class ReviewRequestTester:
     def __init__(self):
