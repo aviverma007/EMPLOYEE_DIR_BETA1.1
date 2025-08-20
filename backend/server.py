@@ -2220,8 +2220,16 @@ Remember: You're both a specialized SmartWorld system expert AND a general AI as
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat_with_bot(request: ChatRequest):
-    """Chat endpoint for the AI assistant"""
+    """Chat endpoint for the AI assistant with real-time data capabilities"""
     try:
+        # Check if the message requires real-time data
+        realtime_data = await process_realtime_request(request.message)
+        
+        # Prepare the message for the LLM
+        enhanced_message = request.message
+        if realtime_data:
+            enhanced_message = f"{request.message}\n\n[Real-time Data Retrieved]:\n{realtime_data}\n\nPlease incorporate this live data into your response and provide a comprehensive answer."
+        
         # Initialize chat with session ID and system message
         chat = LlmChat(
             api_key=os.environ.get('EMERGENT_LLM_KEY'),
@@ -2230,12 +2238,12 @@ async def chat_with_bot(request: ChatRequest):
         ).with_model("gemini", "gemini-2.0-flash")
         
         # Create user message
-        user_message = UserMessage(text=request.message)
+        user_message = UserMessage(text=enhanced_message)
         
         # Get response from the model
         response = await chat.send_message(user_message)
         
-        # Save chat to database
+        # Save chat to database (save original message, not enhanced)
         chat_record = ChatMessage(
             session_id=request.session_id,
             user_message=request.message,
