@@ -393,8 +393,8 @@ const Home = () => {
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col ${
-              tile.title === "PICTURES" ? "overflow-hidden border-0 p-0" : ""
+            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col ${
+              tile.title === "PICTURES" ? "overflow-hidden border-0 p-0" : "transform hover:scale-105"
             }`}
           >
             {tile.title === "PICTURES" ? (
