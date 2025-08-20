@@ -1,5 +1,6 @@
 // Frontend-only API using dataService
 import dataService from './dataService';
+import imageStorage from './imageStorage';
 
 // Employee API endpoints
 export const employeeAPI = {
