@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { policyAPI } from '../services/api';
 
 const Policies = () => {
+  const { isAdmin } = useAuth();
   const [policies, setPolicies] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
     hr: true,
