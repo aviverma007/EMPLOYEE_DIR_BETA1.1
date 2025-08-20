@@ -168,7 +168,7 @@ const FloatingChatbot = () => {
           
           {/* Tooltip */}
           <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-            Ask SmartWorld AI Assistant
+            AI Assistant • Real-time Data • Weather • Traffic
           </div>
         </div>
       )}
