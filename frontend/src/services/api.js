@@ -51,28 +51,28 @@ export const hierarchyAPI = {
 
 // Utility API endpoints
 export const utilityAPI = {
-  // Refresh Excel data
+  // Refresh Excel data (now just reloads from frontend)
   refreshExcel: async () => {
-    const response = await api.post('/api/refresh-excel');
-    return response.data;
+    const stats = await dataService.loadAllData();
+    return { 
+      message: 'Excel data refreshed successfully',
+      count: stats.employees
+    };
   },
 
   // Get departments
   getDepartments: async () => {
-    const response = await api.get('/api/departments');
-    return response.data.departments;
+    return await dataService.getDepartments();
   },
 
   // Get locations  
   getLocations: async () => {
-    const response = await api.get('/api/locations');
-    return response.data.locations;
+    return await dataService.getLocations();
   },
 
   // Get system statistics
   getStats: async () => {
-    const response = await api.get('/api/stats');
-    return response.data;
+    return await dataService.getStats();
   }
 };
 
