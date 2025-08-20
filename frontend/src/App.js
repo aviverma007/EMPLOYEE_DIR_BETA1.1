@@ -27,7 +27,6 @@ import Workflows from "./components/Workflows";
 import Attendance from "./components/Attendance";
 import MeetingRooms from "./components/MeetingRooms";
 import HolidayCalendar from "./components/HolidayCalendar";
-import FloatingChatbot from "./components/FloatingChatbot";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
