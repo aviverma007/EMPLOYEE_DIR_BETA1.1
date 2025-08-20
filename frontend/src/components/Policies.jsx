@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { ChevronDown, ChevronRight, FileText, ExternalLink, Calendar } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { policyAPI } from '../services/api';
 
 const Policies = () => {
