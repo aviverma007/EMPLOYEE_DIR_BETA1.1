@@ -23,7 +23,8 @@ from models import (
     MeetingRoom, MeetingRoomCreate, MeetingRoomUpdate, MeetingRoomBooking, MeetingRoomBookingCreate, MeetingRoomBulkBookingCreate,
     Policy, PolicyCreate, PolicyUpdate,
     Workflow, WorkflowCreate, WorkflowUpdate, WorkflowStep,
-    AttendanceRecord, AttendanceCreate, AttendanceUpdate
+    AttendanceRecord, AttendanceCreate, AttendanceUpdate,
+    ChatMessage, ChatRequest, ChatResponse
 )
 from excel_parser import ExcelParser
 from attendance_parser import parse_attendance_excel
