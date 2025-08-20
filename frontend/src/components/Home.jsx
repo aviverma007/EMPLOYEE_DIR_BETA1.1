@@ -567,7 +567,7 @@ const Home = () => {
                           <div className="text-center p-4">
                             <Users className="h-8 w-8 text-blue-400 mx-auto mb-2" />
                             <p className="text-sm font-medium">Loading new joinees...</p>
-                            <p className="text-xs text-blue-500">July 2025 onwards</p>
+                            <p className="text-xs text-blue-500">Last 1 month</p>
                           </div>
                         </div>
                       )}
