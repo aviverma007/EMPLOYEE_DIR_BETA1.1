@@ -293,20 +293,3 @@ class AttendanceUpdate(BaseModel):
     status: Optional[str] = None
     remarks: Optional[str] = None
 
-# Chatbot models
-class ChatMessage(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    session_id: str = Field(..., description="Chat session ID")
-    user_message: str = Field(..., description="User message")
-    bot_response: str = Field(..., description="Bot response")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-
-class ChatRequest(BaseModel):
-    session_id: str = Field(..., description="Chat session ID")
-    message: str = Field(..., description="User message")
-
-class ChatResponse(BaseModel):
-    session_id: str
-    message: str
-    response: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
