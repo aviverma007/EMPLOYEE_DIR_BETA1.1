@@ -84,7 +84,7 @@ const LoginForm = () => {
                 <User className="h-6 w-6 mr-3" />
                 <div className="text-left">
                   <div className="font-semibold">Enter User Dashboard</div>
-                  <div className="text-sm opacity-90">Full access to all features</div>
+                  <div className="text-sm opacity-90">Access to essential features</div>
                 </div>
               </Button>
             </CardContent>
