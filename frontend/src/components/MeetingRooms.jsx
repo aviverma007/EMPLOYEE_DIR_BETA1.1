@@ -5,6 +5,7 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '../context/AuthContext';
 import { meetingRoomAPI, employeeAPI, utilityAPI } from '../services/api';
 
 const MeetingRooms = () => {
