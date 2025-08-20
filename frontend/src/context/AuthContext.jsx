@@ -15,11 +15,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = (userData) => {
-    console.log('AuthContext login called with:', userData);
     setUser(userData);
     setIsAuthenticated(true);
     localStorage.setItem('user', JSON.stringify(userData));
-    console.log('Authentication state updated');
   };
 
   const logout = () => {
