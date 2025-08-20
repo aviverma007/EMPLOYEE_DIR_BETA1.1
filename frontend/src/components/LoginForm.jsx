@@ -9,30 +9,24 @@ const LoginForm = () => {
   const { login } = useAuth();
 
   const handleAdminLogin = () => {
-    console.log('Admin login clicked');
     const userData = {
       name: 'Administrator',
       role: 'admin',
       employeeId: 'ADMIN001',
       loginTime: new Date().toISOString()
     };
-    console.log('Calling login with:', userData);
     login(userData);
-    console.log('Toast being called');
     toast.success('Welcome Administrator!');
   };
 
   const handleUserLogin = () => {
-    console.log('User login clicked');
     const userData = {
       name: 'User',
       role: 'user',
       employeeId: 'USER001',
       loginTime: new Date().toISOString()
     };
-    console.log('Calling login with:', userData);
     login(userData);
-    console.log('Toast being called');
     toast.success('Welcome User!');
   };
 
