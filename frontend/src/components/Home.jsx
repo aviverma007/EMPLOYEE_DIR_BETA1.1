@@ -93,6 +93,13 @@ const Home = () => {
       isDropdown: true
     },
     {
+      title: "BIMABRO",
+      icon: <User className="h-4 w-4" />,
+      description: "Employee portal",
+      url: "https://employee.bimabro.com/",
+      color: "bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-300"
+    },
+    {
       title: "Events",
       icon: <Calendar className="h-4 w-4" />,
       description: "Company events & updates",
