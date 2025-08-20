@@ -143,23 +143,21 @@ const Home = () => {
     }
   ];
 
+import { employeeAPI } from '../services/api';
+
   // Fetch employees data for new joinees
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-        const response = await fetch(`${backendUrl}/api/employees`);
-        if (response.ok) {
-          const data = await response.json();
-          // Filter employees who joined in July 2025 or later
-          const recentJoinees = data.filter(emp => {
-            const joinDate = new Date(emp.dateOfJoining);
-            const july2025 = new Date('2025-07-01');
-            return joinDate >= july2025;
-          }).sort((a, b) => new Date(b.dateOfJoining) - new Date(a.dateOfJoining));
-          
-          setEmployees(recentJoinees.slice(0, 15)); // Show latest 15 employees
-        }
+        const data = await employeeAPI.getAll();
+        // Filter employees who joined in July 2025 or later
+        const recentJoinees = data.filter(emp => {
+          const joinDate = new Date(emp.dateOfJoining);
+          const july2025 = new Date('2025-07-01');
+          return joinDate >= july2025;
+        }).sort((a, b) => new Date(b.dateOfJoining) - new Date(a.dateOfJoining));
+        
+        setEmployees(recentJoinees.slice(0, 15)); // Show latest 15 employees
       } catch (error) {
         console.error('Error fetching employees:', error);
         // Fallback data for demonstration - none as we want real data from July 2025
