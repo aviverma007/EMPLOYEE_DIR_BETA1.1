@@ -398,25 +398,56 @@ const Home = () => {
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
-                  {/* Simple Photo Gallery - CSS Scroll */}
+                  {/* Enhanced Photo Gallery - Slideshow with full-size images */}
                   <div className="flex-1">
-                    <div className="h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-blue-100">
-                      <div className="space-y-2">
+                    <div className="h-32 rounded-md overflow-hidden relative">
+                      {/* Slideshow container */}
+                      <div 
+                        className="flex transition-transform duration-700 ease-in-out h-full"
+                        style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+                      >
                         {galleryImages.map((image, idx) => (
                           <div 
                             key={idx}
-                            className="w-full h-24 rounded-md overflow-hidden"
+                            className="min-w-full h-full relative overflow-hidden rounded-md"
                           >
                             <img
                               src={image}
                               alt={`Company gallery ${idx + 1}`}
-                              className="w-full h-full object-contain bg-gray-100"
+                              className="w-full h-full object-cover transition-all duration-500 hover:scale-105"
                               onError={(e) => {
                                 e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
                               }}
                             />
+                            {/* Overlay for better text readability */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                           </div>
                         ))}
+                      </div>
+                      
+                      {/* Slide indicators */}
+                      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+                        {galleryImages.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setCurrentGalleryIndex(idx)}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                              idx === currentGalleryIndex 
+                                ? 'bg-white scale-110 shadow-lg' 
+                                : 'bg-white/60 hover:bg-white/80'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      
+                      {/* Progress bar */}
+                      <div className="absolute top-2 left-2 right-2 h-1 bg-white/20 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-white rounded-full transition-all duration-2000 ease-linear"
+                          style={{ 
+                            width: `${((currentGalleryIndex + 1) / galleryImages.length) * 100}%` 
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
