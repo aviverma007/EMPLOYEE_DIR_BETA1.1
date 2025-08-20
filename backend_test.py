@@ -49,34 +49,36 @@ class MinimalBackendTester:
         })
 
     def test_server_connectivity(self):
-        """Test 1: Basic server connectivity"""
+        """Test 1: Backend server connectivity (localhost)"""
         try:
-            response = self.session.get(f"{self.backend_url}")
+            # Test backend server directly on localhost:8001
+            response = self.session.get("http://localhost:8001/")
             if response.status_code == 200:
                 data = response.json()
                 if "Frontend-Only Employee Directory API" in data.get("message", ""):
-                    self.log_test("Server Connectivity", True, 
-                                f"Server responding correctly (status: {response.status_code})", 
+                    self.log_test("Backend Server Connectivity", True, 
+                                f"Backend server responding correctly on port 8001", 
                                 f"Response: {data}")
                 else:
-                    self.log_test("Server Connectivity", False, 
+                    self.log_test("Backend Server Connectivity", False, 
                                 f"Unexpected response content", 
                                 f"Response: {data}")
             else:
-                self.log_test("Server Connectivity", False, 
-                            f"Server returned status {response.status_code}")
+                self.log_test("Backend Server Connectivity", False, 
+                            f"Backend server returned status {response.status_code}")
         except Exception as e:
-            self.log_test("Server Connectivity", False, f"Connection failed: {str(e)}")
+            self.log_test("Backend Server Connectivity", False, f"Backend server connection failed: {str(e)}")
 
     def test_health_endpoint(self):
-        """Test 2: Health check endpoint"""
+        """Test 2: Health check endpoint (localhost)"""
         try:
-            response = self.session.get(f"{self.backend_url}/health")
+            # Test health endpoint directly on localhost:8001
+            response = self.session.get("http://localhost:8001/health")
             if response.status_code == 200:
                 data = response.json()
                 if data.get("status") == "healthy" and data.get("mode") == "frontend-only":
                     self.log_test("Health Check", True, 
-                                "Health endpoint working correctly", 
+                                "Health endpoint working correctly on backend server", 
                                 f"Response: {data}")
                 else:
                     self.log_test("Health Check", False, 
