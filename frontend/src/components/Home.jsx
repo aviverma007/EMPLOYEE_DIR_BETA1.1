@@ -144,8 +144,6 @@ const Home = () => {
     }
   ];
 
-import { employeeAPI } from '../services/api';
-
   // Fetch employees data for new joinees
   useEffect(() => {
     const fetchEmployees = async () => {
