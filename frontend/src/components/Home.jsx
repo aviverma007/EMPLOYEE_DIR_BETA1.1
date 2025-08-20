@@ -385,15 +385,80 @@ const Home = () => {
         {tiles.map((tile, index) => (
           <Card 
             key={index}
-            className={`${tile.color} ${tile.textColor} shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col`}
+            className={`${tile.color} ${tile.textColor} ${
+              tile.title === "PICTURES" 
+                ? "shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col overflow-hidden border-0 p-0" 
+                : "shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 cursor-pointer h-full flex flex-col"
+            }`}
           >
-            <CardHeader className="pb-2 flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                {tile.icon}
-                <CardTitle className="text-base font-bold">{tile.title}</CardTitle>
+            {tile.title === "PICTURES" ? (
+              <div className="h-full w-full relative overflow-hidden">
+                {/* Full-screen slideshow container */}
+                <div 
+                  className="flex transition-transform duration-700 ease-in-out h-full"
+                  style={{ transform: `translateX(-${currentGalleryIndex * 100}%)` }}
+                >
+                  {galleryImages.map((image, idx) => (
+                    <div 
+                      key={idx}
+                      className="min-w-full h-full relative overflow-hidden"
+                    >
+                      <img
+                        src={image}
+                        alt={`Company gallery ${idx + 1}`}
+                        className="w-full h-full object-cover transition-all duration-500"
+                        onError={(e) => {
+                          e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjEwMCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4=';
+                        }}
+                      />
+                      {/* Overlay gradient for better visibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Title overlay */}
+                <div className="absolute top-4 left-4 z-10">
+                  <div className="flex items-center space-x-2 text-white">
+                    <Image className="h-5 w-5" />
+                    <span className="text-sm font-bold tracking-wide">PICTURES</span>
+                  </div>
+                </div>
+                
+                {/* Slide indicators */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
+                  {galleryImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentGalleryIndex(idx)}
+                      className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                        idx === currentGalleryIndex 
+                          ? 'bg-white scale-110 shadow-lg' 
+                          : 'bg-white/60 hover:bg-white/80'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Progress bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-10">
+                  <div 
+                    className="h-full bg-white/80 transition-all duration-2000 ease-linear"
+                    style={{ 
+                      width: `${((currentGalleryIndex + 1) / galleryImages.length) * 100}%` 
+                    }}
+                  />
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="pt-0 flex-1 flex flex-col">
+            ) : (
+              <>
+                <CardHeader className="pb-2 flex-shrink-0">
+                  <div className="flex items-center space-x-2">
+                    {tile.icon}
+                    <CardTitle className="text-base font-bold">{tile.title}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0 flex-1 flex flex-col">
               {tile.interactive && tile.title === "PICTURES" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
