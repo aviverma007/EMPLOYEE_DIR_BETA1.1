@@ -75,5 +75,3 @@ export const utilityAPI = {
     return await dataService.getStats();
   }
 };
-
-export default api;
