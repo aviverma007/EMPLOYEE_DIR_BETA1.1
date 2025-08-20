@@ -622,6 +622,8 @@ const Home = () => {
                 </div>
               )}
                 </CardContent>
+              </>
+            )}
           </Card>
         ))}
       </div>
