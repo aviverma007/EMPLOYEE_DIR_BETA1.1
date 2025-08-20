@@ -115,7 +115,7 @@ const FloatingChatbot = () => {
         method: 'DELETE'
       });
       setMessages([{
-        text: "Chat history cleared. How can I help you today?",
+        text: "Chat history cleared! 🔄\n\nI'm ready to help with:\n💼 SmartWorld system guidance\n🌍 General questions & knowledge\n⚡ Real-time data (weather, traffic, news, stocks)\n\nWhat would you like to know?",
         isUser: false,
         timestamp: new Date()
       }]);
