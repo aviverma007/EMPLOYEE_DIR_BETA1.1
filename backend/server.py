@@ -2073,16 +2073,7 @@ async def get_current_time(timezone: str = "Asia/Kolkata"):
 
 
 
-# ====================================
-# Chatbot API Endpoints
-# ====================================
 
-# Initialize the LLM Chat service
-from emergentintegrations.llm.chat import LlmChat, UserMessage
-import aiohttp
-import json
-from datetime import datetime
-import asyncio
 
 # System message containing application knowledge and general AI capabilities
 SYSTEM_MESSAGE = """You are SmartWorld's intelligent AI assistant. You can help with two main areas:
