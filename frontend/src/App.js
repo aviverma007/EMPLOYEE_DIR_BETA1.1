@@ -163,9 +163,6 @@ const AppContent = () => {
                 </Tabs>
               </div>
               <Toaster />
-              
-              {/* Floating Chatbot - appears on all pages */}
-              <FloatingChatbot />
             </div>
           } />
         </Routes>
