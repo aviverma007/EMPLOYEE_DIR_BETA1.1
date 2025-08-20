@@ -154,24 +154,33 @@ const AppContent = () => {
                     <TabsContent value="directory" className="mt-0 h-full">
                       {activeDirectorySection === "directory" ? (
                         <EmployeeDirectory />
-                      ) : isAdmin() ? (
-                        <HierarchyBuilder />
                       ) : (
-                        <EmployeeDirectory />
+                        <HierarchyBuilder />
                       )}
                     </TabsContent>
                     
-                    {/* Both Admin and User get limited content as requested */}
+                    <TabsContent value="work" className="mt-0 h-full">
+                      <Work />
+                    </TabsContent>
+                    
+                    <TabsContent value="knowledge" className="mt-0 h-full">
+                      <Knowledge />
+                    </TabsContent>
+                    
                     <TabsContent value="policies" className="mt-0 h-full">
                       <Policies />
+                    </TabsContent>
+                    
+                    <TabsContent value="workflows" className="mt-0 h-full">
+                      <Workflows />
                     </TabsContent>
                     
                     <TabsContent value="meeting-rooms" className="mt-0 h-full">
                       <MeetingRooms />
                     </TabsContent>
                     
-                    <TabsContent value="holiday-calendar" className="mt-0 h-full">
-                      <HolidayCalendar />
+                    <TabsContent value="attendance" className="mt-0 h-full">
+                      <Attendance />
                     </TabsContent>
                     
                     <TabsContent value="help" className="mt-0 h-full">
