@@ -168,7 +168,7 @@ const Policies = () => {
 
       {/* Policy sections in full-width tree-like structure */}
       <div className="space-y-6">
-        {Object.entries(policyData).map(([sectionTitle, sectionPolicies]) => {
+        {Object.entries(getPoliciesToDisplay()).map(([sectionTitle, sectionPolicies]) => {
           const sectionKey = getSectionKey(sectionTitle);
           const isExpanded = expandedSections[sectionKey];
           
