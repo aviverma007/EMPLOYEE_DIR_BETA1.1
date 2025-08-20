@@ -2096,11 +2096,14 @@ async def process_realtime_request(message: str):
             realtime_info += f"Updated: {currency['timestamp']}\n"
     
     # Time requests
-    if any(word in message_lower for word in ['time', 'current time', 'what time', 'clock']):
+    if any(word in message_lower for word in ['time', 'current time', 'what time', 'clock', 'date', 'today']):
         time_info = await get_current_time()
         if 'error' not in time_info:
-            realtime_info += f"\n🕐 **Current Time:**\n"
-            realtime_info += f"India (IST): {time_info['current_time']}\n"
+            realtime_info += f"\n🕐 **Current Date & Time:**\n"
+            realtime_info += f"📅 Date: {time_info['day_name']}, {time_info['current_time'].split(' at ')[0]}\n"
+            realtime_info += f"⏰ Time: {time_info['clock']}\n"
+            realtime_info += f"🌍 Timezone: {time_info['timezone']}\n"
+            realtime_info += f"Updated: {time_info['timestamp']}\n"
     
     return realtime_info
 
