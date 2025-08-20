@@ -196,7 +196,7 @@ class DataService {
           punchOut.setHours(17, 30 + Math.floor(Math.random() * 30));
 
           attendance.push({
-            id: `att_${attendance.length + 1:04d}`,
+            id: `att_${(attendance.length + 1).toString().padStart(4, '0')}`,
             employee_id: emp.id,
             employee_name: emp.name,
             date: date.toISOString().split('T')[0],
