@@ -1987,6 +1987,42 @@ async def get_currency_rates(base: str = "USD", target: str = "INR"):
     except Exception as e:
         return {"error": f"Could not fetch currency data: {str(e)}"}
 
+async def get_server_time():
+    """Get accurate server time"""
+    try:
+        import subprocess
+        import platform
+        
+        # Get system time
+        now = datetime.now()
+        
+        # Try to get more accurate system time
+        if platform.system() == "Linux":
+            try:
+                result = subprocess.run(['date', '+%Y-%m-%d %H:%M:%S %Z'], 
+                                      capture_output=True, text=True, timeout=5)
+                if result.returncode == 0:
+                    system_time = result.stdout.strip()
+                else:
+                    system_time = now.strftime("%Y-%m-%d %H:%M:%S %Z")
+            except:
+                system_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            system_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        
+        return {
+            "system_time": system_time,
+            "python_time": now.strftime("%A, %B %d, %Y at %I:%M:%S %p"),
+            "timestamp": now.isoformat()
+        }
+    except Exception as e:
+        now = datetime.now()
+        return {
+            "system_time": now.strftime("%Y-%m-%d %H:%M:%S"),
+            "python_time": now.strftime("%A, %B %d, %Y at %I:%M:%S %p"),
+            "timestamp": now.isoformat()
+        }
+
 async def get_current_time(timezone: str = "Asia/Kolkata"):
     """Get current time in specified timezone"""
     try:
