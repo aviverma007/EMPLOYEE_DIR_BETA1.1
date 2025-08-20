@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend API Testing for Employee Directory and Hierarchy Builder
-Tests all 12 API endpoints with proper validation and error handling
+Backend API Testing Script - Employee Management Data Loading Verification
+Testing specific review request: Verify Excel data loading with 640 employees
 """
 
 import requests
@@ -9,9 +9,10 @@ import json
 import sys
 from typing import Dict, List, Any
 import time
+from datetime import datetime
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://app-launcher-37.preview.emergentagent.com/api"
+BACKEND_URL = "https://407b4321-679b-4365-8585-d2149e5d4143.preview.emergentagent.com/api"
 
 class EmployeeDirectoryTester:
     def __init__(self):
