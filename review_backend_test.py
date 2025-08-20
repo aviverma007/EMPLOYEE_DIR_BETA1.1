@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import uuid
 
 # Use external URL from frontend/.env for testing
-BASE_URL = "https://user-profile-app.preview.emergentagent.com/api"
+BASE_URL = "https://frontend-excel.preview.emergentagent.com/api"
 
 class ReviewBackendTester:
     def __init__(self):

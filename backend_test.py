@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 
 # Get backend URL from frontend .env
-BACKEND_URL = "https://user-profile-app.preview.emergentagent.com/api"
+BACKEND_URL = "https://frontend-excel.preview.emergentagent.com/api"
 
 class EmployeeDirectoryTester:
     def __init__(self):
