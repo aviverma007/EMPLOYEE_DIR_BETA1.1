@@ -149,17 +149,20 @@ const Home = () => {
     const fetchEmployees = async () => {
       try {
         const data = await employeeAPI.getAll();
-        // Filter employees who joined in July 2025 or later
+        // Filter employees who joined in the last 1 month
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
         const recentJoinees = data.filter(emp => {
+          if (!emp.dateOfJoining) return false;
           const joinDate = new Date(emp.dateOfJoining);
-          const july2025 = new Date('2025-07-01');
-          return joinDate >= july2025;
+          return joinDate >= oneMonthAgo;
         }).sort((a, b) => new Date(b.dateOfJoining) - new Date(a.dateOfJoining));
         
         setEmployees(recentJoinees.slice(0, 15)); // Show latest 15 employees
       } catch (error) {
         console.error('Error fetching employees:', error);
-        // Fallback data for demonstration - none as we want real data from July 2025
+        // Fallback data for demonstration
         setEmployees([]);
       }
     };
