@@ -489,45 +489,55 @@ const Home = () => {
                     <div className="flex-1 flex flex-col">
                       <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                       
-                      {/* New Joinees Vertical Scrolling Display - 3 at a time */}
+                      {/* New Joinees Enhanced Display */}
                       {employees.length > 0 ? (
                         <div className="flex-1 flex flex-col">
-                          <div className={`space-y-1 overflow-hidden relative ${
-                            !isAdmin() ? 'h-24' : 'h-32'
+                          <div className={`space-y-2 overflow-hidden relative ${
+                            !isAdmin() ? 'h-32' : 'h-40'
                           }`}>
                             <div 
                               className="transition-transform duration-1000 ease-in-out"
                               style={{ 
-                                transform: `translateY(-${(currentJoineeIndex) * (isAdmin() ? 33 : 22)}px)` 
+                                transform: `translateY(-${(currentJoineeIndex) * (isAdmin() ? 42 : 38)}px)` 
                               }}
                             >
                               {/* Create extended array for seamless scrolling */}
                               {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
                                 <div 
                                   key={`${employee.id}-${idx}`}
-                                  className={`bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between ${
-                                    !isAdmin() ? 'h-6' : 'h-8'
+                                  className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-2 mb-2 shadow-sm hover:shadow-md transition-all duration-300 ${
+                                    !isAdmin() ? 'h-8' : 'h-10'
                                   }`}
+                                  style={{
+                                    outline: '1px solid rgba(59, 130, 246, 0.3)',
+                                    outlineOffset: '1px'
+                                  }}
                                 >
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between text-xs">
-                                      <div className="flex flex-col flex-1 min-w-0">
-                                        <div className="flex items-center justify-between">
-                                          <span className="font-semibold text-blue-900 truncate mr-2">
-                                            {employee.id} - {employee.name}
-                                          </span>
-                                          <span className="text-blue-400 flex-shrink-0 text-[10px]">
-                                            {formatDate(employee.dateOfJoining).split(',')[0]}
-                                          </span>
-                                        </div>
-                                        <div className="flex items-center space-x-2 text-[10px] mt-0.5">
-                                          <span className="text-blue-600 truncate">
-                                            {employee.grade || 'N/A'}
-                                          </span>
-                                          <span className="text-blue-500 truncate">
-                                            {employee.department.length > 12 ? employee.department.substring(0, 12) + '..' : employee.department}
-                                          </span>
-                                        </div>
+                                  <div className="flex items-center justify-between h-full">
+                                    {/* Employee Name with White Background */}
+                                    <div className="bg-white px-2 py-1 rounded-md border border-blue-300 shadow-sm flex-shrink-0">
+                                      <span className="font-bold text-blue-900 text-xs">
+                                        {employee.name}
+                                      </span>
+                                    </div>
+                                    
+                                    {/* Employee Details */}
+                                    <div className="flex flex-col justify-center ml-2 flex-1 min-w-0">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-blue-700 font-medium text-[10px] truncate">
+                                          ID: {employee.id}
+                                        </span>
+                                        <span className="text-blue-500 text-[9px] flex-shrink-0 ml-2">
+                                          {formatDate(employee.dateOfJoining)}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center space-x-2 text-[9px] mt-0.5">
+                                        <span className="bg-blue-200 text-blue-800 px-1 rounded text-[8px] font-medium">
+                                          {employee.grade || 'N/A'}
+                                        </span>
+                                        <span className="text-blue-600 truncate font-medium">
+                                          {employee.department.length > 15 ? employee.department.substring(0, 15) + '..' : employee.department}
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -536,25 +546,29 @@ const Home = () => {
                             </div>
                           </div>
                           
-                          {/* Progress indicator */}
+                          {/* Enhanced Progress indicator */}
                           <div className="flex justify-center mt-2 space-x-1">
-                            {employees.slice(0, Math.min(10, employees.length)).map((_, idx) => (
+                            {employees.slice(0, Math.min(8, employees.length)).map((_, idx) => (
                               <div
                                 key={idx}
-                                className={`h-1 rounded-full transition-all duration-300 ${
+                                className={`h-1.5 rounded-full transition-all duration-500 ${
                                   idx === currentJoineeIndex 
-                                    ? 'bg-blue-600 w-4' 
+                                    ? 'bg-blue-600 w-6 shadow-md' 
                                     : idx === (currentJoineeIndex + 1) % employees.length
-                                    ? 'bg-blue-500 w-2'
-                                    : 'bg-blue-300 w-1'
+                                    ? 'bg-blue-400 w-3'
+                                    : 'bg-blue-200 w-2'
                                 }`}
                               />
                             ))}
                           </div>
                         </div>
                       ) : (
-                        <div className="flex-1 flex items-center justify-center text-blue-700">
-                          <p className="text-sm">Loading joinees from July 2025...</p>
+                        <div className="flex-1 flex items-center justify-center text-blue-700 bg-blue-50 rounded-lg border-2 border-dashed border-blue-300">
+                          <div className="text-center p-4">
+                            <Users className="h-8 w-8 text-blue-400 mx-auto mb-2" />
+                            <p className="text-sm font-medium">Loading new joinees...</p>
+                            <p className="text-xs text-blue-500">July 2025 onwards</p>
+                          </div>
                         </div>
                       )}
                     </div>
