@@ -29,7 +29,7 @@ import MeetingRooms from "./components/MeetingRooms";
 import HolidayCalendar from "./components/HolidayCalendar";
 
 const AppContent = () => {
-  const { isAuthenticated, initializeAuth, isAdmin } = useAuth();
+  const { isAuthenticated, initializeAuth, isAdmin, isUser } = useAuth();
   const [activeTab, setActiveTab] = useState("home");
   const [activeDirectorySection, setActiveDirectorySection] = useState("directory");
 
