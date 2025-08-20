@@ -215,6 +215,11 @@ const AppContent = () => {
                       <MeetingRooms />
                     </TabsContent>
                     
+                    {/* Both Admin and User can access Holiday Calendar */}
+                    <TabsContent value="holiday-calendar" className="mt-0 h-full">
+                      <HolidayCalendar />
+                    </TabsContent>
+                    
                     {/* Admin-only content */}
                     {isAdmin() && (
                       <TabsContent value="attendance" className="mt-0 h-full">
