@@ -99,6 +99,10 @@ const Policies = () => {
     ]
   };
 
+  useEffect(() => {
+    fetchPolicies();
+  }, []);
+
   // Get policies to display based on user role
   const getPoliciesToDisplay = () => {
     if (isAdmin()) {
