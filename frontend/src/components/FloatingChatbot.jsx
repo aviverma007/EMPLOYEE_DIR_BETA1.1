@@ -41,7 +41,7 @@ const FloatingChatbot = () => {
         } else {
           // Add welcome message if no history
           setMessages([{
-            text: "Hi! I'm SmartWorld's AI assistant. I can help you navigate the Employee Directory System, answer questions about features, find employees, book meeting rooms, and much more. How can I assist you today?",
+            text: "Hi! I'm SmartWorld's AI assistant with real-time capabilities! 🚀\n\n💼 **SmartWorld System**: Navigate employee directory, book meeting rooms, access policies\n🌍 **General AI**: Answer any question like ChatGPT\n⚡ **Real-time Data**: Check weather, traffic, news, stocks, currency rates, and more!\n\nTry asking:\n• \"What's the weather in Delhi?\"\n• \"How do I search employees?\"\n• \"Latest news headlines\"\n• \"Current stock market\"\n\nHow can I help you today?",
             isUser: false,
             timestamp: new Date()
           }]);
