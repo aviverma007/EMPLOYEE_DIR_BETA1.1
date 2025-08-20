@@ -6,24 +6,46 @@ import imageStorage from './imageStorage';
 export const employeeAPI = {
   // Get all employees with optional search and filters
   getAll: async (searchParams = {}) => {
-    return await dataService.getEmployees(searchParams);
+    const employees = await dataService.getEmployees(searchParams);
+    
+    // Load stored images for all employees
+    const allImages = await imageStorage.getAllImages();
+    
+    // Add stored images to employee data
+    return employees.map(emp => ({
+      ...emp,
+      profileImage: allImages[emp.id] || emp.profileImage
+    }));
   },
 
   // Update employee profile image
   updateImage: async (employeeId, imageData) => {
+    // If it's base64 data, save to storage
+    if (typeof imageData === 'string' && imageData.startsWith('data:image/')) {
+      // Create a mock file object from base64 for storage
+      const response = await fetch(imageData);
+      const blob = await response.blob();
+      const file = new File([blob], `profile_${employeeId}.jpg`, { type: blob.type });
+      
+      const savedUrl = await imageStorage.saveImage(employeeId, file);
+      
+      // Update in dataService as well
+      const updatedEmployee = await dataService.updateEmployeeImage(employeeId, savedUrl);
+      return { ...updatedEmployee, profileImage: savedUrl };
+    }
+    
     return await dataService.updateEmployeeImage(employeeId, imageData);
   },
 
   // Upload employee profile image file (original images)
   uploadImage: async (employeeId, imageFile) => {
-    // Convert file to base64 for frontend storage
-    const base64 = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(imageFile);
-    });
+    // Save the actual file to local storage
+    const savedUrl = await imageStorage.saveImage(employeeId, imageFile);
     
-    return await dataService.updateEmployeeImage(employeeId, base64);
+    // Also update in dataService
+    const updatedEmployee = await dataService.updateEmployeeImage(employeeId, savedUrl);
+    
+    return { ...updatedEmployee, profileImage: savedUrl };
   }
 };
 
