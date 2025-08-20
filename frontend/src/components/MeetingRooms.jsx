@@ -9,14 +9,21 @@ import { useAuth } from '../context/AuthContext';
 import { meetingRoomAPI, employeeAPI, utilityAPI } from '../services/api';
 
 const MeetingRooms = () => {
+  const { isAdmin } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [filters, setFilters] = useState({
-    location: '',
-    floor: '',
-    status: ''
-  });
+  const [filters, setFilters] = useState(
+    isAdmin() ? {
+      location: '',
+      floor: '',
+      status: ''
+    } : {
+      location: 'IFC',
+      floor: '14',
+      status: ''
+    }
+  );
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [bookingData, setBookingData] = useState({
     employee_name: '',
