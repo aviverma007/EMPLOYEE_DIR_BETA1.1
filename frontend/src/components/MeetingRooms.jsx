@@ -13,17 +13,11 @@ const MeetingRooms = () => {
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [filters, setFilters] = useState(
-    isAdmin() ? {
-      location: '',
-      floor: '',
-      status: ''
-    } : {
-      location: 'IFC',
-      floor: '14',
-      status: ''
-    }
-  );
+  const [filters, setFilters] = useState({
+    location: '',
+    floor: '',
+    status: ''
+  });
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [bookingData, setBookingData] = useState({
     employee_name: '',
@@ -33,6 +27,17 @@ const MeetingRooms = () => {
     purpose: ''
   });
   const [loading, setLoading] = useState(true);
+
+  // Set user-specific filters after component mounts
+  useEffect(() => {
+    if (!isAdmin()) {
+      setFilters({
+        location: 'IFC',
+        floor: '14',
+        status: ''
+      });
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     fetchRooms();
