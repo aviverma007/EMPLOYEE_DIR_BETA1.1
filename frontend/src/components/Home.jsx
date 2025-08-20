@@ -441,13 +441,15 @@ const Home = () => {
                   ))}
                 </div>
                 
-                {/* Title overlay */}
-                <div className="absolute top-4 left-4 z-10">
-                  <div className="flex items-center space-x-2 text-white">
-                    <Image className="h-5 w-5" />
-                    <span className="text-sm font-bold tracking-wide">PICTURES</span>
+                {/* Title overlay - Only show for Admin */}
+                {isAdmin() && (
+                  <div className="absolute top-4 left-4 z-10">
+                    <div className="flex items-center space-x-2 text-white">
+                      <Image className="h-5 w-5" />
+                      <span className="text-sm font-bold tracking-wide">PICTURES</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Slide indicators */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
