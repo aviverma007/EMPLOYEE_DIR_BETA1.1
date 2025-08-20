@@ -467,7 +467,6 @@ const Home = () => {
                 </CardHeader>
                 <CardContent className="pt-0 flex-1 flex flex-col">
                   {tile.interactive && tile.title === "NEW JOINEES" ? (
-              ) : tile.interactive && tile.title === "NEW JOINEES" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-3">{tile.description}</p>
                   
