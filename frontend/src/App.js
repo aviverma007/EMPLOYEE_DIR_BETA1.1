@@ -8,7 +8,7 @@ import {
   DropdownMenuContent, 
   DropdownMenuItem 
 } from "./components/ui/dropdown-menu";
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import LoginForm from "./components/LoginForm";
 import EmployeeDirectory from "./components/EmployeeDirectory";
 import Header from "./components/Header";
