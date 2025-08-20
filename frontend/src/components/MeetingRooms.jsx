@@ -172,66 +172,83 @@ const MeetingRooms = () => {
         </Button>
       </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Location & Floor Selection</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Location Filter</label>
-              <select
-                value={filters.location}
-                onChange={(e) => setFilters({...filters, location: e.target.value})}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">All Locations</option>
-                {locations.map(location => (
-                  <option key={location} value={location}>
-                    {location}
-                  </option>
-                ))}
-              </select>
-            </div>
+      {/* Filters - Only show for Admin */}
+      {isAdmin() && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Location & Floor Selection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Location Filter</label>
+                <select
+                  value={filters.location}
+                  onChange={(e) => setFilters({...filters, location: e.target.value})}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">All Locations</option>
+                  {locations.map(location => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Floor Filter</label>
-              <select
-                value={filters.floor}
-                onChange={(e) => setFilters({...filters, floor: e.target.value})}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">All Floors</option>
-                {getUniqueFloors().map(floor => (
-                  <option key={floor} value={floor}>
-                    {floor}
-                  </option>
-                ))}
-              </select>
-            </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Floor Filter</label>
+                <select
+                  value={filters.floor}
+                  onChange={(e) => setFilters({...filters, floor: e.target.value})}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">All Floors</option>
+                  {getUniqueFloors().map(floor => (
+                    <option key={floor} value={floor}>
+                      {floor}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">Room Status Filter</label>
-              <select
-                value={filters.status}
-                onChange={(e) => setFilters({...filters, status: e.target.value})}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">All Status</option>
-                <option value="vacant">Vacant</option>
-                <option value="occupied">Occupied</option>
-              </select>
-            </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Room Status Filter</label>
+                <select
+                  value={filters.status}
+                  onChange={(e) => setFilters({...filters, status: e.target.value})}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">All Status</option>
+                  <option value="vacant">Vacant</option>
+                  <option value="occupied">Occupied</option>
+                </select>
+              </div>
 
-            <div className="flex items-end">
-              <Button variant="outline" onClick={clearFilters} className="w-full">
-                Clear Filters
-              </Button>
+              <div className="flex items-end">
+                <Button variant="outline" onClick={clearFilters} className="w-full">
+                  Clear Filters
+                </Button>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* For Users - Show info about 14th floor IFC rooms */}
+      {!isAdmin() && (
+        <Card className="mb-6 bg-blue-50 border-blue-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center space-x-3">
+              <MapPin className="h-5 w-5 text-blue-600" />
+              <div>
+                <h3 className="font-semibold text-blue-900">Meeting Rooms - IFC 14th Floor</h3>
+                <p className="text-sm text-blue-700">Showing available meeting rooms on the 14th floor at IFC location</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Booking Modal */}
       {selectedRoom && (
