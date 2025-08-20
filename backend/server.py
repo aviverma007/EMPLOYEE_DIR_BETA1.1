@@ -1897,6 +1897,153 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# ====================================
+# Chatbot API Endpoints
+# ====================================
+
+# Initialize the LLM Chat service
+from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+# System message containing application knowledge
+SYSTEM_MESSAGE = """You are SmartWorld's intelligent assistant chatbot. You help employees and users navigate and understand the Employee Directory System.
+
+APPLICATION OVERVIEW:
+- SmartWorld Employee Directory System with 640+ employees
+- 6 main sections: Home, Employee Directory, Policies, Meeting Rooms, Holiday Calendar, Help
+- Support both Admin and User access levels
+
+KEY FEATURES YOU CAN HELP WITH:
+
+1. HOME SECTION:
+   - News feed with company announcements (high/medium/normal priority)
+   - Pictures gallery with company events
+   - New Joinees section (showing recent hires from July 2025+)
+   - To-Do List for personal task management
+   - Quick Links/Quick Access section with:
+     * Adrenaline HR Portal: https://maxhr.myadrenalin.com/AdrenalinMax/
+     * Company Website: https://smartworlddevelopers.com/
+     * BIMABRO: https://employee.bimabro.com/
+     * MAFOI HR Suite: https://mafoi.hfactor.app/hrsuite/#/login/smartworld
+     * Projects dropdown with 6 SmartWorld projects (SKY ARC, THE EDITION, ONE DXP, ORCHARD STREET, ORCHARD, GEMS)
+
+2. EMPLOYEE DIRECTORY:
+   - 640+ employee profiles with photos, contact info, departments, locations
+   - Search functionality (starts-with pattern) by name, ID, department, location, grade, mobile
+   - 23 departments and 22 office locations
+   - Hierarchy Builder (Admin only) for organizational structure
+   - Profile image upload and management
+
+3. POLICIES:
+   - HR Policy, IT Policy, Admin Policy, Other Policies sections
+   - PDF document links for company policies
+   - Holiday calendars and business hour policies
+
+4. MEETING ROOMS:
+   - 32 meeting rooms across multiple locations
+   - IFC location: floors 11, 12, 14 with named rooms (OVAL, PETRONAS, GLOBAL CENTER, etc.)
+   - Room booking system (9 AM - 8 PM, single booking per room)
+   - Capacity information and equipment details
+   - Clear all bookings functionality
+
+5. HELP SECTION:
+   - Support ticket system with priority levels
+   - Threaded replies for help requests
+   - Status tracking (open/in_progress/resolved)
+
+6. HOLIDAY CALENDAR:
+   - Company holiday schedules
+   - Compact calendar view
+
+TECHNICAL FEATURES:
+- Real-time updates and notifications
+- Image upload and storage
+- Excel data integration
+- Search and filtering capabilities
+- Mobile-responsive design
+- Role-based access (Admin vs User)
+
+QUICK TROUBLESHOOTING:
+- Login: Use Administrator Access or User Access buttons
+- Search: Type at least 2 characters for employee search
+- Images: Upload supported formats (JPG, PNG, GIF)
+- Booking: One booking per room, cancel existing before new booking
+- Help: Use priority levels for urgent issues
+
+Be helpful, friendly, and provide step-by-step guidance. If users ask about specific employees, departments, or features, guide them to the appropriate section. Always encourage users to explore the different tabs and features available to them."""
+
+@app.post("/api/chat", response_model=ChatResponse)
+async def chat_with_bot(request: ChatRequest):
+    """Chat endpoint for the AI assistant"""
+    try:
+        # Initialize chat with session ID and system message
+        chat = LlmChat(
+            api_key=os.environ.get('EMERGENT_LLM_KEY'),
+            session_id=request.session_id,
+            system_message=SYSTEM_MESSAGE
+        ).with_model("gemini", "gemini-2.0-flash")
+        
+        # Create user message
+        user_message = UserMessage(text=request.message)
+        
+        # Get response from the model
+        response = await chat.send_message(user_message)
+        
+        # Save chat to database
+        chat_record = ChatMessage(
+            session_id=request.session_id,
+            user_message=request.message,
+            bot_response=response,
+            created_at=datetime.utcnow()
+        )
+        
+        # Insert into MongoDB
+        await db.chat_messages.insert_one(chat_record.dict())
+        
+        return ChatResponse(
+            session_id=request.session_id,
+            message=request.message,
+            response=response,
+            created_at=datetime.utcnow()
+        )
+        
+    except Exception as e:
+        logger.error(f"Chat error: {str(e)}")
+        import traceback
+        logger.error(f"Chat traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"Chat service error: {str(e)}")
+
+@app.get("/api/chat/history/{session_id}")
+async def get_chat_history(session_id: str, limit: int = 50):
+    """Get chat history for a session"""
+    try:
+        cursor = db.chat_messages.find(
+            {"session_id": session_id}
+        ).sort("created_at", -1).limit(limit)
+        
+        messages = []
+        async for message in cursor:
+            # Convert ObjectId to string and remove it from dict
+            if '_id' in message:
+                del message['_id']
+            messages.append(message)
+        
+        return {"session_id": session_id, "messages": list(reversed(messages))}
+        
+    except Exception as e:
+        logger.error(f"Chat history error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch chat history: {str(e)}")
+
+@app.delete("/api/chat/history/{session_id}")
+async def clear_chat_history(session_id: str):
+    """Clear chat history for a session"""
+    try:
+        result = await db.chat_messages.delete_many({"session_id": session_id})
+        return {"message": f"Cleared {result.deleted_count} messages for session {session_id}"}
+        
+    except Exception as e:
+        logger.error(f"Clear chat history error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to clear chat history: {str(e)}")
+
 # Initialize database with Excel data on startup
 @app.on_event("startup")
 async def startup_db():
