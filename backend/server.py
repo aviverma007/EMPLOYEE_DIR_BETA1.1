@@ -1903,6 +1903,10 @@ logger = logging.getLogger(__name__)
 
 # Initialize the LLM Chat service
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+import aiohttp
+import json
+from datetime import datetime
+import asyncio
 
 # System message containing application knowledge and general AI capabilities
 SYSTEM_MESSAGE = """You are SmartWorld's intelligent AI assistant. You can help with two main areas:
