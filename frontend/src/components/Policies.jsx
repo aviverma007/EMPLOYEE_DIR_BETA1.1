@@ -99,9 +99,14 @@ const Policies = () => {
     ]
   };
 
-  useEffect(() => {
-    fetchPolicies();
-  }, []);
+  // Get policies to display based on user role
+  const getPoliciesToDisplay = () => {
+    if (isAdmin()) {
+      return policyData; // Admin sees all policies
+    } else {
+      return { "HR POLICY": policyData["HR POLICY"] }; // User sees only HR policies
+    }
+  };
 
   const fetchPolicies = async () => {
     try {
