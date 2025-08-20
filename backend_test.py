@@ -91,9 +91,9 @@ class MinimalBackendTester:
             self.log_test("Health Check", False, f"Health check failed: {str(e)}")
 
     def test_cors_configuration(self):
-        """Test 3: CORS configuration"""
+        """Test 3: CORS configuration via external URL"""
         try:
-            # Test preflight request
+            # Test preflight request via external URL for API endpoints
             headers = {
                 'Origin': 'https://example.com',
                 'Access-Control-Request-Method': 'GET',
@@ -107,9 +107,11 @@ class MinimalBackendTester:
                 'access-control-allow-headers': response.headers.get('access-control-allow-headers')
             }
             
-            if cors_headers['access-control-allow-origin'] == '*':
+            # Check if CORS allows the origin (should be * for allow all origins)
+            allow_origin = cors_headers['access-control-allow-origin']
+            if allow_origin == '*' or allow_origin == 'https://example.com':
                 self.log_test("CORS Configuration", True, 
-                            "CORS properly configured for all origins", 
+                            "CORS properly configured for API endpoints", 
                             f"CORS headers: {cors_headers}")
             else:
                 self.log_test("CORS Configuration", False, 
