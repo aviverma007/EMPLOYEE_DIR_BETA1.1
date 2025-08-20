@@ -467,74 +467,74 @@ const Home = () => {
                 </CardHeader>
                 <CardContent className="pt-0 flex-1 flex flex-col">
                   {tile.interactive && tile.title === "NEW JOINEES" ? (
-                <div className="flex-1 flex flex-col">
-                  <p className="text-xs opacity-90 mb-3">{tile.description}</p>
-                  
-                  {/* New Joinees Vertical Scrolling Display - 3 at a time */}
-                  {employees.length > 0 ? (
                     <div className="flex-1 flex flex-col">
-                      <div className="space-y-1 h-32 overflow-hidden relative">
-                        <div 
-                          className="transition-transform duration-1000 ease-in-out"
-                          style={{ 
-                            transform: `translateY(-${(currentJoineeIndex) * 33}px)` 
-                          }}
-                        >
-                          {/* Create extended array for seamless scrolling */}
-                          {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
+                      <p className="text-xs opacity-90 mb-3">{tile.description}</p>
+                      
+                      {/* New Joinees Vertical Scrolling Display - 3 at a time */}
+                      {employees.length > 0 ? (
+                        <div className="flex-1 flex flex-col">
+                          <div className="space-y-1 h-32 overflow-hidden relative">
                             <div 
-                              key={`${employee.id}-${idx}`}
-                              className="h-8 bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between"
+                              className="transition-transform duration-1000 ease-in-out"
+                              style={{ 
+                                transform: `translateY(-${(currentJoineeIndex) * 33}px)` 
+                              }}
                             >
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between text-xs">
-                                  <div className="flex flex-col flex-1 min-w-0">
-                                    <div className="flex items-center justify-between">
-                                      <span className="font-semibold text-blue-900 truncate mr-2">
-                                        {employee.id} - {employee.name}
-                                      </span>
-                                      <span className="text-blue-400 flex-shrink-0 text-[10px]">
-                                        {formatDate(employee.dateOfJoining).split(',')[0]}
-                                      </span>
-                                    </div>
-                                    <div className="flex items-center space-x-2 text-[10px] mt-0.5">
-                                      <span className="text-blue-600 truncate">
-                                        {employee.grade || 'N/A'}
-                                      </span>
-                                      <span className="text-blue-500 truncate">
-                                        {employee.department.length > 12 ? employee.department.substring(0, 12) + '..' : employee.department}
-                                      </span>
+                              {/* Create extended array for seamless scrolling */}
+                              {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
+                                <div 
+                                  key={`${employee.id}-${idx}`}
+                                  className="h-8 bg-blue-50 rounded px-2 py-1 mb-1 flex items-center justify-between"
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between text-xs">
+                                      <div className="flex flex-col flex-1 min-w-0">
+                                        <div className="flex items-center justify-between">
+                                          <span className="font-semibold text-blue-900 truncate mr-2">
+                                            {employee.id} - {employee.name}
+                                          </span>
+                                          <span className="text-blue-400 flex-shrink-0 text-[10px]">
+                                            {formatDate(employee.dateOfJoining).split(',')[0]}
+                                          </span>
+                                        </div>
+                                        <div className="flex items-center space-x-2 text-[10px] mt-0.5">
+                                          <span className="text-blue-600 truncate">
+                                            {employee.grade || 'N/A'}
+                                          </span>
+                                          <span className="text-blue-500 truncate">
+                                            {employee.department.length > 12 ? employee.department.substring(0, 12) + '..' : employee.department}
+                                          </span>
+                                        </div>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
+                              ))}
                             </div>
-                          ))}
+                          </div>
+                          
+                          {/* Progress indicator */}
+                          <div className="flex justify-center mt-2 space-x-1">
+                            {employees.slice(0, Math.min(10, employees.length)).map((_, idx) => (
+                              <div
+                                key={idx}
+                                className={`h-1 rounded-full transition-all duration-300 ${
+                                  idx === currentJoineeIndex 
+                                    ? 'bg-blue-600 w-4' 
+                                    : idx === (currentJoineeIndex + 1) % employees.length
+                                    ? 'bg-blue-500 w-2'
+                                    : 'bg-blue-300 w-1'
+                                }`}
+                              />
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      
-                      {/* Progress indicator */}
-                      <div className="flex justify-center mt-2 space-x-1">
-                        {employees.slice(0, Math.min(10, employees.length)).map((_, idx) => (
-                          <div
-                            key={idx}
-                            className={`h-1 rounded-full transition-all duration-300 ${
-                              idx === currentJoineeIndex 
-                                ? 'bg-blue-600 w-4' 
-                                : idx === (currentJoineeIndex + 1) % employees.length
-                                ? 'bg-blue-500 w-2'
-                                : 'bg-blue-300 w-1'
-                            }`}
-                          />
-                        ))}
-                      </div>
+                      ) : (
+                        <div className="flex-1 flex items-center justify-center text-blue-700">
+                          <p className="text-sm">Loading joinees from July 2025...</p>
+                        </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center text-blue-700">
-                      <p className="text-sm">Loading joinees from July 2025...</p>
-                    </div>
-                  )}
-                </div>
               ) : tile.interactive && tile.title === "TO DO LIST" ? (
                 <div className="flex-1 flex flex-col">
                   <p className="text-xs opacity-90 mb-2">{tile.description}</p>
