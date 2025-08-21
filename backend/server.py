@@ -1,17 +1,18 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import os
 
-app = FastAPI(title="Frontend-Only Employee Directory API", version="1.0.0")
+# Create FastAPI app
+app = FastAPI()
 
-# CORS middleware - allow all origins for frontend-only mode
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 @app.get("/")
@@ -22,7 +23,6 @@ async def root():
 async def health_check():
     return {"status": "healthy", "mode": "frontend-only"}
 
-# Minimal API endpoints for compatibility (all return empty responses)
 @app.get("/api/employees")
 async def get_employees():
     return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
@@ -39,17 +39,22 @@ async def get_locations():
 async def get_stats():
     return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
 
-# Catch-all for other API endpoints
-@app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def catch_all_api(path: str):
-    return JSONResponse(
-        status_code=200,
-        content={
-            "message": f"API endpoint /{path} is now handled by frontend dataService",
-            "mode": "frontend-only",
-            "redirect": "Use frontend Excel parsing"
-        }
-    )
+@app.get("/api/meeting-rooms")
+async def get_meeting_rooms():
+    return {"message": "Meeting rooms API is now handled by frontend dataService", "redirect": "Use frontend dataService"}
+
+@app.post("/api/meeting-rooms/{room_id}/book")
+async def book_meeting_room(room_id: str):
+    return {"message": f"Meeting room booking for {room_id} is now handled by frontend dataService", "redirect": "Use frontend dataService"}
+
+# Catch-all for other endpoints
+@app.api_route("/api/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def catch_all(full_path: str, request: Request):
+    return {
+        "message": f"API endpoint /{full_path} is now handled by frontend dataService",
+        "mode": "frontend-only",
+        "redirect": "Use frontend dataService"
+    }
 
 if __name__ == "__main__":
     import uvicorn
