@@ -775,6 +775,9 @@ class DataService {
 
   // Meeting Rooms methods
   async getMeetingRooms(filters = {}) {
+    // Clean up expired bookings first
+    this.cleanupExpiredBookings(this.meetingRooms);
+    
     let filtered = [...this.meetingRooms];
     
     if (filters.location) {
@@ -788,6 +791,9 @@ class DataService {
     if (filters.status) {
       filtered = filtered.filter(room => room.status === filters.status);
     }
+    
+    // Save any changes made by cleanup
+    this.saveMeetingRoomsToStorage();
     
     return filtered;
   }
