@@ -44,5 +44,6 @@ def catch_all_post(path: str):
     return {"message": f"API endpoint /{path} is now handled by frontend dataService", "mode": "frontend-only", "redirect": "Use frontend dataService"}
 
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.environ.get("PORT", 8001))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    uvicorn.run(app, host="0.0.0.0", port=port)
