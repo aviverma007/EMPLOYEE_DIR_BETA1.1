@@ -256,7 +256,7 @@ const MeetingRooms = () => {
               <MapPin className="h-5 w-5 text-blue-600" />
               <div>
                 <h3 className="font-semibold text-blue-900">Meeting Rooms - IFC 14th Floor</h3>
-                <p className="text-sm text-blue-700">Showing available meeting rooms on the 14th floor at IFC location</p>
+                <p className="text-sm text-blue-700">Showing available meeting rooms on the 14th floor at IFC location (9 rooms available)</p>
               </div>
             </div>
           </CardContent>
