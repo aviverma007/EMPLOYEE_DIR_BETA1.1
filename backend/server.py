@@ -1,60 +1,72 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 import os
 
-# Create FastAPI app
-app = FastAPI()
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.route('/')
+def root():
+    return jsonify({
+        "message": "Frontend-Only Employee Directory API", 
+        "status": "running", 
+        "mode": "minimal"
+    })
 
-@app.get("/")
-async def root():
-    return {"message": "Frontend-Only Employee Directory API", "status": "running", "mode": "minimal"}
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy", "mode": "frontend-only"})
 
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "mode": "frontend-only"}
+@app.route('/api/employees')
+def get_employees():
+    return jsonify({
+        "message": "Data is now managed by frontend", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.get("/api/employees")
-async def get_employees():
-    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
+@app.route('/api/departments')
+def get_departments():
+    return jsonify({
+        "message": "Data is now managed by frontend", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.get("/api/departments")
-async def get_departments():
-    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
+@app.route('/api/locations')
+def get_locations():
+    return jsonify({
+        "message": "Data is now managed by frontend", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.get("/api/locations")
-async def get_locations():
-    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
+@app.route('/api/stats')
+def get_stats():
+    return jsonify({
+        "message": "Data is now managed by frontend", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.get("/api/stats")
-async def get_stats():
-    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
+@app.route('/api/meeting-rooms')
+def get_meeting_rooms():
+    return jsonify({
+        "message": "Meeting rooms API is now handled by frontend dataService", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.get("/api/meeting-rooms")
-async def get_meeting_rooms():
-    return {"message": "Meeting rooms API is now handled by frontend dataService", "redirect": "Use frontend dataService"}
+@app.route('/api/meeting-rooms/<room_id>/book', methods=['POST'])
+def book_meeting_room(room_id):
+    return jsonify({
+        "message": f"Meeting room booking for {room_id} is now handled by frontend dataService", 
+        "redirect": "Use frontend dataService"
+    })
 
-@app.post("/api/meeting-rooms/{room_id}/book")
-async def book_meeting_room(room_id: str):
-    return {"message": f"Meeting room booking for {room_id} is now handled by frontend dataService", "redirect": "Use frontend dataService"}
-
-# Catch-all for other endpoints
-@app.api_route("/api/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def catch_all(full_path: str, request: Request):
-    return {
-        "message": f"API endpoint /{full_path} is now handled by frontend dataService",
+# Catch-all for other API endpoints
+@app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+def catch_all_api(path):
+    return jsonify({
+        "message": f"API endpoint /{path} is now handled by frontend dataService",
         "mode": "frontend-only",
         "redirect": "Use frontend dataService"
-    }
+    })
 
 if __name__ == "__main__":
     import uvicorn
