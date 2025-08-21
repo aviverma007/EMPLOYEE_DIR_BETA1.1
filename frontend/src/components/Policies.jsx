@@ -124,7 +124,16 @@ const Policies = () => {
   };
 
   const handlePolicyClick = (link) => {
-    window.open(link, '_blank');
+    try {
+      // Encode the URL properly to handle spaces and special characters
+      const encodedLink = encodeURI(link);
+      console.log('Opening policy:', encodedLink);
+      window.open(encodedLink, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error('Error opening policy:', error);
+      // Fallback: try direct link
+      window.open(link, '_blank');
+    }
   };
 
   const getSectionKey = (title) => {
