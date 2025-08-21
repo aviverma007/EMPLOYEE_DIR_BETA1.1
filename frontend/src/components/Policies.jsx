@@ -14,63 +14,63 @@ const Policies = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // All policies under single HR POLICY heading - no categorization
+  // All policies under single HR POLICY heading - mapped to actual files
   const policyData = {
     "HR POLICY": [
-      { 
-        title: "New Joinee Welcome Kit", 
-        link: "/company policies/_3_11_842fc9cf36614e97_New Joinee Welcome Kit SWD.pdf", 
-        description: "Complete guide for new employees joining the organization"
-      },
-      { 
-        title: "Employee Code of Conduct", 
-        link: "/company policies/_24_0_5f0912d98dec4e88_Employee Code of Conduct.pdf", 
-        description: "Guidelines for professional behavior and conduct standards"
-      },
-      { 
-        title: "Flexible Work Schedule Policy", 
-        link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
-        description: "Guidelines for flexible working arrangements and remote work policies"
-      },
       { 
         title: "Business Hours Attendance Policy", 
         link: "/company policies/_11_11_70bde4e9a0a04aed_Business Hours Attendance Policy.pdf", 
         description: "Attendance requirements and business hours guidelines"
       },
       { 
-        title: "Night Shift Meal Allowance", 
+        title: "Sexual Harassment At Work Redressal Policy", 
+        link: "/company policies/_12_39_b356500c83384d2d_Sexual Harassment At Work Redressal Policy_26-Apr-22.pdf", 
+        description: "Workplace harassment prevention and redressal procedures"
+      },
+      { 
+        title: "Dress Code Policy", 
+        link: "/company policies/_13_55_00673d13502c42da_Dress code policy.pdf", 
+        description: "Professional dress code guidelines and standards"
+      },
+      { 
+        title: "Employee Referral Policy", 
+        link: "/company policies/_14_19_2fe9bd4b1c514d00_Employee referral policy.pdf", 
+        description: "Employee referral program guidelines and procedures"
+      },
+      { 
+        title: "Leave Policy (Revised)", 
+        link: "/company policies/_14_33_50e319284d7e4fe4_Leave Policy (Revised).pdf", 
+        description: "Comprehensive leave policy including all types of leaves"
+      },
+      { 
+        title: "Local Conveyance Policy", 
+        link: "/company policies/_15_9_02985794b8584650_Local Conveyance policy.pdf", 
+        description: "Local travel and conveyance reimbursement guidelines"
+      },
+      { 
+        title: "Whistle Blower Policy", 
+        link: "/company policies/_16_4_3edd02c8f36f429f_Whistle Blower Policy.pdf", 
+        description: "Whistleblower protection and reporting procedures"
+      },
+      { 
+        title: "Tour Travel Policy", 
+        link: "/company policies/_23_44_6eca6e909cee4aa7_Tour Travel Policy.pdf", 
+        description: "Business travel guidelines and expense policies"
+      },
+      { 
+        title: "Revised Attendance Policy", 
+        link: "/company policies/_36_12_f19af68b04f849ee_Revised Attendance Policy w.e.f 21st May 25.pdf", 
+        description: "Updated attendance policy effective from May 21, 2025"
+      },
+      { 
+        title: "Night Shift Meal & Conveyance Allowance", 
         link: "/company policies/_38_0_62d66a9aaaf645cc_Meal and Conveyance for Employees Working at Night on Sites.pdf", 
         description: "Meal and conveyance allowance for employees working night shifts on sites"
       },
       { 
-        title: "Information Security Policy", 
-        link: "/company policies/_18_0_8b6e4c9a6f124b33_Information Security Policy.pdf", 
-        description: "Guidelines for maintaining information security and data protection"
-      },
-      { 
-        title: "IT Equipment Usage Policy", 
-        link: "/company policies/_19_0_1f4a2d8b3c567e89_IT Equipment Usage Policy.pdf", 
-        description: "Proper usage and care of company IT equipment and resources"
-      },
-      { 
-        title: "Email and Internet Usage Policy", 
-        link: "/company policies/_20_0_9e8f7a6b5d432c10_Email Internet Usage Policy.pdf", 
-        description: "Guidelines for appropriate email and internet usage in the workplace"
-      },
-      { 
-        title: "Office Administration Guidelines", 
-        link: "/company policies/_25_0_7c9e8f1a2b435d67_Office Administration Guidelines.pdf", 
-        description: "General office administration procedures and guidelines"
-      },
-      { 
-        title: "Travel and Expense Policy", 
-        link: "/company policies/_26_0_4b8d9f2e1c567a89_Travel Expense Policy.pdf", 
-        description: "Guidelines for business travel and expense reimbursement procedures"
-      },
-      { 
-        title: "Asset Management Policy", 
-        link: "/company policies/_27_0_8e7f6a9b3c124d56_Asset Management Policy.pdf", 
-        description: "Procedures for managing and tracking company assets and equipment"
+        title: "Flexible Work Schedule Policy", 
+        link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
+        description: "Guidelines for flexible working arrangements and remote work policies"
       },
       { 
         title: "Holiday List 2023", 
@@ -83,9 +83,9 @@ const Policies = () => {
         description: "Official holiday calendar for the year 2025"
       },
       { 
-        title: "Emergency Response Procedures", 
-        link: "/company policies/_28_0_5f1a8d9e2b367c45_Emergency Response Procedures.pdf", 
-        description: "Guidelines for handling emergency situations in the workplace"
+        title: "Proposed Holiday List 2024", 
+        link: "/company policies/Proposed Holiday List - 2024.xlsx.pdf", 
+        description: "Proposed holiday calendar for the year 2024"
       }
     ]
   };
