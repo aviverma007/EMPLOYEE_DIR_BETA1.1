@@ -837,23 +837,44 @@ class DataService {
       throw new Error('Meeting room not found');
     }
 
+    if (room.status === 'vacant') {
+      throw new Error('No booking found to cancel');
+    }
+
+    const roomName = room.name;
+    const employeeName = room.current_booking ? room.current_booking.employee_name : 'Unknown';
+
     room.bookings = [];
     room.current_booking = null;
     room.status = 'vacant';
 
-    return { message: 'Booking cancelled successfully' };
+    // Save to localStorage
+    this.saveMeetingRoomsToStorage();
+
+    console.log(`Booking cancelled for ${roomName} (previously booked by ${employeeName})`);
+    return { message: 'Booking cancelled successfully', room_name: roomName };
   }
 
   async clearAllMeetingRoomBookings() {
+    let cancelledCount = 0;
+    
     this.meetingRooms.forEach(room => {
+      if (room.status === 'occupied') {
+        cancelledCount++;
+      }
       room.bookings = [];
       room.current_booking = null;
       room.status = 'vacant';
     });
 
+    // Save to localStorage
+    this.saveMeetingRoomsToStorage();
+
+    console.log(`Cleared all bookings: ${cancelledCount} rooms were occupied, now all ${this.meetingRooms.length} rooms are vacant`);
     return { 
       message: 'All bookings cleared successfully',
-      rooms_updated: this.meetingRooms.length 
+      rooms_updated: this.meetingRooms.length,
+      previously_occupied: cancelledCount
     };
   }
 
