@@ -175,21 +175,11 @@ const Policies = () => {
         </div>
       </div>
 
-      {/* Policy sections - All policies under HR POLICY with category grouping */}
+      {/* Policy sections - All policies under HR POLICY without categorization */}
       <div className="space-y-6">
         {Object.entries(getPoliciesToDisplay()).map(([sectionTitle, sectionPolicies]) => {
           const sectionKey = getSectionKey(sectionTitle);
           const isExpanded = expandedSections[sectionKey];
-          
-          // Group policies by category
-          const groupedPolicies = sectionPolicies.reduce((groups, policy) => {
-            const category = policy.category || 'General';
-            if (!groups[category]) {
-              groups[category] = [];
-            }
-            groups[category].push(policy);
-            return groups;
-          }, {});
           
           return (
             <Card key={sectionTitle} className="w-full">
@@ -215,48 +205,30 @@ const Policies = () => {
               
               {isExpanded && (
                 <CardContent className="pt-0">
-                  <div className="space-y-6">
-                    {Object.entries(groupedPolicies).map(([category, categoryPolicies]) => (
-                      <div key={category} className="border-l-4 border-blue-200 pl-4">
-                        {/* Category Header */}
-                        <div className="mb-3">
-                          <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-                            <FileText className="h-5 w-5 mr-2 text-blue-500" />
-                            {category} Policies
-                            <Badge variant="outline" className="ml-2 text-xs">
-                              {categoryPolicies.length}
-                            </Badge>
-                          </h3>
-                        </div>
-                        
-                        {/* Category Policies */}
-                        <div className="space-y-3 ml-6">
-                          {categoryPolicies.map((policy, index) => (
-                            <div 
-                              key={index}
-                              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
-                            >
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-3">
-                                  <FileText className="h-4 w-4 text-gray-400" />
-                                  <div>
-                                    <h4 className="font-medium text-gray-900">{policy.title}</h4>
-                                    <p className="text-sm text-gray-600 mt-1">{policy.description}</p>
-                                  </div>
-                                </div>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handlePolicyClick(policy.link)}
-                                className="ml-4"
-                              >
-                                <ExternalLink className="h-4 w-4 mr-2" />
-                                View PDF
-                              </Button>
+                  <div className="space-y-3">
+                    {sectionPolicies.map((policy, index) => (
+                      <div 
+                        key={index}
+                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3">
+                            <FileText className="h-4 w-4 text-gray-400" />
+                            <div>
+                              <h4 className="font-medium text-gray-900">{policy.title}</h4>
+                              <p className="text-sm text-gray-600 mt-1">{policy.description}</p>
                             </div>
-                          ))}
+                          </div>
                         </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handlePolicyClick(policy.link)}
+                          className="ml-4"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          View PDF
+                        </Button>
                       </div>
                     ))}
                   </div>
