@@ -69,12 +69,42 @@ class DataService {
           reportingId = String(row['REPORTING ID']);
         }
         
-        // Handle date of joining
+        // Handle date of joining - Convert Excel serial number to date
         let dateJoining = '';
         if (row['DATE OF JOINING']) {
           try {
-            dateJoining = String(row['DATE OF JOINING']).split(' ')[0];
-          } catch {
+            const rawDate = row['DATE OF JOINING'];
+            
+            // If it's a number (Excel serial date), convert it
+            if (typeof rawDate === 'number') {
+              // Excel serial date: days since January 1, 1900
+              // JavaScript Date: milliseconds since January 1, 1970
+              // Excel epoch: January 1, 1900 (but Excel incorrectly treats 1900 as leap year)
+              const excelEpoch = new Date(1900, 0, 1); // January 1, 1900
+              const msPerDay = 24 * 60 * 60 * 1000;
+              // Subtract 2 days to account for Excel's leap year bug and 0-indexing
+              const jsDate = new Date(excelEpoch.getTime() + (rawDate - 2) * msPerDay);
+              dateJoining = jsDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+            } 
+            // If it's already a string, try to parse it
+            else if (typeof rawDate === 'string') {
+              const parsedDate = new Date(rawDate);
+              if (!isNaN(parsedDate.getTime())) {
+                dateJoining = parsedDate.toISOString().split('T')[0];
+              } else {
+                dateJoining = String(rawDate).split(' ')[0];
+              }
+            }
+            // If it's a Date object
+            else if (rawDate instanceof Date) {
+              dateJoining = rawDate.toISOString().split('T')[0];
+            }
+            // Fallback
+            else {
+              dateJoining = String(rawDate);
+            }
+          } catch (error) {
+            console.warn('Error parsing date for employee:', row['EMP NAME'], 'Raw date:', row['DATE OF JOINING']);
             dateJoining = String(row['DATE OF JOINING']);
           }
         }
