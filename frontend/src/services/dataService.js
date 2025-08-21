@@ -799,10 +799,24 @@ class DataService {
       throw new Error('Room is already booked. Multiple bookings are not allowed.');
     }
 
+    // Validate booking times
+    const startTime = new Date(bookingData.start_time);
+    const endTime = new Date(bookingData.end_time);
+    const now = new Date();
+
+    if (startTime < now) {
+      throw new Error('Cannot book a room for past time');
+    }
+
+    if (endTime <= startTime) {
+      throw new Error('End time must be after start time');
+    }
+
     const booking = {
       id: `booking_${Date.now()}`,
       ...bookingData,
       room_id: roomId,
+      room_name: room.name,
       created_at: new Date().toISOString()
     };
 
@@ -810,6 +824,10 @@ class DataService {
     room.current_booking = booking;
     room.status = 'occupied';
 
+    // Save to localStorage
+    this.saveMeetingRoomsToStorage();
+
+    console.log(`Room ${room.name} booked successfully for ${booking.employee_name}`);
     return booking;
   }
 
