@@ -33,7 +33,7 @@ const MeetingRooms = () => {
     if (!isAdmin()) {
       setFilters({
         location: 'IFC',
-        floor: '14',
+        floor: '14th Floor',
         status: ''
       });
     }
