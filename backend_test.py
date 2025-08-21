@@ -227,9 +227,59 @@ class MinimalBackendTester:
         except Exception as e:
             self.log_test("POST Request Handling", False, f"POST request test failed: {str(e)}")
 
+    def test_meeting_rooms_endpoints(self):
+        """Test 9: Meeting rooms API endpoints redirect to frontend"""
+        try:
+            # Test meeting rooms endpoint
+            response = self.session.get(f"{self.backend_url}/api/meeting-rooms")
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "is now handled by frontend dataService"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Meeting Rooms Endpoint", True, 
+                                "Meeting rooms endpoint redirects to frontend correctly", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Meeting Rooms Endpoint", False, 
+                                "Meeting rooms endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Meeting Rooms Endpoint", False, 
+                            f"Meeting rooms endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Meeting Rooms Endpoint", False, f"Meeting rooms endpoint test failed: {str(e)}")
+
+    def test_meeting_rooms_booking_endpoints(self):
+        """Test 10: Meeting rooms booking endpoints redirect to frontend"""
+        try:
+            # Test booking endpoint
+            booking_data = {
+                "employee_id": "12345",
+                "start_time": "2024-12-20T10:00:00",
+                "end_time": "2024-12-20T11:00:00",
+                "purpose": "Test meeting"
+            }
+            response = self.session.post(f"{self.backend_url}/api/meeting-rooms/test-room/book", json=booking_data)
+            if response.status_code == 200:
+                data = response.json()
+                expected_message = "is now handled by frontend dataService"
+                if expected_message in data.get("message", ""):
+                    self.log_test("Meeting Rooms Booking Endpoint", True, 
+                                "Meeting rooms booking endpoint redirects to frontend correctly", 
+                                f"Response: {data}")
+                else:
+                    self.log_test("Meeting Rooms Booking Endpoint", False, 
+                                "Meeting rooms booking endpoint returned unexpected message", 
+                                f"Response: {data}")
+            else:
+                self.log_test("Meeting Rooms Booking Endpoint", False, 
+                            f"Meeting rooms booking endpoint returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Meeting Rooms Booking Endpoint", False, f"Meeting rooms booking endpoint test failed: {str(e)}")
+
     def run_all_tests(self):
         """Run all tests"""
-        print("🚀 Starting Minimal Backend Server Tests")
+        print("🚀 Starting Frontend-Only Backend API Tests")
         print("=" * 60)
         
         self.test_server_connectivity()
@@ -240,9 +290,11 @@ class MinimalBackendTester:
         self.test_stats_endpoint()
         self.test_catch_all_endpoint()
         self.test_post_request_handling()
+        self.test_meeting_rooms_endpoints()
+        self.test_meeting_rooms_booking_endpoints()
         
         print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 BACKEND API TEST SUMMARY")
         print("=" * 60)
         
         passed = sum(1 for result in self.test_results if result['success'])
@@ -254,7 +306,7 @@ class MinimalBackendTester:
         print(f"Success Rate: {(passed/total)*100:.1f}%")
         
         if passed == total:
-            print("\n🎉 ALL TESTS PASSED! Minimal backend server is working correctly.")
+            print("\n🎉 ALL BACKEND API TESTS PASSED! Backend correctly redirects to frontend dataService.")
         else:
             print(f"\n⚠️  {total - passed} test(s) failed. Check the details above.")
             
