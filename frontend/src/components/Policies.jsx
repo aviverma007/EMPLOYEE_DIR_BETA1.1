@@ -10,10 +10,7 @@ const Policies = () => {
   const { isAdmin } = useAuth();
   const [policies, setPolicies] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
-    hr: true,
-    it: false,
-    admin: false,
-    other: false
+    hr: true
   });
   const [loading, setLoading] = useState(true);
 
