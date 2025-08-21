@@ -247,11 +247,20 @@ class DataService {
     return attendance;
   }
 
-  // Generate meeting rooms data
+  // Generate meeting rooms data with persistence
   generateMeetingRooms() {
-    return [
+    // Try to load from localStorage first
+    const savedRooms = this.loadMeetingRoomsFromStorage();
+    if (savedRooms && savedRooms.length > 0) {
+      console.log(`Loaded ${savedRooms.length} meeting rooms from storage`);
+      return savedRooms;
+    }
+    
+    // Create initial room structure
+    const rooms = [
+      // IFC 11th Floor - 1 room
       {
-        id: "room_001",
+        id: "ifc-11-001",
         name: "IFC Conference Room 11A",
         location: "IFC",
         floor: "11th Floor",
@@ -261,8 +270,10 @@ class DataService {
         bookings: [],
         current_booking: null
       },
+      
+      // IFC 12th Floor - 1 room
       {
-        id: "room_002", 
+        id: "ifc-12-001", 
         name: "IFC Conference Room 12B",
         location: "IFC",
         floor: "12th Floor",
@@ -272,8 +283,10 @@ class DataService {
         bookings: [],
         current_booking: null
       },
+      
+      // IFC 14th Floor - Multiple rooms (9 rooms as per test results)
       {
-        id: "room_003",
+        id: "ifc-14-001",
         name: "OVAL MEETING ROOM",
         location: "IFC", 
         floor: "14th Floor",
@@ -284,7 +297,7 @@ class DataService {
         current_booking: null
       },
       {
-        id: "room_004",
+        id: "ifc-14-002",
         name: "PETRONAS MEETING ROOM",
         location: "IFC",
         floor: "14th Floor", 
@@ -295,7 +308,73 @@ class DataService {
         current_booking: null
       },
       {
-        id: "room_005",
+        id: "ifc-14-003",
+        name: "GLOBAL CENTER MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 5,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-004",
+        name: "LOUVRE MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 5,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-005",
+        name: "GOLDEN GATE MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 10,
+        amenities: "Projector, Video Conference, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-006",
+        name: "EMPIRE STATE MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 5,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-007",
+        name: "MARINA BAY MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 5,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-008",
+        name: "BURJ MEETING ROOM",
+        location: "IFC",
+        floor: "14th Floor",
+        capacity: 5,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "ifc-14-009",
         name: "BOARD ROOM",
         location: "IFC",
         floor: "14th Floor",
@@ -304,8 +383,101 @@ class DataService {
         status: "vacant",
         bookings: [],
         current_booking: null
+      },
+      
+      // Other locations - 1 room each on floor 1
+      {
+        id: "central-1-001",
+        name: "Central Office Conference Room",
+        location: "Central Office 75",
+        floor: "1st Floor",
+        capacity: 8,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "office75-1-001",
+        name: "Office 75 Meeting Room",
+        location: "Office 75",
+        floor: "1st Floor",
+        capacity: 6,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "noida-1-001",
+        name: "Noida Conference Room",
+        location: "Noida",
+        floor: "1st Floor",
+        capacity: 12,
+        amenities: "Projector, Video Conference, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
+      },
+      {
+        id: "project-1-001",
+        name: "Project Office Meeting Room",
+        location: "Project Office",
+        floor: "1st Floor",
+        capacity: 8,
+        amenities: "Projector, Whiteboard",
+        status: "vacant",
+        bookings: [],
+        current_booking: null
       }
     ];
+    
+    // Save initial structure to storage
+    this.saveMeetingRoomsToStorage(rooms);
+    console.log(`Generated and saved ${rooms.length} meeting rooms`);
+    return rooms;
+  }
+
+  // Load meeting rooms from localStorage
+  loadMeetingRoomsFromStorage() {
+    try {
+      const saved = localStorage.getItem('meetingRooms_data');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Clean up expired bookings on load
+        this.cleanupExpiredBookings(parsed);
+        return parsed;
+      }
+    } catch (error) {
+      console.error('Error loading meeting rooms from storage:', error);
+    }
+    return null;
+  }
+
+  // Save meeting rooms to localStorage
+  saveMeetingRoomsToStorage(rooms = null) {
+    try {
+      const roomsToSave = rooms || this.meetingRooms;
+      localStorage.setItem('meetingRooms_data', JSON.stringify(roomsToSave));
+      localStorage.setItem('meetingRooms_lastSaved', new Date().toISOString());
+    } catch (error) {
+      console.error('Error saving meeting rooms to storage:', error);
+    }
+  }
+
+  // Clean up expired bookings
+  cleanupExpiredBookings(rooms) {
+    const now = new Date();
+    rooms.forEach(room => {
+      if (room.current_booking) {
+        const endTime = new Date(room.current_booking.end_time);
+        if (endTime < now) {
+          room.status = 'vacant';
+          room.current_booking = null;
+          room.bookings = [];
+        }
+      }
+    });
   }
 
   // Generate sample policies
