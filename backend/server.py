@@ -1,72 +1,47 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from fastapi import FastAPI
 import os
 
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+app = FastAPI()
 
-@app.route('/')
+@app.get("/")
 def root():
-    return jsonify({
-        "message": "Frontend-Only Employee Directory API", 
-        "status": "running", 
-        "mode": "minimal"
-    })
+    return {"message": "Frontend-Only Employee Directory API", "status": "running", "mode": "minimal"}
 
-@app.route('/health')
+@app.get("/health")
 def health_check():
-    return jsonify({"status": "healthy", "mode": "frontend-only"})
+    return {"status": "healthy", "mode": "frontend-only"}
 
-@app.route('/api/employees')
+@app.get("/api/employees")
 def get_employees():
-    return jsonify({
-        "message": "Data is now managed by frontend", 
-        "redirect": "Use frontend dataService"
-    })
+    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
 
-@app.route('/api/departments')
+@app.get("/api/departments")
 def get_departments():
-    return jsonify({
-        "message": "Data is now managed by frontend", 
-        "redirect": "Use frontend dataService"
-    })
+    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
 
-@app.route('/api/locations')
+@app.get("/api/locations")
 def get_locations():
-    return jsonify({
-        "message": "Data is now managed by frontend", 
-        "redirect": "Use frontend dataService"
-    })
+    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
 
-@app.route('/api/stats')
+@app.get("/api/stats")
 def get_stats():
-    return jsonify({
-        "message": "Data is now managed by frontend", 
-        "redirect": "Use frontend dataService"
-    })
+    return {"message": "Data is now managed by frontend", "redirect": "Use frontend dataService"}
 
-@app.route('/api/meeting-rooms')
+@app.get("/api/meeting-rooms")
 def get_meeting_rooms():
-    return jsonify({
-        "message": "Meeting rooms API is now handled by frontend dataService", 
-        "redirect": "Use frontend dataService"
-    })
+    return {"message": "Meeting rooms API is now handled by frontend dataService", "redirect": "Use frontend dataService"}
 
-@app.route('/api/meeting-rooms/<room_id>/book', methods=['POST'])
-def book_meeting_room(room_id):
-    return jsonify({
-        "message": f"Meeting room booking for {room_id} is now handled by frontend dataService", 
-        "redirect": "Use frontend dataService"
-    })
+@app.post("/api/meeting-rooms/{room_id}/book")
+def book_meeting_room(room_id: str):
+    return {"message": f"Meeting room booking for {room_id} is now handled by frontend dataService", "redirect": "Use frontend dataService"}
 
-# Catch-all for other API endpoints
-@app.route('/api/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
-def catch_all_api(path):
-    return jsonify({
-        "message": f"API endpoint /{path} is now handled by frontend dataService",
-        "mode": "frontend-only",
-        "redirect": "Use frontend dataService"
-    })
+@app.get("/api/{path:path}")
+def catch_all_get(path: str):
+    return {"message": f"API endpoint /{path} is now handled by frontend dataService", "mode": "frontend-only", "redirect": "Use frontend dataService"}
+
+@app.post("/api/{path:path}")
+def catch_all_post(path: str):
+    return {"message": f"API endpoint /{path} is now handled by frontend dataService", "mode": "frontend-only", "redirect": "Use frontend dataService"}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8001))
