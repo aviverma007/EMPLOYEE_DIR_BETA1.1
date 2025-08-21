@@ -193,7 +193,7 @@ class DataService {
 
   // Initialize other data structures with sample data
   initializeOtherData() {
-    // Initialize meeting rooms
+    // Initialize meeting rooms with persistence
     this.meetingRooms = this.generateMeetingRooms();
     
     // Initialize sample data for other modules
@@ -203,6 +203,10 @@ class DataService {
     this.help = [];
     this.policies = this.generateSamplePolicies();
     this.workflows = [];
+    
+    // Update locations to include all meeting room locations
+    const meetingRoomLocations = [...new Set(this.meetingRooms.map(room => room.location))];
+    this.locations = [...new Set([...this.locations, ...meetingRoomLocations])];
   }
 
   // Generate sample attendance data if Excel file is not available
