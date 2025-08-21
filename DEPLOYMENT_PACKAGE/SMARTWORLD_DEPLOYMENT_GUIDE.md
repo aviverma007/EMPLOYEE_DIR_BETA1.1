@@ -91,12 +91,34 @@ C:\CompanyApps\SmartWorldEmployee\
 ├── backend\                 # API server files
 ├── frontend\               # Web application
 │   └── build\             # Production build
-├── company policies\       # PDF policy files
+│   └── public\            # Static files
+│       └── company policies\  # PDF policy files (14 policies)
+├── company policies\       # PDF policy files (backup location)
 ├── employee_directory.xlsx # Employee data
 ├── ecosystem.config.js    # PM2 configuration
 ├── production-server.js   # Main web server
 └── logs\                  # Application logs
 ```
+
+## 📋 COMPANY POLICIES INCLUDED
+
+Your Employee Portal includes these 14 company policies:
+1. **Business Hours Attendance Policy** - Attendance requirements and guidelines
+2. **Sexual Harassment At Work Redressal Policy** - Workplace harassment prevention
+3. **Dress Code Policy** - Professional dress code guidelines  
+4. **Employee Referral Policy** - Employee referral program procedures
+5. **Leave Policy (Revised)** - Comprehensive leave policy
+6. **Local Conveyance Policy** - Local travel reimbursement guidelines
+7. **Whistle Blower Policy** - Whistleblower protection procedures
+8. **Tour Travel Policy** - Business travel guidelines and expenses
+9. **Revised Attendance Policy** - Updated attendance policy (May 2025)
+10. **Night Shift Meal & Conveyance Allowance** - Night shift benefits
+11. **Flexible Work Schedule Policy** - Remote work and flexible arrangements
+12. **Holiday List 2023** - Official holiday calendar for 2023
+13. **Holiday List 2025** - Official holiday calendar for 2025  
+14. **Proposed Holiday List 2024** - Proposed holiday calendar for 2024
+
+All policies are accessible via the "Policies" tab with individual "View PDF" buttons.
 
 ---
 
