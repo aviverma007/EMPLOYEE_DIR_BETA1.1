@@ -519,7 +519,8 @@ const Home = () => {
                               {employees.concat(employees.slice(0, 5)).map((employee, idx) => (
                                 <div 
                                   key={`${employee.id}-${idx}`}
-                                  className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-2 mb-2 shadow-sm hover:shadow-md transition-all duration-300 ${
+                                  onClick={() => handleEmployeeClick(employee)}
+                                  className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200 p-2 mb-2 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer hover:scale-102 ${
                                     !isAdmin() ? 'h-8' : 'h-10'
                                   }`}
                                   style={{
