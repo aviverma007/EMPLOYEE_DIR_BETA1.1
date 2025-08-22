@@ -7,6 +7,7 @@ import { Input } from './ui/input';
 import { PlusCircle, Calendar, User, Clock, CheckCircle, AlertCircle, Trash2, Edit3 } from 'lucide-react';
 import { toast } from 'sonner';
 import { taskAPI, employeeAPI } from '../services/api';
+import SearchableEmployeeDropdown from './ui/SearchableEmployeeDropdown';
 
 const Work = () => {
   const [tasks, setTasks] = useState([]);
