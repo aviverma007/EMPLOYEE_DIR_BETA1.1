@@ -23,6 +23,13 @@ import { toast } from 'sonner';
 
 const LoginForm = () => {
   const { login } = useAuth();
+  const [selectedRole, setSelectedRole] = useState('');
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const ADMIN_PASSWORD = 'Smart@12345';
 
   const handleAdminLogin = () => {
     const userData = {
