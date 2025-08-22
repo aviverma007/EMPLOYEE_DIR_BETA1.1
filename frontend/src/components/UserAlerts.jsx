@@ -14,6 +14,8 @@ const UserAlerts = () => {
   const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
   const [showAlert, setShowAlert] = useState(false);
   const [isCloudVisible, setIsCloudVisible] = useState(true); // Control cloud visibility
+  const [buttonPosition, setButtonPosition] = useState({ top: 16, right: 16 }); // Button position
+  const [isDragging, setIsDragging] = useState(false);
 
   // Load alerts on component mount
   useEffect(() => {
