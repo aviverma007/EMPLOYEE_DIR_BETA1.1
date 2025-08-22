@@ -946,6 +946,79 @@ class DataService {
     this.workflows.unshift(newWorkflow);
     return newWorkflow;
   }
+
+  // ===== ALERTS MANAGEMENT =====
+  
+  // Get all alerts
+  getAlerts() {
+    return this.alerts;
+  }
+
+  // Get active alerts (for user display)
+  getActiveAlerts() {
+    const now = new Date();
+    return this.alerts.filter(alert => 
+      alert.isActive && 
+      (!alert.expiryDate || new Date(alert.expiryDate) > now)
+    );
+  }
+
+  // Create a new alert (Admin only)
+  createAlert(alertData) {
+    const newAlert = {
+      id: `alert_${Date.now()}`,
+      title: alertData.title || 'Alert',
+      message: alertData.message || '',
+      type: alertData.type || 'info', // info, warning, success, error
+      priority: alertData.priority || 'normal', // high, normal, low
+      isActive: alertData.isActive !== undefined ? alertData.isActive : true,
+      expiryDate: alertData.expiryDate || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      createdBy: alertData.createdBy || 'admin'
+    };
+    this.alerts.unshift(newAlert);
+    return newAlert;
+  }
+
+  // Update alert (Admin only)
+  updateAlert(alertId, alertData) {
+    const alertIndex = this.alerts.findIndex(alert => alert.id === alertId);
+    if (alertIndex === -1) {
+      throw new Error('Alert not found');
+    }
+
+    this.alerts[alertIndex] = {
+      ...this.alerts[alertIndex],
+      ...alertData,
+      updated_at: new Date().toISOString()
+    };
+    
+    return this.alerts[alertIndex];
+  }
+
+  // Delete alert (Admin only)
+  deleteAlert(alertId) {
+    const alertIndex = this.alerts.findIndex(alert => alert.id === alertId);
+    if (alertIndex === -1) {
+      throw new Error('Alert not found');
+    }
+
+    const deletedAlert = this.alerts.splice(alertIndex, 1)[0];
+    return deletedAlert;
+  }
+
+  // Toggle alert status (Admin only)
+  toggleAlertStatus(alertId) {
+    const alert = this.alerts.find(alert => alert.id === alertId);
+    if (!alert) {
+      throw new Error('Alert not found');
+    }
+
+    alert.isActive = !alert.isActive;
+    alert.updated_at = new Date().toISOString();
+    return alert;
+  }
 }
 
 // Create singleton instance
