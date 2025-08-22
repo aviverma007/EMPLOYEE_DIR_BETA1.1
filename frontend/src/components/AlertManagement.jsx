@@ -19,7 +19,7 @@ import {
   Clock
 } from "lucide-react";
 import { toast } from "sonner";
-import { dataService } from "../services/dataService";
+import dataService from "../services/dataService";
 
 const AlertManagement = () => {
   const [alerts, setAlerts] = useState([]);
