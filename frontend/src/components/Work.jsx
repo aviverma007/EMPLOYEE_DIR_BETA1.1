@@ -203,19 +203,13 @@ const Work = () => {
                 
                 <div>
                   <label className="block text-sm font-medium mb-1">Assign To</label>
-                  <select
-                    value={formData.assigned_to}
-                    onChange={(e) => setFormData({...formData, assigned_to: e.target.value})}
-                    className="w-full p-2 border rounded-md"
+                  <SearchableEmployeeDropdown
+                    employees={employees}
+                    selectedEmployeeId={formData.assigned_to}
+                    onEmployeeSelect={(employeeId) => setFormData({...formData, assigned_to: employeeId})}
+                    placeholder="Search by employee name or ID..."
                     required
-                  >
-                    <option value="">Select Employee</option>
-                    {employees.map(emp => (
-                      <option key={emp.id} value={emp.id}>
-                        {emp.name} ({emp.id})
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
 
                 <div>
