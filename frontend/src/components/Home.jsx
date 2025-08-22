@@ -269,6 +269,18 @@ const Home = () => {
     setShowProjectsDropdown(!showProjectsDropdown);
   };
 
+  // Handle employee selection for details modal
+  const handleEmployeeClick = (employee) => {
+    setSelectedEmployee(employee);
+    setShowEmployeeModal(true);
+  };
+
+  // Close employee modal
+  const closeEmployeeModal = () => {
+    setShowEmployeeModal(false);
+    setSelectedEmployee(null);
+  };
+
   // Define different tiles for Admin vs User
   const adminTiles = [
     {
