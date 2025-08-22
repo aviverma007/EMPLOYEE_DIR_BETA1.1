@@ -71,21 +71,6 @@ const Policies = () => {
         title: "Flexible Work Schedule Policy", 
         link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
         description: "Guidelines for flexible working arrangements and remote work policies"
-      },
-      { 
-        title: "Holiday List 2023", 
-        link: "/company policies/Holiday List - 2023.xlsx.pdf", 
-        description: "Official holiday calendar for the year 2023"
-      },
-      { 
-        title: "Holiday List 2025", 
-        link: "/company policies/List of Holidays -2025.xlsx.pdf", 
-        description: "Official holiday calendar for the year 2025"
-      },
-      { 
-        title: "Proposed Holiday List 2024", 
-        link: "/company policies/Proposed Holiday List - 2024.xlsx.pdf", 
-        description: "Proposed holiday calendar for the year 2024"
       }
     ]
   };
