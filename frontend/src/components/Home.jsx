@@ -172,11 +172,11 @@ const Home = () => {
     fetchEmployees();
   }, []);
 
-  // Auto-scroll banner every 3 seconds
+  // Auto-scroll banner every 5 seconds (increased by 2 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBannerIndex(prev => (prev + 1) % bannerImages.length);
-    }, 3000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
