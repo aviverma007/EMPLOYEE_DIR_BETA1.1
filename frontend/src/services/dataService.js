@@ -32,6 +32,9 @@ class DataService {
       // Initialize other data structures
       this.initializeOtherData();
       
+      // Initialize demo alerts for testing
+      this.initializeDemoAlerts();
+      
       this.isLoaded = true;
       console.log('All data loaded successfully');
       
