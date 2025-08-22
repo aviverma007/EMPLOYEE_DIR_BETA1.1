@@ -180,11 +180,11 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [bannerImages.length]);
 
-  // Auto-scroll gallery images every 2 seconds
+  // Auto-scroll gallery images every 4 seconds (increased by 2 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentGalleryIndex(prev => (prev + 1) % galleryImages.length);
-    }, 2000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [galleryImages.length]);
 
