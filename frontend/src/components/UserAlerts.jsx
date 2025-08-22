@@ -6,7 +6,7 @@ import {
   X, 
   Clock
 } from "lucide-react";
-import { dataService } from "../services/dataService";
+import dataService from "../services/dataService";
 
 const UserAlerts = () => {
   const [alerts, setAlerts] = useState([]);
