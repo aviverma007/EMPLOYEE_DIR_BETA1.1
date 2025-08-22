@@ -13,6 +13,7 @@ const SearchableEmployeeDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   
   const selectedEmployee = employees.find(emp => emp.id === selectedEmployeeId);
   
@@ -30,15 +31,28 @@ const SearchableEmployeeDropdown = ({
     onEmployeeSelect(employee.id);
     setIsOpen(false);
     setSearchTerm('');
+    setIsSearching(false);
   };
   
   const handleInputClick = () => {
     setIsOpen(true);
+    // If there's a selected employee, start fresh search
+    if (selectedEmployee && !isSearching) {
+      setSearchTerm('');
+      setIsSearching(true);
+    }
   };
   
   const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
+    const value = e.target.value;
+    setSearchTerm(value);
+    setIsSearching(true);
     if (!isOpen) setIsOpen(true);
+    
+    // If user clears the search completely, reset selection
+    if (value === '') {
+      onEmployeeSelect('');
+    }
   };
   
   const handleKeyDown = (e) => {
