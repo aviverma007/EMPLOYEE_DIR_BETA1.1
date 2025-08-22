@@ -64,12 +64,12 @@ class DataService {
         // Convert mobile number safely
         const mobile = row['MOBILE'] ? String(row['MOBILE']) : '';
         
-        // Convert extension safely
-        const extension = row['EXTENSION NUMBER'] ? String(row['EXTENSION NUMBER']) : '0';
+        // Extension number is not in new Excel file
+        const extension = '0'; // Default value since EXTENSION NUMBER column doesn't exist in new file
         
         // Handle reporting ID
         let reportingId = null;
-        if (row['REPORTING ID'] && String(row['REPORTING ID']).trim() !== '') {
+        if (row['REPORTING ID'] && String(row['REPORTING ID']).trim() !== '' && String(row['REPORTING ID']).trim() !== '*') {
           reportingId = String(row['REPORTING ID']);
         }
         
@@ -79,8 +79,12 @@ class DataService {
           try {
             const rawDate = row['DATE OF JOINING'];
             
+            // If it's already a Date object (from newer Excel parsing)
+            if (rawDate instanceof Date) {
+              dateJoining = rawDate.toISOString().split('T')[0];
+            }
             // If it's a number (Excel serial date), convert it
-            if (typeof rawDate === 'number') {
+            else if (typeof rawDate === 'number') {
               // Excel serial date: days since January 1, 1900
               // JavaScript Date: milliseconds since January 1, 1970
               // Excel epoch: January 1, 1900 (but Excel incorrectly treats 1900 as leap year)
@@ -98,10 +102,6 @@ class DataService {
               } else {
                 dateJoining = String(rawDate).split(' ')[0];
               }
-            }
-            // If it's a Date object
-            else if (rawDate instanceof Date) {
-              dateJoining = rawDate.toISOString().split('T')[0];
             }
             // Fallback
             else {
