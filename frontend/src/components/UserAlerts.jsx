@@ -113,10 +113,8 @@ const UserAlerts = () => {
     }
   };
 
-  const handleDismissAll = () => {
-    const allAlertIds = alerts.map(alert => alert.id);
-    setDismissedAlerts(prev => new Set([...prev, ...allAlertIds]));
-    setShowAlert(false);
+  const toggleCloudVisibility = () => {
+    setIsCloudVisible(!isCloudVisible);
   };
 
   const getAlertIcon = (type) => {
