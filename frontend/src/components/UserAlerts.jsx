@@ -3,9 +3,7 @@ import {
   AlertTriangle, 
   CheckCircle, 
   Info, 
-  X, 
   Clock,
-  Cloud,
   Bell
 } from "lucide-react";
 import dataService from "../services/dataService";
