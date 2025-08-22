@@ -1022,6 +1022,42 @@ class DataService {
     alert.updated_at = new Date().toISOString();
     return alert;
   }
+
+  // Initialize demo alerts for testing
+  initializeDemoAlerts() {
+    // Only add demo alerts if alerts array is empty
+    if (this.alerts.length === 0) {
+      const demoAlerts = [
+        {
+          id: 'alert_demo_1',
+          title: 'Welcome to SmartWorld!',
+          message: 'Welcome to the SmartWorld Employee Management System. We are excited to have you on board!',
+          type: 'success',
+          priority: 'high',
+          isActive: true,
+          expiryDate: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          createdBy: 'system'
+        },
+        {
+          id: 'alert_demo_2',
+          title: 'System Updates',
+          message: 'New features have been added to the system. Check out the enhanced employee directory and meeting room booking system.',
+          type: 'info',
+          priority: 'normal',
+          isActive: true,
+          expiryDate: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          createdBy: 'system'
+        }
+      ];
+      
+      this.alerts = demoAlerts;
+      console.log('Demo alerts initialized:', this.alerts.length);
+    }
+  }
 }
 
 // Create singleton instance
