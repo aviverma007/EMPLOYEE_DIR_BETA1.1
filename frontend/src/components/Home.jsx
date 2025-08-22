@@ -757,7 +757,7 @@ const Home = () => {
       {!isAdmin() && (
         <div className="mt-4">
           <h3 className="text-md font-medium text-blue-900 mb-3 text-center">Quick Access</h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {userQuickAccessButtons.map((button, index) => (
               <div key={index} className="relative flex flex-col items-center">
                 {button.isDropdown ? (
