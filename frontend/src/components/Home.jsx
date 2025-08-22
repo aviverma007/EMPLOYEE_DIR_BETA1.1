@@ -841,6 +841,102 @@ const Home = () => {
           }}
         />
       )}
+
+      {/* Employee Details Modal */}
+      {showEmployeeModal && selectedEmployee && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Background overlay - click to close */}
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" 
+            onClick={closeEmployeeModal}
+          />
+          
+          {/* Modal content */}
+          <div className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 animate-in zoom-in">
+            {/* Close button */}
+            <button
+              onClick={closeEmployeeModal}
+              className="absolute top-4 right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+            >
+              <X className="h-5 w-5 text-gray-500 hover:text-gray-700" />
+            </button>
+
+            {/* Employee profile image */}
+            <div className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-t-xl p-6 text-center">
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden">
+                {selectedEmployee.profileImage ? (
+                  <img 
+                    src={selectedEmployee.profileImage} 
+                    alt={selectedEmployee.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                  <User className="h-12 w-12 text-blue-400" />
+                </div>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-1">{selectedEmployee.name}</h3>
+              <p className="text-blue-100 text-sm">Employee ID: {selectedEmployee.id}</p>
+            </div>
+
+            {/* Employee details */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Department</span>
+                    <span className="text-gray-900 font-semibold">{selectedEmployee.department || 'N/A'}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Location</span>
+                    <span className="text-gray-900 font-semibold">{selectedEmployee.location || 'N/A'}</span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Grade</span>
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-sm font-medium">
+                      {selectedEmployee.grade || 'N/A'}
+                    </span>
+                  </div>
+                  
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Joining Date</span>
+                    <span className="text-gray-900 font-semibold">
+                      {selectedEmployee.dateOfJoining ? formatDate(selectedEmployee.dateOfJoining) : 'N/A'}
+                    </span>
+                  </div>
+                  
+                  {selectedEmployee.mobile && (
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                      <span className="text-gray-600 font-medium">Mobile</span>
+                      <span className="text-gray-900 font-semibold">{selectedEmployee.mobile}</span>
+                    </div>
+                  )}
+                  
+                  {selectedEmployee.email && (
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-gray-600 font-medium">Email</span>
+                      <span className="text-gray-900 font-semibold text-sm break-all">{selectedEmployee.email}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Welcome message */}
+              <div className="mt-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-4 text-center">
+                <PartyPopper className="h-6 w-6 text-green-500 mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-700">Welcome to the team!</p>
+                <p className="text-xs text-gray-500 mt-1">We're excited to have you aboard</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
