@@ -214,38 +214,6 @@ const Policies = () => {
           );
         })}
       </div>
-
-      {/* Policy Information Footer */}
-      <Card className="mt-8">
-        <CardContent className="p-6">
-          <div className="flex items-start space-x-4">
-            <Calendar className="h-6 w-6 text-blue-600 mt-1" />
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-2">Policy Updates</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                All company policies are reviewed quarterly and updated as necessary. Employees are notified of any policy changes through official communication channels.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <strong className="text-gray-900">Last Review:</strong>
-                  <br />
-                  <span className="text-gray-600">January 2025</span>
-                </div>
-                <div>
-                  <strong className="text-gray-900">Next Review:</strong>
-                  <br />
-                  <span className="text-gray-600">April 2025</span>
-                </div>
-                <div>
-                  <strong className="text-gray-900">Contact:</strong>
-                  <br />
-                  <span className="text-gray-600">HR Department</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
