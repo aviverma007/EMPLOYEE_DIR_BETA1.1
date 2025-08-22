@@ -112,12 +112,31 @@ const Home = () => {
   ];
 
   // External link buttons with images - FOR USER PROFILE ONLY
+  // Order: HR PORTAL, BIMABRO, MAFOI, VENDORGLOBE, COMPANY, PROJECTS
   const userQuickAccessButtons = [
     {
       title: "HR Portal",
       description: "Adrenaline",
       url: "https://maxhr.myadrenalin.com/AdrenalinMax/",
       image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/otz1j4e1_adrenaline%20hrms%20logo.png"
+    },
+    {
+      title: "BIMABRO",
+      description: "Employee Portal",
+      url: "https://employee.bimabro.com/",
+      image: "https://customer-assets.emergentagent.com/job_fast-modify/artifacts/s5o6c9cu_BimaBro.jpg"
+    },
+    {
+      title: "MAFOI",
+      description: "HR Suite",
+      url: "https://mafoi.hfactor.app/hrsuite/#/login/smartworld",
+      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/hnug73tl_MAFOI%20logo.jpg"
+    },
+    {
+      title: "VENDORGLOBE",
+      description: "QMS Portal",
+      url: "https://smartworlddevelopersonline.com/qms/",
+      image: "/images/vendorglobe-logo.png" // Will be updated with actual uploaded image
     },
     {
       title: "Company",
@@ -131,18 +150,6 @@ const Home = () => {
       url: "#",
       image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/ulju1r77_projects.png",
       isDropdown: true
-    },
-    {
-      title: "BIMABRO",
-      description: "Employee Portal",
-      url: "https://employee.bimabro.com/",
-      image: "https://customer-assets.emergentagent.com/job_fast-modify/artifacts/s5o6c9cu_BimaBro.jpg"
-    },
-    {
-      title: "MAFOI",
-      description: "HR Suite",
-      url: "https://mafoi.hfactor.app/hrsuite/#/login/smartworld",
-      image: "https://customer-assets.emergentagent.com/job_change-maker-1/artifacts/hnug73tl_MAFOI%20logo.jpg"
     }
   ];
 
