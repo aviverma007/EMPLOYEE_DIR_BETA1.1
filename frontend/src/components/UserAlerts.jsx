@@ -146,24 +146,28 @@ const UserAlerts = () => {
   const getAlertColors = (type) => {
     switch (type) {
       case 'error': return {
-        bg: 'bg-red-500',
-        text: 'text-white',
-        border: 'border-red-600'
+        bg: 'bg-red-100',
+        text: 'text-red-800',
+        border: 'border-red-200',
+        icon: 'text-red-600'
       };
       case 'warning': return {
-        bg: 'bg-yellow-500',
-        text: 'text-white',
-        border: 'border-yellow-600'
+        bg: 'bg-yellow-100',
+        text: 'text-yellow-800',
+        border: 'border-yellow-200',
+        icon: 'text-yellow-600'
       };
       case 'success': return {
-        bg: 'bg-green-500',
-        text: 'text-white',
-        border: 'border-green-600'
+        bg: 'bg-green-100',
+        text: 'text-green-800',
+        border: 'border-green-200',
+        icon: 'text-green-600'
       };
       default: return {
-        bg: 'bg-blue-500',
-        text: 'text-white',
-        border: 'border-blue-600'
+        bg: 'bg-blue-50',
+        text: 'text-blue-800',
+        border: 'border-blue-200',
+        icon: 'text-blue-600'
       };
     }
   };
