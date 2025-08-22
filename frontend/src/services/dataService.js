@@ -14,6 +14,7 @@ class DataService {
     this.policies = [];
     this.workflows = [];
     this.meetingRooms = [];
+    this.alerts = []; // Add alerts array
     this.isLoaded = false;
   }
 
