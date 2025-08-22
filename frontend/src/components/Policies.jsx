@@ -18,9 +18,9 @@ const Policies = () => {
   const policyData = {
     "HR POLICY": [
       { 
-        title: "Business Hours Attendance Policy", 
-        link: "/company policies/_11_11_70bde4e9a0a04aed_Business Hours Attendance Policy.pdf", 
-        description: "Attendance requirements and business hours guidelines"
+        title: "Working Hours & Attendance Policy", 
+        link: "/company policies/Working Hours & Attendance Policy.pdf", 
+        description: "Attendance requirements and working hours guidelines"
       },
       { 
         title: "Sexual Harassment At Work Redressal Policy", 
