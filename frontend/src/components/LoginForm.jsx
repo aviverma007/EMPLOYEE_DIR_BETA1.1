@@ -31,6 +31,19 @@ const LoginForm = () => {
 
   const ADMIN_PASSWORD = 'Smart@12345';
 
+  const handleRoleSelection = (role) => {
+    setSelectedRole(role);
+    
+    if (role === 'user') {
+      // Direct login for user
+      handleUserLogin();
+    } else if (role === 'admin') {
+      // Show password dialog for admin
+      setShowPasswordDialog(true);
+      setPassword('');
+    }
+  };
+
   const handleAdminLogin = () => {
     const userData = {
       name: 'Administrator',
@@ -39,7 +52,7 @@ const LoginForm = () => {
       loginTime: new Date().toISOString()
     };
     login(userData);
-    toast.success('Welcome Administrator!');
+    toast.success('Welcome Administrator! 🛡️');
   };
 
   const handleUserLogin = () => {
@@ -50,7 +63,35 @@ const LoginForm = () => {
       loginTime: new Date().toISOString()
     };
     login(userData);
-    toast.success('Welcome User!');
+    toast.success('Welcome User! 👋');
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!password.trim()) {
+      toast.error('Please enter the password');
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Simulate loading for better UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (password === ADMIN_PASSWORD) {
+      setShowPasswordDialog(false);
+      handleAdminLogin();
+    } else {
+      toast.error('Incorrect password. Please try again.');
+    }
+    
+    setIsLoading(false);
+    setPassword('');
+  };
+
+  const handleDialogClose = () => {
+    setShowPasswordDialog(false);
+    setPassword('');
+    setSelectedRole('');
   };
 
   return (
