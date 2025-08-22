@@ -254,6 +254,13 @@ const AppContent = () => {
                     <TabsContent value="help" className="mt-0 h-full">
                       <Help />
                     </TabsContent>
+                    
+                    {/* Admin-only Alerts Management */}
+                    {isAdmin() && (
+                      <TabsContent value="alerts" className="mt-0 h-full">
+                        <AlertManagement />
+                      </TabsContent>
+                    )}
                   </div>
                 </Tabs>
               </div>
