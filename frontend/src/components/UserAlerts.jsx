@@ -187,82 +187,119 @@ const UserAlerts = () => {
   const colors = getAlertColors(currentAlert.type);
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm w-full animate-in slide-in-from-right duration-300">
-      <div className={`${colors.bg} ${colors.text} rounded-lg shadow-2xl border-2 ${colors.border} overflow-hidden`}>
-        {/* Alert Header */}
-        <div className="px-4 py-3 border-b border-white border-opacity-20">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              {getAlertIcon(currentAlert.type)}
-              <span className="font-semibold text-sm">
-                {currentAlert.title}
-              </span>
-              {currentAlert.priority === 'high' && (
-                <span className="bg-white bg-opacity-20 px-2 py-1 rounded text-xs font-medium">
-                  HIGH
-                </span>
-              )}
-            </div>
-            <button
-              onClick={() => handleDismiss(currentAlert.id)}
-              className="text-white hover:text-gray-200 transition-colors p-1 rounded-full hover:bg-white hover:bg-opacity-20"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Alert Content */}
-        <div className="px-4 py-3">
-          <p className="text-sm leading-relaxed mb-3">
-            {currentAlert.message}
-          </p>
+    <>
+      {/* Floating Cloud Button - Always visible when alerts exist */}
+      <div className="fixed top-4 right-4 z-50">
+        <button
+          onClick={toggleCloudVisibility}
+          className="relative group"
+        >
+          {/* Blinking Animation Ring */}
+          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-75 animate-ping"></div>
           
-          {/* Alert Footer */}
-          <div className="flex items-center justify-between text-xs opacity-90">
-            <div className="flex items-center space-x-1">
-              <Clock className="h-3 w-3" />
-              <span>
-                {new Date(currentAlert.created_at).toLocaleDateString()}
-              </span>
+          {/* Cloud Button */}
+          <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-full p-4 shadow-2xl border-2 border-blue-400 hover:scale-110 transition-all duration-300 backdrop-blur-sm bg-opacity-90">
+            <div className="flex items-center justify-center">
+              <Cloud className="h-6 w-6 text-blue-300 filter drop-shadow-lg" />
+              <Bell className="h-4 w-4 text-white absolute top-2 right-2 animate-bounce" />
             </div>
+          </div>
+          
+          {/* Notification Badge */}
+          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
+            {alerts.length}
+          </div>
+        </button>
+      </div>
+
+      {/* Cloud-like Alert Popup */}
+      {isCloudVisible && (
+        <div className="fixed top-16 right-4 z-40 max-w-sm w-full animate-in slide-in-from-right duration-500">
+          {/* Cloud Shape Container */}
+          <div className="relative">
+            {/* Cloud Shadow */}
+            <div className="absolute inset-0 bg-black opacity-20 rounded-3xl transform translate-x-1 translate-y-1 blur-sm"></div>
             
-            {alerts.length > 1 && (
-              <div className="flex items-center space-x-2">
-                <span>
-                  {currentAlertIndex + 1} of {alerts.length}
-                </span>
-                {/* Progress indicators */}
-                <div className="flex space-x-1">
-                  {alerts.map((_, index) => (
-                    <div
-                      key={index}
-                      className={`w-2 h-2 rounded-full ${
-                        index === currentAlertIndex 
-                          ? 'bg-white' 
-                          : 'bg-white bg-opacity-40'
-                      }`}
-                    />
-                  ))}
+            {/* Main Cloud Body */}
+            <div className="relative bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 rounded-3xl shadow-2xl border border-gray-500 backdrop-blur-md bg-opacity-85">
+              {/* Cloud decorative elements */}
+              <div className="absolute -top-3 left-8 w-6 h-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-80"></div>
+              <div className="absolute -top-2 right-12 w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-70"></div>
+              <div className="absolute -left-2 top-6 w-5 h-5 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-75"></div>
+              
+              {/* Alert Content */}
+              <div className="p-6">
+                {/* Alert Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-full ${colors.bg} bg-opacity-80`}>
+                      {getAlertIcon(currentAlert.type)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white text-sm">
+                        {currentAlert.title}
+                      </h3>
+                      {currentAlert.priority === 'high' && (
+                        <span className="bg-red-500 bg-opacity-80 px-2 py-1 rounded text-xs font-medium text-white">
+                          HIGH PRIORITY
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDismiss(currentAlert.id)}
+                    className="text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-gray-600 hover:bg-opacity-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Alert Message */}
+                <div className="mb-4 p-3 bg-black bg-opacity-20 rounded-xl border border-gray-600">
+                  <p className="text-gray-200 text-sm leading-relaxed">
+                    {currentAlert.message}
+                  </p>
+                </div>
+                
+                {/* Alert Footer */}
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-3 w-3" />
+                    <span>
+                      {new Date(currentAlert.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  {alerts.length > 1 && (
+                    <div className="flex items-center space-x-3">
+                      <span className="text-blue-300 font-medium">
+                        {currentAlertIndex + 1} of {alerts.length}
+                      </span>
+                      {/* Progress indicators */}
+                      <div className="flex space-x-1">
+                        {alerts.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                              index === currentAlertIndex 
+                                ? 'bg-blue-400 ring-2 ring-blue-300 ring-opacity-50' 
+                                : 'bg-gray-500 bg-opacity-60'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+
+              {/* Blue accent glow */}
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500 to-blue-600 opacity-10 pointer-events-none"></div>
+            </div>
           </div>
         </div>
-
-        {/* Action Buttons */}
-        {alerts.length > 1 && (
-          <div className="px-4 py-2 border-t border-white border-opacity-20">
-            <button
-              onClick={handleDismissAll}
-              className="w-full text-xs bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-2 rounded text-white font-medium transition-all duration-200"
-            >
-              Dismiss All Alerts
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
