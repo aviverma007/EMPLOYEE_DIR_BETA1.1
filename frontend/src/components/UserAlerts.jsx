@@ -29,15 +29,20 @@ const UserAlerts = () => {
   const loadActiveAlerts = () => {
     try {
       const activeAlerts = dataService.getActiveAlerts();
+      console.log('Loading active alerts:', activeAlerts); // Debug log
+      
       // Filter out dismissed alerts
       const newAlerts = activeAlerts.filter(alert => !dismissedAlerts.has(alert.id));
+      console.log('Filtered alerts (after dismissal):', newAlerts); // Debug log
       
       if (newAlerts.length > 0) {
         setAlerts(newAlerts);
         setCurrentAlertIndex(0);
         setShowAlert(true);
+        console.log('Showing alerts:', newAlerts.length); // Debug log
       } else {
         setShowAlert(false);
+        console.log('No alerts to show'); // Debug log
       }
     } catch (error) {
       console.error('Error loading alerts:', error);
