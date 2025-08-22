@@ -192,13 +192,13 @@ const UserAlerts = () => {
       <div className="fixed top-4 right-4 z-50">
         <button
           onClick={toggleCloudVisibility}
-          className="relative group"
+          className="relative group cloud-float"
         >
           {/* Blinking Animation Ring */}
-          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-75 animate-ping"></div>
+          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-75 animate-ping cloud-blink"></div>
           
           {/* Cloud Button */}
-          <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-full p-4 shadow-2xl border-2 border-blue-400 hover:scale-110 transition-all duration-300 backdrop-blur-sm bg-opacity-90">
+          <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-full p-4 shadow-2xl border-2 border-blue-400 hover:scale-110 transition-all duration-300 backdrop-blur-sm bg-opacity-90 cloud-pulse">
             <div className="flex items-center justify-center">
               <Cloud className="h-6 w-6 text-blue-300 filter drop-shadow-lg" />
               <Bell className="h-4 w-4 text-white absolute top-2 right-2 animate-bounce" />
@@ -206,7 +206,7 @@ const UserAlerts = () => {
           </div>
           
           {/* Notification Badge */}
-          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse">
+          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse cloud-blink">
             {alerts.length}
           </div>
         </button>
