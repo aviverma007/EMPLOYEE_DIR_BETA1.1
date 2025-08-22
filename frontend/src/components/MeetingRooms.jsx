@@ -371,19 +371,12 @@ const MeetingRooms = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Employee</label>
-                <select
-                  value={bookingData.employee_id}
-                  onChange={(e) => handleEmployeeSelect(e.target.value)}
-                  className="w-full p-2 border rounded-md"
-                  required
-                >
-                  <option value="">Select Employee</option>
-                  {employees.map(emp => (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.id})
-                    </option>
-                  ))}
-                </select>
+                <SearchableEmployeeDropdown
+                  employees={employees}
+                  selectedEmployeeId={bookingData.employee_id}
+                  onEmployeeSelect={handleEmployeeSelect}
+                  placeholder="Search by employee name or ID..."
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
