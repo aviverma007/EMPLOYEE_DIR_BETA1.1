@@ -27,6 +27,8 @@ import Workflows from "./components/Workflows";
 import Attendance from "./components/Attendance";
 import MeetingRooms from "./components/MeetingRooms";
 import HolidayCalendar from "./components/HolidayCalendar";
+import AlertManagement from "./components/AlertManagement";
+import UserAlerts from "./components/UserAlerts";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin, isUser } = useAuth();
