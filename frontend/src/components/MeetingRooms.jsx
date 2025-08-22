@@ -8,6 +8,105 @@ import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { meetingRoomAPI, employeeAPI, utilityAPI } from '../services/api';
 
+// Searchable Employee Dropdown Component
+const SearchableEmployeeDropdown = ({ employees, selectedEmployeeId, onEmployeeSelect, placeholder = "Search employee by name or ID..." }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const selectedEmployee = employees.find(emp => emp.id === selectedEmployeeId);
+  
+  // Filter employees based on search term (search by name or ID)
+  const filteredEmployees = employees.filter(employee => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      employee.name.toLowerCase().includes(searchLower) ||
+      employee.id.toLowerCase().includes(searchLower)
+    );
+  }).slice(0, 50); // Limit to 50 results for performance
+  
+  const handleEmployeeClick = (employee) => {
+    onEmployeeSelect(employee.id);
+    setIsOpen(false);
+    setSearchTerm('');
+  };
+  
+  const handleInputClick = () => {
+    setIsOpen(true);
+  };
+  
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+    if (!isOpen) setIsOpen(true);
+  };
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.employee-dropdown-container')) {
+        setIsOpen(false);
+        setSearchTerm('');
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  
+  return (
+    <div className="employee-dropdown-container relative">
+      <div className="relative">
+        <Input
+          type="text"
+          value={searchTerm || (selectedEmployee ? `${selectedEmployee.name} (${selectedEmployee.id})` : '')}
+          onChange={handleInputChange}
+          onClick={handleInputClick}
+          placeholder={placeholder}
+          className="w-full pr-10 cursor-pointer"
+          autoComplete="off"
+        />
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <Search className="h-4 w-4 text-gray-400" />
+          <ChevronDown className="h-4 w-4 text-gray-400 ml-1" />
+        </div>
+      </div>
+      
+      {isOpen && (
+        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+          {filteredEmployees.length > 0 ? (
+            <>
+              {searchTerm && (
+                <div className="px-3 py-2 text-xs text-gray-500 border-b bg-gray-50">
+                  Showing {filteredEmployees.length} result{filteredEmployees.length !== 1 ? 's' : ''}
+                  {filteredEmployees.length === 50 && ' (limited to 50)'}
+                </div>
+              )}
+              {filteredEmployees.map((employee) => (
+                <div
+                  key={employee.id}
+                  onClick={() => handleEmployeeClick(employee)}
+                  className={`px-3 py-2 cursor-pointer hover:bg-blue-50 flex flex-col ${
+                    selectedEmployeeId === employee.id ? 'bg-blue-100' : ''
+                  }`}
+                >
+                  <div className="font-medium text-sm">{employee.name}</div>
+                  <div className="text-xs text-gray-600">ID: {employee.id}</div>
+                  {employee.department && (
+                    <div className="text-xs text-gray-500">{employee.department}</div>
+                  )}
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="px-3 py-2 text-sm text-gray-500">
+              {searchTerm ? `No employees found for "${searchTerm}"` : 'No employees available'}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const MeetingRooms = () => {
   const { isAdmin } = useAuth();
   const [rooms, setRooms] = useState([]);
