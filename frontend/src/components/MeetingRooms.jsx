@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
-import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle, Search, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { meetingRoomAPI, employeeAPI, utilityAPI } from '../services/api';
+import SearchableEmployeeDropdown from './ui/SearchableEmployeeDropdown';
 
 // Searchable Employee Dropdown Component
 const SearchableEmployeeDropdown = ({ employees, selectedEmployeeId, onEmployeeSelect, placeholder = "Search employee by name or ID..." }) => {
