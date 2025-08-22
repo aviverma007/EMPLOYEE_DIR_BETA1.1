@@ -136,7 +136,7 @@ const Home = () => {
       title: "VENDORGLOBE",
       description: "QMS Portal",
       url: "https://smartworlddevelopersonline.com/qms/",
-      image: "/images/vendorglobe-placeholder.svg" // Placeholder - replace with actual uploaded image
+      image: "/images/vendorglobe.png"
     },
     {
       title: "Company",
