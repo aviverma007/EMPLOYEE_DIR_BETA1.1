@@ -16,6 +16,42 @@ code {
         monospace;
 }
 
+/* Custom Cloud Alert Animations */
+@keyframes cloudBlink {
+  0%, 50% { opacity: 1; }
+  25%, 75% { opacity: 0.7; }
+}
+
+@keyframes cloudFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+}
+
+@keyframes cloudPulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 
+                0 0 40px rgba(59, 130, 246, 0.1),
+                0 0 60px rgba(59, 130, 246, 0.05);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 
+                0 0 60px rgba(59, 130, 246, 0.2),
+                0 0 90px rgba(59, 130, 246, 0.1);
+  }
+}
+
+.cloud-blink {
+  animation: cloudBlink 2s ease-in-out infinite;
+}
+
+.cloud-float {
+  animation: cloudFloat 3s ease-in-out infinite;
+}
+
+.cloud-pulse {
+  animation: cloudPulse 2s ease-in-out infinite;
+}
+
 /* Cloud Animation Styles */
 @keyframes float {
   0% { transform: translateY(0px) rotate(0deg); }
