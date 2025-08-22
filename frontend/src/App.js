@@ -263,6 +263,9 @@ const AppContent = () => {
                     )}
                   </div>
                 </Tabs>
+                
+                {/* User Alerts - Show only for User role */}
+                {isUser() && <UserAlerts />}
               </div>
               <Toaster />
             </div>
