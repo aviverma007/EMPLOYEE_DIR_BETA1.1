@@ -59,9 +59,15 @@ const SearchableEmployeeDropdown = ({
     if (e.key === 'Escape') {
       setIsOpen(false);
       setSearchTerm('');
+      setIsSearching(false);
     } else if (e.key === 'Enter' && filteredEmployees.length > 0) {
       e.preventDefault();
       handleEmployeeClick(filteredEmployees[0]);
+    } else if (e.key === 'Backspace' && !isSearching && selectedEmployee) {
+      // When user starts backspacing on a selected employee, switch to search mode
+      setIsSearching(true);
+      setSearchTerm('');
+      onEmployeeSelect('');
     }
   };
   
@@ -71,6 +77,7 @@ const SearchableEmployeeDropdown = ({
       if (!event.target.closest('.employee-dropdown-container')) {
         setIsOpen(false);
         setSearchTerm('');
+        setIsSearching(false);
       }
     };
     
@@ -78,9 +85,16 @@ const SearchableEmployeeDropdown = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
   
+  // Reset search state when selectedEmployeeId changes externally
+  useEffect(() => {
+    if (selectedEmployeeId && !isSearching) {
+      setSearchTerm('');
+    }
+  }, [selectedEmployeeId, isSearching]);
+  
   // Display value in input
   const displayValue = () => {
-    if (searchTerm) return searchTerm;
+    if (isSearching || searchTerm) return searchTerm;
     if (selectedEmployee) return `${selectedEmployee.name} (${selectedEmployee.id})`;
     return '';
   };
