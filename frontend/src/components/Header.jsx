@@ -68,8 +68,16 @@ const Header = () => {
             </div>
           </div>
           
-          {/* Right side - Profile, Refresh, Logout */}
+          {/* Right side - Beta Badge, Profile, Refresh, Logout */}
           <div className={`flex items-center ${isAdmin() ? 'space-x-3' : 'space-x-2'}`}>
+            {/* Beta Version Badge */}
+            <Badge 
+              variant="outline" 
+              className="bg-orange-100 text-orange-700 border-orange-300 text-xs px-2 py-1"
+            >
+              Beta v1.0
+            </Badge>
+            
             {/* User Info */}
             <div className={`flex items-center ${isAdmin() ? 'space-x-3' : 'space-x-2'}`}>
               <div className="text-right">
