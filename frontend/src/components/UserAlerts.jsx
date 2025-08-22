@@ -16,11 +16,38 @@ const UserAlerts = () => {
 
   // Load alerts on component mount
   useEffect(() => {
-    loadActiveAlerts();
+    const checkAndLoadAlerts = async () => {
+      // Wait for dataService to be loaded
+      if (!dataService.isLoaded) {
+        console.log('Waiting for dataService to load...');
+        // Check every 500ms if dataService is loaded
+        const checkInterval = setInterval(() => {
+          if (dataService.isLoaded) {
+            clearInterval(checkInterval);
+            console.log('DataService loaded, loading alerts now...');
+            loadActiveAlerts();
+          }
+        }, 500);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkInterval);
+          console.log('Timeout waiting for dataService, loading alerts anyway...');
+          loadActiveAlerts();
+        }, 10000);
+      } else {
+        console.log('DataService already loaded, loading alerts...');
+        loadActiveAlerts();
+      }
+    };
+
+    checkAndLoadAlerts();
     
     // Refresh alerts every 30 seconds to check for new ones
     const refreshInterval = setInterval(() => {
-      loadActiveAlerts();
+      if (dataService.isLoaded) {
+        loadActiveAlerts();
+      }
     }, 30000);
 
     return () => clearInterval(refreshInterval);
