@@ -15,6 +15,7 @@ const UserAlerts = () => {
   const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
   const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
   const [showAlert, setShowAlert] = useState(false);
+  const [isCloudVisible, setIsCloudVisible] = useState(true); // Control cloud visibility
 
   // Load alerts on component mount
   useEffect(() => {
