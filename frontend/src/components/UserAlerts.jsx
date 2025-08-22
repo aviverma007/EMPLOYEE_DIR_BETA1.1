@@ -214,18 +214,18 @@ const UserAlerts = () => {
 
       {/* Cloud-like Alert Popup */}
       {isCloudVisible && (
-        <div className="fixed top-16 right-4 z-40 max-w-sm w-full animate-in slide-in-from-right duration-500">
+        <div className="fixed top-16 right-4 z-40 max-w-sm w-full animate-in slide-in-from-right duration-500 cloud-float">
           {/* Cloud Shape Container */}
           <div className="relative">
             {/* Cloud Shadow */}
             <div className="absolute inset-0 bg-black opacity-20 rounded-3xl transform translate-x-1 translate-y-1 blur-sm"></div>
             
             {/* Main Cloud Body */}
-            <div className="relative bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 rounded-3xl shadow-2xl border border-gray-500 backdrop-blur-md bg-opacity-85">
+            <div className="relative bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 rounded-3xl shadow-2xl border border-gray-500 backdrop-blur-md bg-opacity-85 cloud-pulse">
               {/* Cloud decorative elements */}
-              <div className="absolute -top-3 left-8 w-6 h-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-80"></div>
-              <div className="absolute -top-2 right-12 w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-70"></div>
-              <div className="absolute -left-2 top-6 w-5 h-5 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-75"></div>
+              <div className="absolute -top-3 left-8 w-6 h-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-80 animate-pulse"></div>
+              <div className="absolute -top-2 right-12 w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-70 animate-pulse delay-100"></div>
+              <div className="absolute -left-2 top-6 w-5 h-5 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-75 animate-pulse delay-200"></div>
               
               {/* Alert Content */}
               <div className="p-6">
