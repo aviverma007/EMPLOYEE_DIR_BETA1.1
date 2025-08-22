@@ -188,14 +188,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [galleryImages.length]);
 
-  // Auto-scroll gallery images every 2 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentGalleryIndex(prev => (prev + 1) % galleryImages.length);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [galleryImages.length]);
-
   // Auto-scroll new joinees every 3 seconds (showing 3 at a time)
   useEffect(() => {
     if (employees.length > 3) {
