@@ -204,87 +204,119 @@ const UserAlerts = () => {
     );
   }
 
+  if (!showAlert || alerts.length === 0) {
+    return (
+      <>
+        {/* Floating Bell Button - Always visible when there are dismissed alerts */}
+        {dismissedAlerts.size > 0 && (
+          <div 
+            className="fixed z-50"
+            style={{ top: `${buttonPosition.top}px`, right: `${buttonPosition.right}px` }}
+          >
+            <button
+              onClick={toggleCloudVisibility}
+              onMouseDown={handleMouseDown}
+              className={`relative group cursor-${isDragging ? 'grabbing' : 'grab'}`}
+            >
+              {/* Blinking Animation Ring */}
+              <div className="absolute inset-0 bg-blue-400 rounded-full opacity-50 animate-ping"></div>
+              
+              {/* Bell Button - Smaller */}
+              <div className="relative bg-white rounded-full p-2 shadow-lg border-2 border-blue-400 hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+                <Bell className="h-4 w-4 text-blue-600 animate-bounce" />
+              </div>
+              
+              {/* Notification Badge - Smaller */}
+              <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold animate-pulse">
+                {dismissedAlerts.size}
+              </div>
+            </button>
+          </div>
+        )}
+      </>
+    );
+  }
+
   const currentAlert = alerts[currentAlertIndex];
   const colors = getAlertColors(currentAlert.type);
 
   return (
     <>
-      {/* Floating Cloud Button - Always visible when alerts exist */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* Floating Bell Button - Draggable */}
+      <div 
+        className="fixed z-50"
+        style={{ top: `${buttonPosition.top}px`, right: `${buttonPosition.right}px` }}
+      >
         <button
           onClick={toggleCloudVisibility}
-          className="relative group cloud-float"
+          onMouseDown={handleMouseDown}
+          className={`relative group cursor-${isDragging ? 'grabbing' : 'grab'}`}
         >
           {/* Blinking Animation Ring */}
-          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-75 animate-ping cloud-blink"></div>
+          <div className="absolute inset-0 bg-blue-400 rounded-full opacity-50 animate-ping"></div>
           
-          {/* Cloud Button */}
-          <div className="relative bg-gradient-to-br from-gray-700 via-gray-800 to-black rounded-full p-4 shadow-2xl border-2 border-blue-400 hover:scale-110 transition-all duration-300 backdrop-blur-sm bg-opacity-90 cloud-pulse">
-            <div className="flex items-center justify-center">
-              <Cloud className="h-6 w-6 text-blue-300 filter drop-shadow-lg" />
-              <Bell className="h-4 w-4 text-white absolute top-2 right-2 animate-bounce" />
-            </div>
+          {/* Bell Button - Smaller */}
+          <div className="relative bg-white rounded-full p-2 shadow-lg border-2 border-blue-400 hover:scale-105 transition-all duration-300 backdrop-blur-sm">
+            <Bell className="h-4 w-4 text-blue-600 animate-bounce" />
           </div>
           
-          {/* Notification Badge */}
-          <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold animate-pulse cloud-blink">
+          {/* Notification Badge - Smaller */}
+          <div className="absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold animate-pulse">
             {alerts.length}
           </div>
         </button>
       </div>
 
-      {/* Cloud-like Alert Popup */}
+      {/* Compact White-Blue Alert Popup */}
       {isCloudVisible && (
-        <div className="fixed top-16 right-4 z-40 max-w-sm w-full animate-in slide-in-from-right duration-500 cloud-float">
-          {/* Cloud Shape Container */}
+        <div 
+          className="fixed z-40 max-w-xs w-full animate-in slide-in-from-right duration-300"
+          style={{ 
+            top: `${buttonPosition.top + 60}px`, 
+            right: `${buttonPosition.right}px` 
+          }}
+        >
+          {/* Compact Alert Container */}
           <div className="relative">
-            {/* Cloud Shadow */}
-            <div className="absolute inset-0 bg-black opacity-20 rounded-3xl transform translate-x-1 translate-y-1 blur-sm"></div>
+            {/* Alert Shadow */}
+            <div className="absolute inset-0 bg-gray-300 opacity-20 rounded-2xl transform translate-x-1 translate-y-1 blur-sm"></div>
             
-            {/* Main Cloud Body */}
-            <div className="relative bg-gradient-to-br from-gray-600 via-gray-700 to-gray-900 rounded-3xl shadow-2xl border border-gray-500 backdrop-blur-md bg-opacity-85 cloud-pulse">
-              {/* Cloud decorative elements */}
-              <div className="absolute -top-3 left-8 w-6 h-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-full opacity-80 animate-pulse"></div>
-              <div className="absolute -top-2 right-12 w-4 h-4 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-70 animate-pulse delay-100"></div>
-              <div className="absolute -left-2 top-6 w-5 h-5 bg-gradient-to-br from-gray-600 to-gray-800 rounded-full opacity-75 animate-pulse delay-200"></div>
-              
-              {/* Alert Content */}
-              <div className="p-6">
-                {/* Alert Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-full ${colors.bg} bg-opacity-80`}>
-                      {getAlertIcon(currentAlert.type)}
+            {/* Main Alert Body - White & Blue Theme */}
+            <div className="relative bg-white rounded-2xl shadow-xl border-2 border-blue-200 backdrop-blur-md">
+              {/* Alert Content - Compact */}
+              <div className="p-4">
+                {/* Alert Header - Compact */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <div className={`p-1.5 rounded-full ${colors.bg}`}>
+                      <div className={colors.icon}>
+                        {getAlertIcon(currentAlert.type)}
+                      </div>
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white text-sm">
+                      <h3 className={`font-semibold text-sm ${colors.text}`}>
                         {currentAlert.title}
                       </h3>
                       {currentAlert.priority === 'high' && (
-                        <span className="bg-red-500 bg-opacity-80 px-2 py-1 rounded text-xs font-medium text-white">
-                          HIGH PRIORITY
+                        <span className="bg-blue-500 text-white px-2 py-0.5 rounded text-xs font-medium">
+                          HIGH
                         </span>
                       )}
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDismiss(currentAlert.id)}
-                    className="text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-gray-600 hover:bg-opacity-50"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  {/* Removed X button - no dismiss functionality */}
                 </div>
 
-                {/* Alert Message */}
-                <div className="mb-4 p-3 bg-black bg-opacity-20 rounded-xl border border-gray-600">
-                  <p className="text-gray-200 text-sm leading-relaxed">
+                {/* Alert Message - Compact */}
+                <div className="mb-3 p-2 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className={`text-sm leading-relaxed ${colors.text}`}>
                     {currentAlert.message}
                   </p>
                 </div>
                 
-                {/* Alert Footer */}
-                <div className="flex items-center justify-between text-xs text-gray-400">
-                  <div className="flex items-center space-x-2">
+                {/* Alert Footer - Compact */}
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center space-x-1">
                     <Clock className="h-3 w-3" />
                     <span>
                       {new Date(currentAlert.created_at).toLocaleDateString()}
@@ -292,19 +324,19 @@ const UserAlerts = () => {
                   </div>
                   
                   {alerts.length > 1 && (
-                    <div className="flex items-center space-x-3">
-                      <span className="text-blue-300 font-medium">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-blue-600 font-medium text-xs">
                         {currentAlertIndex + 1} of {alerts.length}
                       </span>
-                      {/* Progress indicators */}
+                      {/* Progress indicators - Smaller */}
                       <div className="flex space-x-1">
                         {alerts.map((_, index) => (
                           <div
                             key={index}
-                            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                               index === currentAlertIndex 
-                                ? 'bg-blue-400 ring-2 ring-blue-300 ring-opacity-50' 
-                                : 'bg-gray-500 bg-opacity-60'
+                                ? 'bg-blue-500 ring-1 ring-blue-300' 
+                                : 'bg-gray-300'
                             }`}
                           />
                         ))}
@@ -314,8 +346,8 @@ const UserAlerts = () => {
                 </div>
               </div>
 
-              {/* Blue accent glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-500 to-blue-600 opacity-10 pointer-events-none"></div>
+              {/* Blue accent glow - Subtle */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-100 to-blue-200 opacity-5 pointer-events-none"></div>
             </div>
           </div>
         </div>
