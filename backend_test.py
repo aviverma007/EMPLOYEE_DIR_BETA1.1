@@ -277,11 +277,143 @@ class MinimalBackendTester:
         except Exception as e:
             self.log_test("Meeting Rooms Booking Endpoint", False, f"Meeting rooms booking endpoint test failed: {str(e)}")
 
+    def test_excel_file_accessibility(self):
+        """Test 11: Excel file accessibility at /employee_directory.xlsx"""
+        try:
+            # Test Excel file accessibility via frontend URL
+            excel_url = f"{self.backend_url}/employee_directory.xlsx"
+            response = self.session.get(excel_url)
+            if response.status_code == 200:
+                # Check content type
+                content_type = response.headers.get('content-type', '')
+                if 'spreadsheet' in content_type or 'excel' in content_type:
+                    # Try to verify it's a valid Excel file by checking content length
+                    content_length = len(response.content)
+                    if content_length > 10000:  # Should be substantial for 625 employees
+                        self.log_test("Excel File Accessibility", True, 
+                                    f"Excel file accessible at /employee_directory.xlsx with {content_length} bytes", 
+                                    f"Content-Type: {content_type}")
+                    else:
+                        self.log_test("Excel File Accessibility", False, 
+                                    f"Excel file too small ({content_length} bytes), may be corrupted")
+                else:
+                    self.log_test("Excel File Accessibility", False, 
+                                f"Excel file has incorrect content-type: {content_type}")
+            else:
+                self.log_test("Excel File Accessibility", False, 
+                            f"Excel file returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Excel File Accessibility", False, f"Excel file accessibility test failed: {str(e)}")
+
+    def test_excel_employee_count(self):
+        """Test 12: Verify Excel file contains 625 employees"""
+        try:
+            import pandas as pd
+            import tempfile
+            
+            # Download Excel file and verify employee count
+            excel_url = f"{self.backend_url}/employee_directory.xlsx"
+            response = self.session.get(excel_url)
+            if response.status_code == 200:
+                # Save to temporary file and read with pandas
+                with tempfile.NamedTemporaryFile(suffix='.xlsx', delete=False) as tmp_file:
+                    tmp_file.write(response.content)
+                    tmp_file.flush()
+                    
+                    try:
+                        df = pd.read_excel(tmp_file.name)
+                        employee_count = len(df)
+                        
+                        if employee_count == 625:
+                            self.log_test("Excel Employee Count", True, 
+                                        f"Excel file contains exactly 625 employees as expected", 
+                                        f"Employee count: {employee_count}")
+                        else:
+                            self.log_test("Excel Employee Count", False, 
+                                        f"Excel file contains {employee_count} employees, expected 625")
+                    except Exception as e:
+                        self.log_test("Excel Employee Count", False, 
+                                    f"Failed to read Excel file: {str(e)}")
+                    finally:
+                        os.unlink(tmp_file.name)
+            else:
+                self.log_test("Excel Employee Count", False, 
+                            f"Could not download Excel file (status {response.status_code})")
+        except ImportError:
+            self.log_test("Excel Employee Count", False, 
+                        "pandas not available for Excel verification")
+        except Exception as e:
+            self.log_test("Excel Employee Count", False, f"Excel employee count test failed: {str(e)}")
+
+    def test_frontend_accessibility(self):
+        """Test 13: Frontend accessibility"""
+        try:
+            response = self.session.get(self.backend_url)
+            if response.status_code == 200:
+                content = response.text
+                # Check for React app indicators
+                if 'id="root"' in content and ('bundle.js' in content or 'static' in content):
+                    self.log_test("Frontend Accessibility", True, 
+                                "Frontend is accessible and serving React application", 
+                                f"Content length: {len(content)} characters")
+                else:
+                    self.log_test("Frontend Accessibility", False, 
+                                "Frontend accessible but not serving expected React content", 
+                                f"Content preview: {content[:200]}...")
+            else:
+                self.log_test("Frontend Accessibility", False, 
+                            f"Frontend returned status {response.status_code}")
+        except Exception as e:
+            self.log_test("Frontend Accessibility", False, f"Frontend accessibility test failed: {str(e)}")
+
+    def test_data_loading_errors(self):
+        """Test 14: Check for any errors preventing proper data loading"""
+        try:
+            # Test multiple endpoints to ensure no 500 errors or exceptions
+            endpoints_to_test = [
+                "/api/employees",
+                "/api/departments", 
+                "/api/locations",
+                "/api/stats",
+                "/api/meeting-rooms"
+            ]
+            
+            all_working = True
+            error_details = []
+            
+            for endpoint in endpoints_to_test:
+                try:
+                    response = self.session.get(f"{self.backend_url}{endpoint}")
+                    if response.status_code != 200:
+                        all_working = False
+                        error_details.append(f"{endpoint}: HTTP {response.status_code}")
+                    else:
+                        # Check if response is valid JSON
+                        data = response.json()
+                        if 'message' not in data:
+                            all_working = False
+                            error_details.append(f"{endpoint}: Invalid JSON structure")
+                except Exception as e:
+                    all_working = False
+                    error_details.append(f"{endpoint}: {str(e)}")
+            
+            if all_working:
+                self.log_test("Data Loading Error Check", True, 
+                            "All API endpoints responding without errors", 
+                            f"Tested {len(endpoints_to_test)} endpoints successfully")
+            else:
+                self.log_test("Data Loading Error Check", False, 
+                            "Some endpoints have errors preventing proper data loading", 
+                            f"Errors: {'; '.join(error_details)}")
+        except Exception as e:
+            self.log_test("Data Loading Error Check", False, f"Error check test failed: {str(e)}")
+
     def run_all_tests(self):
         """Run all tests"""
         print("🚀 Starting Frontend-Only Backend API Tests")
         print("=" * 60)
         
+        # Original tests
         self.test_server_connectivity()
         self.test_health_endpoint()
         self.test_cors_configuration()
@@ -292,6 +424,12 @@ class MinimalBackendTester:
         self.test_post_request_handling()
         self.test_meeting_rooms_endpoints()
         self.test_meeting_rooms_booking_endpoints()
+        
+        # New tests for review request
+        self.test_excel_file_accessibility()
+        self.test_excel_employee_count()
+        self.test_frontend_accessibility()
+        self.test_data_loading_errors()
         
         print("\n" + "=" * 60)
         print("📊 BACKEND API TEST SUMMARY")
