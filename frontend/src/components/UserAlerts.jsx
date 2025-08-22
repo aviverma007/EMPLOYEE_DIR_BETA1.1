@@ -104,17 +104,34 @@ const UserAlerts = () => {
   }, [dismissedAlerts, alerts]);
 
   const handleDismiss = (alertId) => {
-    setDismissedAlerts(prev => new Set([...prev, alertId]));
-    
-    // If this was the last alert, hide the popup
-    const remainingAlerts = alerts.filter(alert => alert.id !== alertId && !dismissedAlerts.has(alert.id));
-    if (remainingAlerts.length === 0) {
-      setShowAlert(false);
-    }
+    // Removed dismiss functionality - alerts can't be closed individually
+    console.log('Alert dismiss disabled');
   };
 
   const toggleCloudVisibility = () => {
     setIsCloudVisible(!isCloudVisible);
+  };
+
+  // Handle dragging functionality
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    const startY = e.clientY;
+    const startTop = buttonPosition.top;
+
+    const handleMouseMove = (e) => {
+      const deltaY = e.clientY - startY;
+      const newTop = Math.max(16, Math.min(window.innerHeight - 100, startTop + deltaY));
+      setButtonPosition(prev => ({ ...prev, top: newTop }));
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const getAlertIcon = (type) => {
