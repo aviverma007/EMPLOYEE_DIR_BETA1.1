@@ -101,8 +101,12 @@ const LoginForm = () => {
           {/* Header */}
           <div className="text-center space-y-6">
             <div className="flex items-center justify-center space-x-4">
-              <div className="p-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-3xl shadow-xl">
-                <Building2 className="h-20 w-20 text-white" />
+              <div className="p-6 bg-white rounded-3xl shadow-xl">
+                <img 
+                  src="/images/company-logo.png" 
+                  alt="SMARTWORLD DEVELOPERS Logo" 
+                  className="h-20 w-20 object-contain"
+                />
               </div>
             </div>
             <div>
