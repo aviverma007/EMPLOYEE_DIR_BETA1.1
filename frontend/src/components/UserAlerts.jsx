@@ -4,7 +4,9 @@ import {
   CheckCircle, 
   Info, 
   X, 
-  Clock
+  Clock,
+  Cloud,
+  Bell
 } from "lucide-react";
 import dataService from "../services/dataService";
 
