@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import os
 
 app = FastAPI()
@@ -42,6 +44,20 @@ def catch_all_get(path: str):
 @app.post("/api/{path:path}")
 def catch_all_post(path: str):
     return {"message": f"API endpoint /{path} is now handled by frontend dataService", "mode": "frontend-only", "redirect": "Use frontend dataService"}
+
+
+# ---------- React Frontend Serving ----------
+# Path to your React build folder
+frontend_path = os.path.join(os.path.dirname(__file__), "build")
+
+# Serve static files (JS, CSS, images, etc.)
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
+
+# Catch-all route to serve React index.html for client-side routing
+@app.get("/{full_path:path}")
+async def serve_react(full_path: str):
+    return FileResponse(os.path.join(frontend_path, "index.html"))
+
 
 if __name__ == "__main__":
     import uvicorn
