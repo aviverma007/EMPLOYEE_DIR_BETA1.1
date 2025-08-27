@@ -7,8 +7,10 @@ import {
   Bell
 } from "lucide-react";
 import dataService from "../services/dataService";
+import useSharedDataSync from '../hooks/useSharedDataSync';
 
 const UserAlerts = () => {
+  const { dataUpdates } = useSharedDataSync(['alerts']); // Listen for alert updates
   const [alerts, setAlerts] = useState([]);
   const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
   const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
@@ -16,6 +18,22 @@ const UserAlerts = () => {
   const [isCloudVisible, setIsCloudVisible] = useState(true); // Control cloud visibility
   const [buttonPosition, setButtonPosition] = useState({ top: 16, right: 16 }); // Button position
   const [isDragging, setIsDragging] = useState(false);
+
+  // Listen for real-time alert updates from other systems
+  useEffect(() => {
+    const handleSharedDataUpdate = (event) => {
+      if (event.detail.dataType === 'alerts') {
+        console.log('[UserAlerts] Received real-time update from another system');
+        if (dataService.isLoaded) {
+          // We'll call the existing loadActiveAlerts function when it's defined
+          setTimeout(() => loadActiveAlerts(), 100);
+        }
+      }
+    };
+
+    window.addEventListener('sharedDataUpdate', handleSharedDataUpdate);
+    return () => window.removeEventListener('sharedDataUpdate', handleSharedDataUpdate);
+  }, []);
 
   // Load alerts on component mount
   useEffect(() => {

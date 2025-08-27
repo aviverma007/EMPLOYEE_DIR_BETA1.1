@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import dataService from "../services/dataService";
+import useSharedDataSync from '../hooks/useSharedDataSync';
 
 const AlertManagement = () => {
+  const { dataUpdates } = useSharedDataSync(['alerts']); // Listen for alert updates
   const [alerts, setAlerts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAlert, setEditingAlert] = useState(null);
@@ -37,6 +39,22 @@ const AlertManagement = () => {
   // Load alerts on component mount
   useEffect(() => {
     loadAlerts();
+  }, []);
+
+  // Listen for real-time alert updates from other systems
+  useEffect(() => {
+    const handleSharedDataUpdate = (event) => {
+      if (event.detail.dataType === 'alerts') {
+        console.log('[AlertManagement] Received real-time update from another system');
+        loadAlerts(); // Refresh alert data when changes detected
+        toast.info('Alerts updated from another system', {
+          duration: 3000,
+        });
+      }
+    };
+
+    window.addEventListener('sharedDataUpdate', handleSharedDataUpdate);
+    return () => window.removeEventListener('sharedDataUpdate', handleSharedDataUpdate);
   }, []);
 
   const loadAlerts = () => {

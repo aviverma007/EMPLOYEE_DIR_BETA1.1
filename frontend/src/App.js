@@ -29,6 +29,7 @@ import MeetingRooms from "./components/MeetingRooms";
 import HolidayCalendar from "./components/HolidayCalendar";
 import AlertManagement from "./components/AlertManagement";
 import UserAlerts from "./components/UserAlerts";
+import SyncStatus from "./components/SyncStatus";
 
 const AppContent = () => {
   const { isAuthenticated, initializeAuth, isAdmin, isUser } = useAuth();
@@ -266,6 +267,9 @@ const AppContent = () => {
                 
                 {/* User Alerts - Show only for User role */}
                 {isUser() && <UserAlerts />}
+                
+                {/* Sync Status - Show for all authenticated users */}
+                <SyncStatus isAdmin={isAdmin()} />
               </div>
               <Toaster />
             </div>

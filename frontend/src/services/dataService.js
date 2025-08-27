@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import sharedNetworkStorage from './sharedNetworkStorage';
 
 class DataService {
   constructor() {
@@ -16,38 +17,230 @@ class DataService {
     this.meetingRooms = [];
     this.alerts = []; // Add alerts array
     this.isLoaded = false;
+    
+    // Initialize shared storage callbacks
+    this.initializeSharedStorageCallbacks();
   }
 
+  // Initialize shared storage callbacks for real-time sync
+  initializeSharedStorageCallbacks() {
+    console.log('[DataService] Setting up shared storage callbacks for real-time sync');
+    
+    // Set up callbacks for each data type
+    sharedNetworkStorage.onDataChange('alerts', (data) => {
+      console.log('[DataService] Synced alerts from shared storage:', data.length);
+      this.alerts = data;
+      this.notifyUIUpdate('alerts');
+    });
+    
+    sharedNetworkStorage.onDataChange('meetingRooms', (data) => {
+      console.log('[DataService] Synced meeting rooms from shared storage:', data.length);
+      // Only update if data is actually different and has content
+      if (data && data.length > 0 && JSON.stringify(data) !== JSON.stringify(this.meetingRooms)) {
+        this.meetingRooms = data;
+        this.notifyUIUpdate('meetingRooms');
+      }
+    });
+    
+    sharedNetworkStorage.onDataChange('news', (data) => {
+      console.log('[DataService] Synced news from shared storage:', data.length);
+      this.news = data;
+      this.notifyUIUpdate('news');
+    });
+    
+    sharedNetworkStorage.onDataChange('tasks', (data) => {
+      console.log('[DataService] Synced tasks from shared storage:', data.length);
+      this.tasks = data;
+      this.notifyUIUpdate('tasks');
+    });
+    
+    sharedNetworkStorage.onDataChange('knowledge', (data) => {
+      console.log('[DataService] Synced knowledge from shared storage:', data.length);
+      this.knowledge = data;
+      this.notifyUIUpdate('knowledge');
+    });
+    
+    sharedNetworkStorage.onDataChange('help', (data) => {
+      console.log('[DataService] Synced help from shared storage:', data.length);
+      this.help = data;
+      this.notifyUIUpdate('help');
+    });
+    
+    sharedNetworkStorage.onDataChange('hierarchy', (data) => {
+      console.log('[DataService] Synced hierarchy from shared storage:', data.length);
+      this.hierarchy = data;
+      this.notifyUIUpdate('hierarchy');
+    });
+    
+    sharedNetworkStorage.onDataChange('attendance', (data) => {
+      console.log('[DataService] Synced attendance from shared storage:', data.length);
+      this.attendance = data;
+      this.notifyUIUpdate('attendance');
+    });
+  }
+
+  // Notify UI about data updates (for components to refresh)
+  notifyUIUpdate(dataType) {
+    // Dispatch custom event for UI components to listen to
+    window.dispatchEvent(new CustomEvent('sharedDataUpdate', { 
+      detail: { dataType, timestamp: new Date().toISOString() }
+    }));
+  }
+
+  // Load data from shared storage first, then Excel as fallback
+  async loadFromSharedStorageFirst() {
+    console.log('[DataService] Loading data from shared storage first...');
+    
+    try {
+      // Load all data types from shared storage
+      const sharedData = await Promise.all([
+        sharedNetworkStorage.loadFromSharedStorage('alerts'),
+        sharedNetworkStorage.loadFromSharedStorage('meetingRooms'),
+        sharedNetworkStorage.loadFromSharedStorage('news'),
+        sharedNetworkStorage.loadFromSharedStorage('tasks'),
+        sharedNetworkStorage.loadFromSharedStorage('knowledge'),
+        sharedNetworkStorage.loadFromSharedStorage('help'),
+        sharedNetworkStorage.loadFromSharedStorage('hierarchy'),
+        sharedNetworkStorage.loadFromSharedStorage('attendance')
+      ]);
+      
+      // Only assign loaded data if it exists and has content
+      if (sharedData[0].data && sharedData[0].data.length > 0) {
+        this.alerts = sharedData[0].data;
+      }
+      if (sharedData[1].data && sharedData[1].data.length > 0) {
+        this.meetingRooms = sharedData[1].data;
+      }
+      if (sharedData[2].data && sharedData[2].data.length > 0) {
+        this.news = sharedData[2].data;
+      }
+      if (sharedData[3].data && sharedData[3].data.length > 0) {
+        this.tasks = sharedData[3].data;
+      }
+      if (sharedData[4].data && sharedData[4].data.length > 0) {
+        this.knowledge = sharedData[4].data;
+      }
+      if (sharedData[5].data && sharedData[5].data.length > 0) {
+        this.help = sharedData[5].data;
+      }
+      if (sharedData[6].data && sharedData[6].data.length > 0) {
+        this.hierarchy = sharedData[6].data;
+      }
+      if (sharedData[7].data && sharedData[7].data.length > 0) {
+        this.attendance = sharedData[7].data;
+      }
+      
+      console.log('[DataService] Loaded data from shared storage:', {
+        alerts: this.alerts.length,
+        meetingRooms: this.meetingRooms.length,
+        news: this.news.length,
+        tasks: this.tasks.length,
+        knowledge: this.knowledge.length,
+        help: this.help.length,
+        hierarchy: this.hierarchy.length,
+        attendance: this.attendance.length
+      });
+      
+      return true;
+    } catch (error) {
+      console.error('[DataService] Error loading from shared storage:', error);
+      return false;
+    }
+  }
   // Load Excel files and parse data
   async loadAllData() {
     try {
-      console.log('Loading data from Excel files...');
+      console.log('[DataService] Loading data from Excel files and shared storage...');
       
-      // Load employee data
+      // Load employee data from Excel (always from Excel)
       await this.loadEmployeeData();
       
-      // Load attendance data
-      await this.loadAttendanceData();
+      // Initialize meeting rooms first (ensure they exist)
+      console.log('[DataService] Initializing meeting rooms...');
+      this.meetingRooms = this.generateMeetingRooms();
+      console.log('[DataService] Generated meeting rooms:', this.meetingRooms.length);
       
-      // Initialize other data structures
-      this.initializeOtherData();
+      // Then try to load from shared storage and overwrite if data exists
+      try {
+        await this.loadFromSharedStorageFirst();
+      } catch (error) {
+        console.warn('[DataService] Failed to load from shared storage:', error);
+      }
       
-      // Initialize demo alerts for testing
-      this.initializeDemoAlerts();
+      // Ensure we still have meeting rooms after shared storage load
+      if (this.meetingRooms.length === 0) {
+        console.log('[DataService] No meeting rooms after shared storage load, reinitializing...');
+        this.meetingRooms = this.generateMeetingRooms();
+        // Save initial meeting rooms to shared storage
+        await sharedNetworkStorage.saveToSharedStorage('meetingRooms', this.meetingRooms);
+      }
+      
+      // Initialize other data structures if empty
+      this.initializeOtherDataIfEmpty();
+      
+      // Initialize demo alerts only if no alerts exist
+      if (this.alerts.length === 0) {
+        this.initializeDemoAlerts();
+        // Save demo alerts to shared storage
+        try {
+          await sharedNetworkStorage.saveToSharedStorage('alerts', this.alerts);
+        } catch (error) {
+          console.warn('[DataService] Failed to save alerts to shared storage:', error);
+        }
+      }
       
       this.isLoaded = true;
-      console.log('All data loaded successfully');
+      console.log('[DataService] ✅ All data loaded successfully:');
+      console.log('[DataService] - Employees:', this.employees.length);
+      console.log('[DataService] - Meeting Rooms:', this.meetingRooms.length);
+      console.log('[DataService] - Alerts:', this.alerts.length);
+      console.log('[DataService] - News:', this.news.length);
+      console.log('[DataService] - Tasks:', this.tasks.length);
+      console.log('[DataService] - Knowledge:', this.knowledge.length);
+      console.log('[DataService] - Help:', this.help.length);
+      
+      // Debug: Show sample of IFC 14th floor rooms
+      const ifc14 = this.meetingRooms.filter(r => r.location === 'IFC' && r.floor === '14th Floor');
+      console.log('[DataService] - IFC 14th Floor Rooms:', ifc14.length, ifc14.map(r => r.name));
       
       return {
         employees: this.employees.length,
         attendance: this.attendance.length,
         departments: this.departments.length,
-        locations: this.locations.length
+        locations: this.locations.length,
+        meetingRooms: this.meetingRooms.length
       };
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('[DataService] Error loading data:', error);
       throw error;
     }
+  }
+
+  // Initialize other data structures only if they're empty
+  initializeOtherDataIfEmpty() {
+    // Initialize sample data for other modules only if empty
+    if (this.news.length === 0) {
+      this.news = [];
+    }
+    if (this.tasks.length === 0) {
+      this.tasks = [];
+    }
+    if (this.knowledge.length === 0) {
+      this.knowledge = [];
+    }
+    if (this.help.length === 0) {
+      this.help = [];
+    }
+    if (this.policies.length === 0) {
+      this.policies = this.generateSamplePolicies();
+    }
+    if (this.workflows.length === 0) {
+      this.workflows = [];
+    }
+    
+    // Update locations to include all meeting room locations
+    const meetingRoomLocations = [...new Set(this.meetingRooms.map(room => room.location))];
+    this.locations = [...new Set([...this.locations, ...meetingRoomLocations])];
   }
 
   // Load employee data from Excel
@@ -197,8 +390,9 @@ class DataService {
 
   // Initialize other data structures with sample data
   initializeOtherData() {
-    // Initialize meeting rooms with persistence
+    // Initialize meeting rooms with persistence - always call this to ensure rooms exist
     this.meetingRooms = this.generateMeetingRooms();
+    console.log('[DataService] Initialized meeting rooms:', this.meetingRooms.length);
     
     // Initialize sample data for other modules
     this.news = [];
@@ -592,6 +786,11 @@ class DataService {
       created_at: new Date().toISOString()
     };
     this.hierarchy.push(newRelation);
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('hierarchy', this.hierarchy);
+    console.log('[DataService] Hierarchy relationship created and synced to shared storage');
+    
     return newRelation;
   }
 
@@ -599,6 +798,11 @@ class DataService {
     const index = this.hierarchy.findIndex(h => h.id === relationId);
     if (index > -1) {
       this.hierarchy.splice(index, 1);
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('hierarchy', this.hierarchy);
+      console.log('[DataService] Hierarchy relationship deleted and synced to shared storage');
+      
       return { message: 'Hierarchy relationship deleted' };
     }
     throw new Error('Hierarchy relationship not found');
@@ -606,6 +810,11 @@ class DataService {
 
   async clearAllHierarchy() {
     this.hierarchy = [];
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('hierarchy', this.hierarchy);
+    console.log('[DataService] All hierarchy relationships cleared and synced to shared storage');
+    
     return { message: 'All hierarchy relationships cleared' };
   }
 
@@ -622,6 +831,11 @@ class DataService {
       updated_at: new Date().toISOString()
     };
     this.news.unshift(newNews);
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('news', this.news);
+    console.log('[DataService] News created and synced to shared storage');
+    
     return newNews;
   }
 
@@ -633,6 +847,11 @@ class DataService {
         ...newsData,
         updated_at: new Date().toISOString()
       };
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('news', this.news);
+      console.log('[DataService] News updated and synced to shared storage');
+      
       return this.news[index];
     }
     throw new Error('News not found');
@@ -642,6 +861,11 @@ class DataService {
     const index = this.news.findIndex(n => n.id === id);
     if (index > -1) {
       this.news.splice(index, 1);
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('news', this.news);
+      console.log('[DataService] News deleted and synced to shared storage');
+      
       return { message: 'News deleted' };
     }
     throw new Error('News not found');
@@ -660,6 +884,11 @@ class DataService {
       updated_at: new Date().toISOString()
     };
     this.tasks.unshift(newTask);
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('tasks', this.tasks);
+    console.log('[DataService] Task created and synced to shared storage');
+    
     return newTask;
   }
 
@@ -671,6 +900,11 @@ class DataService {
         ...taskData,
         updated_at: new Date().toISOString()
       };
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('tasks', this.tasks);
+      console.log('[DataService] Task updated and synced to shared storage');
+      
       return this.tasks[index];
     }
     throw new Error('Task not found');
@@ -680,6 +914,11 @@ class DataService {
     const index = this.tasks.findIndex(t => t.id === id);
     if (index > -1) {
       this.tasks.splice(index, 1);
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('tasks', this.tasks);
+      console.log('[DataService] Task deleted and synced to shared storage');
+      
       return { message: 'Task deleted' };
     }
     throw new Error('Task not found');
@@ -698,6 +937,11 @@ class DataService {
       updated_at: new Date().toISOString()
     };
     this.knowledge.unshift(newKnowledge);
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('knowledge', this.knowledge);
+    console.log('[DataService] Knowledge created and synced to shared storage');
+    
     return newKnowledge;
   }
 
@@ -709,6 +953,11 @@ class DataService {
         ...knowledgeData,
         updated_at: new Date().toISOString()
       };
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('knowledge', this.knowledge);
+      console.log('[DataService] Knowledge updated and synced to shared storage');
+      
       return this.knowledge[index];
     }
     throw new Error('Knowledge not found');
@@ -718,6 +967,11 @@ class DataService {
     const index = this.knowledge.findIndex(k => k.id === id);
     if (index > -1) {
       this.knowledge.splice(index, 1);
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('knowledge', this.knowledge);
+      console.log('[DataService] Knowledge deleted and synced to shared storage');
+      
       return { message: 'Knowledge deleted' };
     }
     throw new Error('Knowledge not found');
@@ -737,6 +991,11 @@ class DataService {
       updated_at: new Date().toISOString()
     };
     this.help.unshift(newHelp);
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('help', this.help);
+    console.log('[DataService] Help request created and synced to shared storage');
+    
     return newHelp;
   }
 
@@ -748,6 +1007,11 @@ class DataService {
         ...helpData,
         updated_at: new Date().toISOString()
       };
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('help', this.help);
+      console.log('[DataService] Help request updated and synced to shared storage');
+      
       return this.help[index];
     }
     throw new Error('Help request not found');
@@ -763,6 +1027,11 @@ class DataService {
       };
       this.help[index].replies.push(reply);
       this.help[index].updated_at = new Date().toISOString();
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('help', this.help);
+      console.log('[DataService] Help reply added and synced to shared storage');
+      
       return reply;
     }
     throw new Error('Help request not found');
@@ -772,6 +1041,11 @@ class DataService {
     const index = this.help.findIndex(h => h.id === id);
     if (index > -1) {
       this.help.splice(index, 1);
+      
+      // Save to shared storage for real-time sync across systems
+      await sharedNetworkStorage.saveToSharedStorage('help', this.help);
+      console.log('[DataService] Help request deleted and synced to shared storage');
+      
       return { message: 'Help request deleted' };
     }
     throw new Error('Help request not found');
@@ -779,25 +1053,36 @@ class DataService {
 
   // Meeting Rooms methods
   async getMeetingRooms(filters = {}) {
+    console.log('[DataService] getMeetingRooms called with filters:', filters);
+    console.log('[DataService] Current meeting rooms count:', this.meetingRooms.length);
+    
     // Clean up expired bookings first
     this.cleanupExpiredBookings(this.meetingRooms);
     
     let filtered = [...this.meetingRooms];
+    console.log('[DataService] Total rooms before filtering:', filtered.length);
     
     if (filters.location) {
       filtered = filtered.filter(room => room.location === filters.location);
+      console.log('[DataService] After location filter:', filtered.length, `(${filters.location})`);
     }
     
     if (filters.floor) {
       filtered = filtered.filter(room => room.floor === filters.floor);
+      console.log('[DataService] After floor filter:', filtered.length, `(${filters.floor})`);
     }
     
     if (filters.status) {
       filtered = filtered.filter(room => room.status === filters.status);
+      console.log('[DataService] After status filter:', filtered.length, `(${filters.status})`);
     }
     
+    console.log('[DataService] Final filtered rooms:', filtered.length);
+    
     // Save any changes made by cleanup
-    this.saveMeetingRoomsToStorage();
+    if (this.meetingRooms.length > 0) {
+      this.saveMeetingRoomsToStorage();
+    }
     
     return filtered;
   }
@@ -838,10 +1123,13 @@ class DataService {
     room.current_booking = booking;
     room.status = 'occupied';
 
-    // Save to localStorage
+    // Save to localStorage (local backup)
     this.saveMeetingRoomsToStorage();
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('meetingRooms', this.meetingRooms);
 
-    console.log(`Room ${room.name} booked successfully for ${booking.employee_name}`);
+    console.log(`[DataService] Room ${room.name} booked successfully for ${booking.employee_name} and synced to shared storage`);
     return booking;
   }
 
@@ -862,10 +1150,13 @@ class DataService {
     room.current_booking = null;
     room.status = 'vacant';
 
-    // Save to localStorage
+    // Save to localStorage (local backup)
     this.saveMeetingRoomsToStorage();
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('meetingRooms', this.meetingRooms);
 
-    console.log(`Booking cancelled for ${roomName} (previously booked by ${employeeName})`);
+    console.log(`[DataService] Booking cancelled for ${roomName} (previously booked by ${employeeName}) and synced to shared storage`);
     return { message: 'Booking cancelled successfully', room_name: roomName };
   }
 
@@ -881,10 +1172,13 @@ class DataService {
       room.status = 'vacant';
     });
 
-    // Save to localStorage
+    // Save to localStorage (local backup)
     this.saveMeetingRoomsToStorage();
+    
+    // Save to shared storage for real-time sync across systems
+    await sharedNetworkStorage.saveToSharedStorage('meetingRooms', this.meetingRooms);
 
-    console.log(`Cleared all bookings: ${cancelledCount} rooms were occupied, now all ${this.meetingRooms.length} rooms are vacant`);
+    console.log(`[DataService] Cleared all bookings: ${cancelledCount} rooms were occupied, now all ${this.meetingRooms.length} rooms are vacant. Synced to shared storage`);
     return { 
       message: 'All bookings cleared successfully',
       rooms_updated: this.meetingRooms.length,
@@ -967,7 +1261,7 @@ class DataService {
   }
 
   // Create a new alert (Admin only)
-  createAlert(alertData) {
+  async createAlert(alertData) {
     const newAlert = {
       id: `alert_${Date.now()}`,
       title: alertData.title || 'Alert',
@@ -981,11 +1275,16 @@ class DataService {
       createdBy: alertData.createdBy || 'admin'
     };
     this.alerts.unshift(newAlert);
+    
+    // Save to shared storage for real-time sync
+    await sharedNetworkStorage.saveToSharedStorage('alerts', this.alerts);
+    console.log('[DataService] Alert created and synced to shared storage');
+    
     return newAlert;
   }
 
   // Update alert (Admin only)
-  updateAlert(alertId, alertData) {
+  async updateAlert(alertId, alertData) {
     const alertIndex = this.alerts.findIndex(alert => alert.id === alertId);
     if (alertIndex === -1) {
       throw new Error('Alert not found');
@@ -997,22 +1296,31 @@ class DataService {
       updated_at: new Date().toISOString()
     };
     
+    // Save to shared storage for real-time sync
+    await sharedNetworkStorage.saveToSharedStorage('alerts', this.alerts);
+    console.log('[DataService] Alert updated and synced to shared storage');
+    
     return this.alerts[alertIndex];
   }
 
   // Delete alert (Admin only)
-  deleteAlert(alertId) {
+  async deleteAlert(alertId) {
     const alertIndex = this.alerts.findIndex(alert => alert.id === alertId);
     if (alertIndex === -1) {
       throw new Error('Alert not found');
     }
 
     const deletedAlert = this.alerts.splice(alertIndex, 1)[0];
+    
+    // Save to shared storage for real-time sync
+    await sharedNetworkStorage.saveToSharedStorage('alerts', this.alerts);
+    console.log('[DataService] Alert deleted and synced to shared storage');
+    
     return deletedAlert;
   }
 
   // Toggle alert status (Admin only)
-  toggleAlertStatus(alertId) {
+  async toggleAlertStatus(alertId) {
     const alert = this.alerts.find(alert => alert.id === alertId);
     if (!alert) {
       throw new Error('Alert not found');
@@ -1020,6 +1328,11 @@ class DataService {
 
     alert.isActive = !alert.isActive;
     alert.updated_at = new Date().toISOString();
+    
+    // Save to shared storage for real-time sync
+    await sharedNetworkStorage.saveToSharedStorage('alerts', this.alerts);
+    console.log('[DataService] Alert status toggled and synced to shared storage');
+    
     return alert;
   }
 

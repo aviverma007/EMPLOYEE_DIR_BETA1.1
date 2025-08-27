@@ -8,9 +8,11 @@ import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
 import { meetingRoomAPI, employeeAPI, utilityAPI } from '../services/api';
 import SearchableEmployeeDropdown from './ui/SearchableEmployeeDropdown';
+import useSharedDataSync from '../hooks/useSharedDataSync';
 
 const MeetingRooms = () => {
   const { isAdmin } = useAuth();
+  const { dataUpdates } = useSharedDataSync(['meetingRooms']); // Listen for meeting room updates
   const [rooms, setRooms] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -28,6 +30,28 @@ const MeetingRooms = () => {
     purpose: ''
   });
   const [loading, setLoading] = useState(true);
+
+  // Listen for real-time meeting room updates from other systems
+  useEffect(() => {
+    const handleSharedDataUpdate = (event) => {
+      if (event.detail.dataType === 'meetingRooms') {
+        console.log('[MeetingRooms] Received real-time update from another system');
+        // Only show notification and refresh if rooms are already loaded
+        if (rooms.length > 0) {
+          fetchRooms(); // Refresh room data when changes detected
+          toast.info('Meeting room bookings updated from another system', {
+            duration: 3000,
+          });
+        } else {
+          // Just refresh without notification during initial load
+          fetchRooms();
+        }
+      }
+    };
+
+    window.addEventListener('sharedDataUpdate', handleSharedDataUpdate);
+    return () => window.removeEventListener('sharedDataUpdate', handleSharedDataUpdate);
+  }, [rooms.length]);
 
   // Set user-specific filters after component mounts
   useEffect(() => {
@@ -53,10 +77,17 @@ const MeetingRooms = () => {
   const fetchRooms = async () => {
     try {
       setLoading(true);
+      console.log('[MeetingRooms] Fetching rooms with filters:', filters);
       const data = await meetingRoomAPI.getAll(filters);
+      console.log('[MeetingRooms] Received rooms data:', data.length, data);
       setRooms(data);
+      
+      // Debug: Check if IFC 14th floor rooms are present
+      const ifc14thFloor = data.filter(room => room.location === 'IFC' && room.floor === '14th Floor');
+      console.log('[MeetingRooms] IFC 14th Floor rooms:', ifc14thFloor.length, ifc14thFloor.map(r => r.name));
+      
     } catch (error) {
-      console.error('Error fetching rooms:', error);
+      console.error('[MeetingRooms] Error fetching rooms:', error);
       toast.error('Failed to load meeting rooms');
     } finally {
       setLoading(false);
