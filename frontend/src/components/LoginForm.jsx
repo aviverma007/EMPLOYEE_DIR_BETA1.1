@@ -114,7 +114,7 @@ const LoginForm = () => {
                 SMARTWORLD DEVELOPERS
               </h1>
               <p className="text-lg text-blue-600 font-medium">
-                Employee Management System
+                SMARTDESK
               </p>
             </div>
           </div>

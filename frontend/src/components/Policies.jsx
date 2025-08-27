@@ -10,11 +10,13 @@ const Policies = () => {
   const { isAdmin } = useAuth();
   const [policies, setPolicies] = useState([]);
   const [expandedSections, setExpandedSections] = useState({
-    hr: true
+    hr: true,
+    admin: false,
+    it: false
   });
   const [loading, setLoading] = useState(true);
 
-  // All policies under single HR POLICY heading - mapped to actual files
+  // All policies organized by categories - mapped to actual files
   const policyData = {
     "HR POLICY": [
       { 
@@ -72,6 +74,65 @@ const Policies = () => {
         link: "/company policies/Microsoft Word - Flexible Work Schedule.pdf", 
         description: "Guidelines for flexible working arrangements and remote work policies"
       }
+    ],
+    "ADMIN POLICY": [
+      { 
+        title: "Office Administration Guidelines", 
+        link: "/company policies/Office Administration Guidelines.pdf", 
+        description: "General office administration and management procedures"
+      },
+      { 
+        title: "Asset Management Policy", 
+        link: "/company policies/Asset Management Policy.pdf", 
+        description: "Company asset allocation, maintenance, and return procedures"
+      },
+      { 
+        title: "Visitor Management Policy", 
+        link: "/company policies/Visitor Management Policy.pdf", 
+        description: "Guidelines for visitor access and management procedures"
+      },
+      { 
+        title: "Document Management Policy", 
+        link: "/company policies/Document Management Policy.pdf", 
+        description: "Document creation, storage, and archival procedures"
+      },
+      { 
+        title: "Facility Management Guidelines", 
+        link: "/company policies/Facility Management Guidelines.pdf", 
+        description: "Office facility usage and maintenance guidelines"
+      }
+    ],
+    "IT POLICY": [
+      { 
+        title: "IT Security Policy", 
+        link: "/company policies/IT Security Policy.pdf", 
+        description: "Information security guidelines and best practices"
+      },
+      { 
+        title: "Data Protection Policy", 
+        link: "/company policies/Data Protection Policy.pdf", 
+        description: "Data privacy and protection compliance procedures"
+      },
+      { 
+        title: "Email and Internet Usage Policy", 
+        link: "/company policies/Email and Internet Usage Policy.pdf", 
+        description: "Guidelines for appropriate email and internet usage"
+      },
+      { 
+        title: "Software License Management", 
+        link: "/company policies/Software License Management.pdf", 
+        description: "Software installation and license compliance procedures"
+      },
+      { 
+        title: "IT Equipment Policy", 
+        link: "/company policies/IT Equipment Policy.pdf", 
+        description: "IT equipment allocation, usage, and maintenance guidelines"
+      },
+      { 
+        title: "Backup and Recovery Policy", 
+        link: "/company policies/Backup and Recovery Policy.pdf", 
+        description: "Data backup and disaster recovery procedures"
+      }
     ]
   };
 
@@ -82,9 +143,9 @@ const Policies = () => {
   // Get policies to display based on user role
   const getPoliciesToDisplay = () => {
     if (isAdmin()) {
-      return policyData; // Admin sees all policies
+      return policyData; // Admin sees all policies (HR, ADMIN, IT)
     } else {
-      return { "HR POLICY": policyData["HR POLICY"] }; // User sees only HR policies
+      return policyData; // User also sees all policies (HR, ADMIN, IT)
     }
   };
 
@@ -151,7 +212,7 @@ const Policies = () => {
         </div>
       </div>
 
-      {/* Policy sections - All policies under HR POLICY without categorization */}
+      {/* Policy sections - HR, ADMIN, and IT policies with categorization */}
       <div className="space-y-6">
         {Object.entries(getPoliciesToDisplay()).map(([sectionTitle, sectionPolicies]) => {
           const sectionKey = getSectionKey(sectionTitle);

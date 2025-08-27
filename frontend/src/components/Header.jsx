@@ -62,7 +62,7 @@ const Header = () => {
               />
               <div>
                 <p className={`font-semibold text-blue-600 ${isAdmin() ? 'text-2xl' : 'text-lg'}`}>
-                  Employee Management System
+                  SMARTDESK
                 </p>
               </div>
             </div>
